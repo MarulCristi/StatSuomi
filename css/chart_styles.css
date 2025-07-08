@@ -1,6 +1,4 @@
-body {
-    overflow: hidden;
-}
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
 
 .navbar {
     position: fixed;
@@ -38,7 +36,7 @@ body {
 .chart-container {
     max-width: 100%;
     margin-left: 15px;
-    padding-top: 20px;
+    padding-top: 13px;
     background: #ffffff;
     border-radius: 16px;
     width: 97%;
@@ -51,4 +49,13 @@ body {
     color: #1f2937;
     text-align: center;
     margin-bottom: 30px;
+}
+
+.city-title {
+    font-size: 4rem;
+    color: #208454; 
+    padding: 20px 0px 0px 30px;
+    letter-spacing: 1.5px; 
+    font-weight: 400; 
+    font-family: "Bungee", sans-serif;
 }

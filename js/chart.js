@@ -70,6 +70,9 @@ const getData = async () => {
 const buildChart = async () => {
     const data = await getData();
 
+    const cityName = document.querySelector('.city-title');
+    cityName.textContent = savedMunicipalityName;
+
     const years = Object.values(data.dimension.Vuosi.category.label)
     const values = data.value;
     const metricsPerYear = 8;
@@ -115,12 +118,84 @@ const buildChart = async () => {
     }
 
     const vitalityChart = new frappe.Chart("#chart", {
-        title: `👶 Vital Stats for ${savedMunicipalityName}`,
+        title: `👶 Vital Stats`,
         data: chartData1,
         type: "bar",
         height: 450,
         colors: ['#00c9a7', '#ff5e57'],
     })
+
+    const chartData2 = {
+        labels: years,
+        datasets: [
+            {
+                name: "Immigration",
+                values: immigration,
+            },
+            {
+                name: "Emigration",
+                values: emigration
+            }
+        ]
+    }
+
+    let expandChart2 = false;
+    
+    document.getElementById('chart2Container').addEventListener('shown.bs.collapse', function() {
+      if (!expandChart2) {
+        const migrationChart = new frappe.Chart("#chart2", {
+          title: `🧳 Migration Stats`,
+          data: chartData2,
+          type: "bar",
+          height: 450,
+          colors: ['#00c9a7', '#ff5e57'],
+        });
+        expandChart2 = true;
+      }
+
+    document.getElementById('chart2').scrollIntoView({ // Automatic scrolling effect
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    const chartData3 = {
+        labels: years,
+        datasets: [
+            {
+                name: "Marriages",
+                values: marriages,
+            },
+            {
+                name: "Divorces",
+                values: divorces
+            }
+        ]
+    }
+
+    let expandChart3 = false;
+    
+    document.getElementById('chart3Container').addEventListener('shown.bs.collapse', function() {
+      if (!expandChart3) {
+        const familyChart = new frappe.Chart("#chart3", {
+          title: `👰 Family Stats`,
+          data: chartData3,
+          type: "bar",
+          height: 450,
+          colors: ['#00c9a7', '#ff5e57'],
+        });
+        expandChart2 = true;
+      }
+
+    document.getElementById('chart3').scrollIntoView({ // Automatic scrolling effect
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    document.getElementById('chart3Container').addEventListener('hidden.bs.collapse', function() {
+      expandChart3 = false;
+    });
 }
 
 buildChart();
