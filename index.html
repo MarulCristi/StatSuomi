@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>StatSuomi</title>
+        <meta name="description" content="Website created by MarulCristi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/menu_styles.css">
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
+        </style>
+        <script type="module">
+        import { polyfillCountryFlagEmojis } from "https://cdn.skypack.dev/country-flag-emoji-polyfill";
+        polyfillCountryFlagEmojis();
+</script>
+    </head>
+    <body class="main-menu">
+        <div class="main-container">
+            <h1>StatSuomi</h1>
+            <p lang="fi">A website showing charts and maps stats of Finland </p>
+            <button id="lets-go" onclick="playZoomAnimation()">Let's go!</button>
+        </div>
+        <!--MAKE SURE TEXT ADJUSTS TO ZOOM CHANGE-->
+
+        <script src="js/main_menu.js" async defer></script>
+    </body>
+</html>

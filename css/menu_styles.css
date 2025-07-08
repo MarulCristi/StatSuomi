@@ -1,0 +1,136 @@
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+.main-menu {
+    background: linear-gradient(-45deg, #00c9ff, #92fe9d, #00c9ff, #a8edea);
+    background-size: 400%;
+    animation: gradient 15s ease infinite;
+    overflow: hidden;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0%, 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.main-container {
+    position: relative;
+    top: 40%;
+    bottom: 50%;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+
+}
+
+h1 {
+    font-family: "Michroma", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 8rem;
+    text-align: center;
+    margin: 0;
+    padding: 10px;
+    color: transparent;
+    background: linear-gradient(-45deg, #a8edea, #fed6e3, #a8edea, #fed6e3);
+    background-size: 400% 400%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: textGradient 15s ease infinite;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    transform: scale(1.00); /* When there's unhover */
+    transition: transform 0.3s ease;
+}
+
+h1:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+@keyframes textGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+/* Show flag emoji. Thanks to 
+https://stackoverflow.com/questions/29766214/placing-national-flags-at-start-of-sentence */ 
+p {
+    font-family: "Twemoji Country Flags", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 2.4rem;
+    text-align: center;
+    color: transparent;
+    background: linear-gradient(-45deg, #a8edea, #fed6e3, #a8edea, #fed6e3);
+    background-size: 400% 400%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: textGradient 15s ease infinite;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+#lets-go {
+    position: absolute;
+    top: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    font-size: 4rem;
+    background: linear-gradient(-45deg, #ff9a85, #ff6fa1, #4db8e8, #4de8c8);
+    background-size: 400% 400%;
+    animation: textGradient 15s ease infinite;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+#lets-go:hover {
+    transform: translateX(-50%) scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+p:lang(fi):after {
+    content: ' 🇫🇮';
+    color: initial;
+}
+
+.zoom-out {
+    animation: zoomOut 0.5s ease-in-out forwards;
+}
+
+@keyframes zoomOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}

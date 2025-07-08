@@ -1,0 +1,54 @@
+body {
+    overflow: hidden;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1001;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    margin-left: 10px;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #4CAF50;
+}
+
+.dropdown-item.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.navbar-nav {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+}
+
+.nav-item {
+    margin-left: 15px;
+}
+
+.chart-container {
+    max-width: 100%;
+    margin-left: 15px;
+    padding-top: 20px;
+    background: #ffffff;
+    border-radius: 16px;
+    width: 97%;
+}
+
+
+.frappe-chart .title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 30px;
+}
