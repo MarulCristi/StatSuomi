@@ -393,6 +393,8 @@ const getData = async() => {
 
       const municipalities = statData.dimension.Alue.category.label
       const allValues = statData.value
+      
+
 
 
 
@@ -400,6 +402,16 @@ const getData = async() => {
       
       const metricsPerMunicipality = 8;
       const municipalityKeys = Object.keys(municipalities);
+
+      const allMunicipalities = [];
+      municipalityKeys.forEach(key => {
+          allMunicipalities.push({
+              code: key,
+              name: municipalities[key]
+          });
+      });
+
+      localStorage.setItem('allMunicipalities', JSON.stringify(allMunicipalities));
 
 
       for (let i = 0; i < municipalityKeys.length; i++) {

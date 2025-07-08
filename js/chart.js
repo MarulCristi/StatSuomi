@@ -73,6 +73,42 @@ const buildChart = async () => {
     const cityName = document.querySelector('.city-title');
     cityName.textContent = savedMunicipalityName;
 
+    const select = document.getElementById('municipalities');
+    const allMunicipalities = localStorage.getItem('allMunicipalities');
+
+    if (allMunicipalities) {
+        const municipalities = JSON.parse(allMunicipalities)
+
+        select.innerHTML = '';
+
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Select another municipality...';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        select.appendChild(defaultOption);
+
+        municipalities.forEach(municipality => {
+            const option = document.createElement('option');
+            option.value = municipality.code;
+            option.textContent = municipality.name;
+            select.appendChild(option);
+          
+        });
+
+        select.addEventListener('change', (event) => { // YOU CAN CHANGE MUNICIPALITY AND DATA GETS UPDATED
+            const selectedCode = event.target.value;
+            const selectedName = event.target.selectedOptions[0].textContent;
+            if (selectedCode) {
+              localStorage.setItem('selectedMunicipalityCode', selectedCode);
+              localStorage.setItem('selectedMunicipality', selectedName)
+
+              savedMunicipalityCode = selectedCode;
+              location.reload(); // PAGE GETS RELOADED
+            }
+        });
+    }
+
+
     const years = Object.values(data.dimension.Vuosi.category.label)
     const values = data.value;
     const metricsPerYear = 8;
@@ -197,5 +233,6 @@ const buildChart = async () => {
       expandChart3 = false;
     });
 }
+
 
 buildChart();

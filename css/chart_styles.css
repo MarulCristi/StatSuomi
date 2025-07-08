@@ -58,4 +58,28 @@
     letter-spacing: 1.5px; 
     font-weight: 400; 
     font-family: "Bungee", sans-serif;
+    margin-bottom: 10px;
+}
+
+#municipalities {
+    margin: 0px 0px 30px 30px;
+    padding: 12px 20px;
+    border: 3px solid #208454; 
+    border-radius: 12px;
+    background: #ffffff;
+    font-size: 18px;
+    font-weight: 500;
+    color: #208454;
+    min-width: 350px;
+    max-width: 500px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(32, 132, 84, 0.1);
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+#municipalities:hover {
+    border-color: #1a6b44;
+    box-shadow: 0 6px 20px rgba(32, 132, 84, 0.2);
+    transform: translateY(-2px);
 }
