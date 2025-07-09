@@ -8,8 +8,6 @@ if (savedMunicipalityCode === "SSS") {
 
 let type = localStorage.getItem('savedChartType') || 'bar' 
 
-// NEXT CHANGE TITLE AND MAKE SURE CHANGING TYPE OF CHART WORKS.
-
 const jsonQuery =
 {
   "query": [
@@ -170,18 +168,27 @@ const buildChart = async () => {
       ];
     }
 
+    let title1;
+    let color;
+
     function updateChart() {
         document.getElementById('chart').innerHTML = '';
+        if(!changed) {
+          title1 = `👶 Vital Stats`
+          color = ['#00c9a7', '#ff5e57']
+        }
+
+        const currentType = localStorage.getItem('savedChartType') || 'bar';
         
         vitalityChart = new frappe.Chart("#chart", {
-            title: `👶 Vital Stats`,
+            title: title1,
             data: {
                 labels: years,
                 datasets: newDataset
             },
-            type: type || 'bar',
+            type: currentType,
             height: 450,
-            colors: ['#00c9a7', '#ff5e57'],
+            colors: color,
         });
     }
 
@@ -189,12 +196,14 @@ const buildChart = async () => {
         type = "bar"
         localStorage.setItem('savedChartType', "bar")
         updateChart()
+        location.reload(); // Frappe.charts doesn't change without reload :(
     });
     
     document.getElementById('line').addEventListener('click', () => {
         type = "line"
         localStorage.setItem('savedChartType', "line")
         updateChart()
+        location.reload(); // Frappe.charts doesn't change without reload :(
     });
 
     document.getElementById('births').addEventListener('click', () => {
@@ -202,11 +211,19 @@ const buildChart = async () => {
         if (visibleDatasets.births && visibleDatasets.deaths) {
             newDataset = [
                 {
-                    name: "Deaths",
-                    values: deaths
+                    name: "Births",
+                    values: births,
                 }
             ];
-            visibleDatasets.births = false;
+            title1 = `👶 Birth Stats`
+            color = ['#00c9a7']
+            visibleDatasets.deaths = false;
+            document.getElementById('births').textContent = "Hide Births"
+            document.getElementById('deaths').textContent = "Show Deaths"
+
+            document.getElementById('births').classList.add('disabled-button');
+            document.getElementById('births').disabled = true;
+
             updateChart();
         }
         else if (visibleDatasets.births && !visibleDatasets.deaths) {
@@ -223,7 +240,17 @@ const buildChart = async () => {
                     values: deaths
                 }
             ];
+            title1 = `🧍 Vital Stats`
+            color = ['#00c9a7', '#ff5e57']
             visibleDatasets.births = true;
+            document.getElementById('births').textContent = "Show Only Births"
+            document.getElementById('deaths').textContent = "Show Only Deaths"
+
+            document.getElementById('births').classList.remove('disabled-button');
+            document.getElementById('deaths').classList.remove('disabled-button');
+            document.getElementById('births').disabled = false;
+            document.getElementById('deaths').disabled = false;
+
             updateChart();
         }
     });
@@ -233,12 +260,20 @@ const buildChart = async () => {
         if (visibleDatasets.births && visibleDatasets.deaths) {
             newDataset = [
                 {
-                    name: "Births",
-                    values: births
+                    name: "Deaths",
+                    values: deaths
                 }
             ];
-            visibleDatasets.deaths = false;
-            updateChart();
+        title1 = `⚰️ Death Stats`
+        color = ['#ff5e57']
+        visibleDatasets.births = false;
+        document.getElementById('births').textContent = "Show Births"
+        document.getElementById('deaths').textContent = "Hide Deaths"
+
+        document.getElementById('deaths').classList.add('disabled-button');
+        document.getElementById('deaths').disabled = true;
+        
+        updateChart();
         }
       else if (visibleDatasets.births && !visibleDatasets.deaths) {
             newDataset = [
@@ -251,7 +286,17 @@ const buildChart = async () => {
                     values: deaths
                 }
             ];
+            title1 = `🧍 Vital Stats`
+            color = ['#00c9a7', '#ff5e57']
             visibleDatasets.deaths = true;
+            document.getElementById('births').textContent = "Show Only Births"
+            document.getElementById('deaths').textContent = "Show Only Deaths"
+
+            document.getElementById('births').classList.remove('disabled-button');
+            document.getElementById('deaths').classList.remove('disabled-button');
+            document.getElementById('births').disabled = false;
+            document.getElementById('deaths').disabled = false;
+
             updateChart();
         }
       else if (!visibleDatasets.births && visibleDatasets.deaths) {
