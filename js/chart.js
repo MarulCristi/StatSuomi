@@ -1,6 +1,15 @@
 let savedMunicipalityCode = localStorage.getItem('selectedMunicipalityCode');
 let savedMunicipalityName = localStorage.getItem('selectedMunicipality');
 
+if (savedMunicipalityCode === "SSS") {
+  savedMunicipalityName = "Finland"
+}
+
+
+let type = localStorage.getItem('savedChartType') || 'bar' 
+
+// NEXT CHANGE TITLE AND MAKE SURE CHANGING TYPE OF CHART WORKS.
+
 const jsonQuery =
 {
   "query": [
@@ -66,6 +75,8 @@ const getData = async () => {
 
     return statData
 }
+
+let changed = false;
 
 const buildChart = async () => {
     const data = await getData();
@@ -139,27 +150,116 @@ const buildChart = async () => {
         population.push(values[baseIndex + 7]);  // vaesto
     }
 
-    const chartData1 = {
-        labels: years,
-        datasets: [
-            {
-                name: "Births",
-                values: births,
-            },
-            {
-                name: "Deaths",
-                values: deaths
-            }
-        ]
+    let visibleDatasets = {
+      births: true,
+      deaths: true
     }
 
-    const vitalityChart = new frappe.Chart("#chart", {
-        title: `👶 Vital Stats`,
-        data: chartData1,
-        type: "bar",
-        height: 450,
-        colors: ['#00c9a7', '#ff5e57'],
-    })
+    let newDataset;
+
+    if(!changed) {
+      newDataset = [
+          {
+              name: "Births",
+              values: births,
+          },
+          {
+              name: "Deaths",
+              values: deaths
+          }
+      ];
+    }
+
+    function updateChart() {
+        document.getElementById('chart').innerHTML = '';
+        
+        vitalityChart = new frappe.Chart("#chart", {
+            title: `👶 Vital Stats`,
+            data: {
+                labels: years,
+                datasets: newDataset
+            },
+            type: type || 'bar',
+            height: 450,
+            colors: ['#00c9a7', '#ff5e57'],
+        });
+    }
+
+    document.getElementById('bar').addEventListener('click', () => {
+        type = "bar"
+        localStorage.setItem('savedChartType', "bar")
+        updateChart()
+    });
+    
+    document.getElementById('line').addEventListener('click', () => {
+        type = "line"
+        localStorage.setItem('savedChartType', "line")
+        updateChart()
+    });
+
+    document.getElementById('births').addEventListener('click', () => {
+        changed = true;
+        if (visibleDatasets.births && visibleDatasets.deaths) {
+            newDataset = [
+                {
+                    name: "Deaths",
+                    values: deaths
+                }
+            ];
+            visibleDatasets.births = false;
+            updateChart();
+        }
+        else if (visibleDatasets.births && !visibleDatasets.deaths) {
+          alert("No data will show if you do this!")
+        }
+        else if (!visibleDatasets.births && visibleDatasets.deaths) {
+            newDataset = [
+                {
+                    name: "Births",
+                    values: births,
+                },
+                {
+                    name: "Deaths",
+                    values: deaths
+                }
+            ];
+            visibleDatasets.births = true;
+            updateChart();
+        }
+    });
+
+    document.getElementById('deaths').addEventListener('click', () => {
+        changed = true;
+        if (visibleDatasets.births && visibleDatasets.deaths) {
+            newDataset = [
+                {
+                    name: "Births",
+                    values: births
+                }
+            ];
+            visibleDatasets.deaths = false;
+            updateChart();
+        }
+      else if (visibleDatasets.births && !visibleDatasets.deaths) {
+            newDataset = [
+                {
+                    name: "Births",
+                    values: births,
+                },
+                {
+                    name: "Deaths",
+                    values: deaths
+                }
+            ];
+            visibleDatasets.deaths = true;
+            updateChart();
+        }
+      else if (!visibleDatasets.births && visibleDatasets.deaths) {
+            alert("No data will show if you do this!")
+        }
+    });
+
+    updateChart();
 
     const chartData2 = {
         labels: years,

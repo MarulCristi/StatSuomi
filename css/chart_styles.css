@@ -51,6 +51,7 @@
     margin-bottom: 30px;
 }
 
+
 .city-title {
     font-size: 4rem;
     color: #208454; 
@@ -62,8 +63,7 @@
 }
 
 #municipalities {
-    margin: 0px 0px 30px 30px;
-    padding: 12px 20px;
+    margin: 0px 0px 10px 30px;
     border: 3px solid #208454; 
     border-radius: 12px;
     background: #ffffff;
@@ -78,8 +78,30 @@
     font-family: inherit;
 }
 
-#municipalities:hover {
-    border-color: #1a6b44;
-    box-shadow: 0 6px 20px rgba(32, 132, 84, 0.2);
-    transform: translateY(-2px);
+.chart-wrapper {
+    position: relative;
 }
+
+.chart-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+}
+
+.chart-btn chart-btn dropdown-toggle {
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.chart-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+

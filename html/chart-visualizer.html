@@ -81,6 +81,29 @@
         <h1 class="city-title"></h1>
         <select id="municipalities"></select>
         <div class="chart-container">
+            <div class="chart-wrapper">
+                <div class="chart-controls">
+                    <div class="dropdown">
+                        <button class="chart-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Change Chart Type
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#" id="bar">📊 Bar Chart</a>
+                            <a class="dropdown-item" href="#" id="line">📈 Line Chart</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="chart-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Hide/Show
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#" id="births">Births</a>
+                            <a class="dropdown-item" href="#" id="deaths">Deaths</a>
+                        </div>
+                    </div>
+                </div>
+        <div id="chart"></div>
+    </div>
             <div id="chart"></div>
             
             <div class="collapsible-container mt-3 mb-3">
