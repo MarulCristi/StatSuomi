@@ -208,101 +208,91 @@ const buildChart = async () => {
 
     document.getElementById('births').addEventListener('click', () => {
         changed = true;
-        if (visibleDatasets.births && visibleDatasets.deaths) {
-            newDataset = [
-                {
-                    name: "Births",
-                    values: births,
-                }
-            ];
-            title1 = `👶 Birth Stats`
-            color = ['#00c9a7']
-            visibleDatasets.deaths = false;
-            document.getElementById('births').textContent = "Hide Births"
-            document.getElementById('deaths').textContent = "Show Deaths"
 
-            document.getElementById('births').classList.add('disabled-button');
-            document.getElementById('births').disabled = true;
 
-            updateChart();
-        }
-        else if (visibleDatasets.births && !visibleDatasets.deaths) {
-          alert("No data will show if you do this!")
-        }
-        else if (!visibleDatasets.births && visibleDatasets.deaths) {
-            newDataset = [
-                {
-                    name: "Births",
-                    values: births,
-                },
-                {
-                    name: "Deaths",
-                    values: deaths
-                }
-            ];
-            title1 = `🧍 Vital Stats`
-            color = ['#00c9a7', '#ff5e57']
-            visibleDatasets.births = true;
-            document.getElementById('births').textContent = "Show Only Births"
-            document.getElementById('deaths').textContent = "Show Only Deaths"
+        newDataset = [
+            {
+                name: "Births",
+                values: births,
+            }
+        ];
+        title1 = `👶 Birth Stats`;
+        color = ['#00c9a7'];
+        visibleDatasets.births = true;
+        visibleDatasets.deaths = false;
 
-            document.getElementById('births').classList.remove('disabled-button');
-            document.getElementById('deaths').classList.remove('disabled-button');
-            document.getElementById('births').disabled = false;
-            document.getElementById('deaths').disabled = false;
 
-            updateChart();
-        }
+        document.getElementById('births').classList.add('disabled-button');
+        document.getElementById('births').disabled = true;
+
+        document.getElementById('deaths').classList.remove('disabled-button');
+        document.getElementById('deaths').disabled = false;
+
+        document.getElementById('all').classList.remove('disabled-button');
+        document.getElementById('all').disabled = false;
+
+        updateChart();
     });
 
     document.getElementById('deaths').addEventListener('click', () => {
         changed = true;
-        if (visibleDatasets.births && visibleDatasets.deaths) {
-            newDataset = [
-                {
-                    name: "Deaths",
-                    values: deaths
-                }
-            ];
-        title1 = `⚰️ Death Stats`
-        color = ['#ff5e57']
+
+
+        newDataset = [
+            {
+                name: "Deaths",
+                values: deaths
+            }
+        ];
+        title1 = `⚰️ Death Stats`;
+        color = ['#ff5e57'];
         visibleDatasets.births = false;
-        document.getElementById('births').textContent = "Show Births"
-        document.getElementById('deaths').textContent = "Hide Deaths"
+        visibleDatasets.deaths = true;
+
 
         document.getElementById('deaths').classList.add('disabled-button');
         document.getElementById('deaths').disabled = true;
-        
+
+        document.getElementById('births').classList.remove('disabled-button');
+        document.getElementById('births').disabled = false;
+
+        document.getElementById('all').classList.remove('disabled-button');
+        document.getElementById('all').disabled = false;
+
         updateChart();
-        }
-      else if (visibleDatasets.births && !visibleDatasets.deaths) {
-            newDataset = [
-                {
-                    name: "Births",
-                    values: births,
-                },
-                {
-                    name: "Deaths",
-                    values: deaths
-                }
-            ];
-            title1 = `🧍 Vital Stats`
-            color = ['#00c9a7', '#ff5e57']
-            visibleDatasets.deaths = true;
-            document.getElementById('births').textContent = "Show Only Births"
-            document.getElementById('deaths').textContent = "Show Only Deaths"
-
-            document.getElementById('births').classList.remove('disabled-button');
-            document.getElementById('deaths').classList.remove('disabled-button');
-            document.getElementById('births').disabled = false;
-            document.getElementById('deaths').disabled = false;
-
-            updateChart();
-        }
-      else if (!visibleDatasets.births && visibleDatasets.deaths) {
-            alert("No data will show if you do this!")
-        }
     });
+
+    document.getElementById('all').addEventListener('click', () => {
+        changed = true;
+
+        // Show both
+        newDataset = [
+            {
+                name: "Births",
+                values: births
+            },
+            {
+                name: "Deaths",
+                values: deaths
+            }
+        ];
+        title1 = `🧍 Vital Stats`;
+        color = ['#00c9a7', '#ff5e57'];
+        visibleDatasets.births = true;
+        visibleDatasets.deaths = true;
+
+        document.getElementById('all').classList.add('disabled-button');
+        document.getElementById('all').disabled = true;
+
+        document.getElementById('births').classList.remove('disabled-button');
+        document.getElementById('births').disabled = false;
+
+        document.getElementById('deaths').classList.remove('disabled-button');
+        document.getElementById('deaths').disabled = false;
+
+        updateChart();
+    });
+
 
     updateChart();
 
