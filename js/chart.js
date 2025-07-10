@@ -8,8 +8,10 @@ if (savedMunicipalityCode === "SSS") {
 
 let chart1Type = localStorage.getItem('savedChartType') || 'bar'
 let chart2Type = localStorage.getItem('savedChart2Type') || 'bar';
+let chart3Type = localStorage.getItem('savedChart3Type') || 'bar';
 
 let expandChart2 = localStorage.getItem('expandedChart2') === 'true';
+let expandChart3 = localStorage.getItem('expandedChart3') === 'true';
 
 const jsonQuery =
 {
@@ -445,7 +447,7 @@ const buildChart = async () => {
     });
 
     if (expandChart2) {
-        
+
         const bsCollapse = new bootstrap.Collapse(document.getElementById('chart2Container'), {
             show: true
         });
@@ -491,28 +493,167 @@ const buildChart = async () => {
         ]
     }
 
-    let expandChart3 = false;
-    
-    document.getElementById('chart3Container').addEventListener('shown.bs.collapse', function() {
-      if (!expandChart3) {
-        const familyChart = new frappe.Chart("#chart3", {
-          title: `👰 Family Stats`,
-          data: chartData3,
-          type: "bar",
-          height: 450,
-          colors: ['#00c9a7', '#ff5e57'],
-        });
-        expandChart3 = true;
-      }
+    let familyDataset = chartData3.datasets;
+    let title3 = `👰 Family Stats`;
+    let color3 = ['#00c9a7', '#ff5e57'];
+    let chart3Changed = false;
 
-    document.getElementById('chart3').scrollIntoView({ // Automatic scrolling effect
-        behavior: 'smooth',
-        block: 'start'
-      });
+    function updateChart3() {
+        document.getElementById('chart3').innerHTML = '';
+        
+        familyChart = new frappe.Chart("#chart3", {
+            title: title3,
+            data: {
+                labels: years,
+                datasets: familyDataset
+            },
+            type: chart3Type,
+            height: 450,
+            colors: color3,
+        });
+    }
+
+    document.getElementById('bar3').addEventListener('click', () => {
+        chart3Type = "bar";
+        localStorage.setItem('savedChart3Type', "bar");
+        location.reload();
+        updateChart3();
+    });
+
+    document.getElementById('line3').addEventListener('click', () => {
+        chart3Type = "line";
+        localStorage.setItem('savedChart3Type', "line");
+        location.reload();
+        updateChart3();
+    });
+
+    document.getElementById('marriages').addEventListener('click', () => {
+        chart3Changed = true;
+        
+        familyDataset = [
+            {
+                name: "Marriages",
+                values: marriages,
+            }
+        ];
+        title3 = `💍 Marriage Stats`;
+        color3 = ['#00c9a7'];
+        
+        document.getElementById('marriages').classList.add('disabled-button');
+        document.getElementById('marriages').disabled = true;
+        
+        document.getElementById('divorces').classList.remove('disabled-button');
+        document.getElementById('divorces').disabled = false;
+        
+        document.getElementById('all3').classList.remove('disabled-button');
+        document.getElementById('all3').disabled = false;
+
+        setTimeout(() => {
+            document.getElementById('chart3').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+        
+        updateChart3();
+    });
+
+    document.getElementById('divorces').addEventListener('click', () => {
+        chart3Changed = true;
+        
+        familyDataset = [
+            {
+                name: "Divorces",
+                values: divorces
+            }
+        ];
+        title3 = `💔 Divorce Stats`;
+        color3 = ['#ff5e57'];
+        
+        document.getElementById('divorces').classList.add('disabled-button');
+        document.getElementById('divorces').disabled = true;
+        
+        document.getElementById('marriages').classList.remove('disabled-button');
+        document.getElementById('marriages').disabled = false;
+        
+        document.getElementById('all3').classList.remove('disabled-button');
+        document.getElementById('all3').disabled = false;
+
+        setTimeout(() => {
+            document.getElementById('chart3').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+        
+        updateChart3();
+    });
+
+    document.getElementById('all3').addEventListener('click', () => {
+        chart3Changed = true;
+        
+        familyDataset = [
+            {
+                name: "Marriages",
+                values: marriages
+            },
+            {
+                name: "Divorces",
+                values: divorces
+            }
+        ];
+        title3 = `👰 Family Stats`;
+        color3 = ['#00c9a7', '#ff5e57'];
+        
+        document.getElementById('all3').classList.add('disabled-button');
+        document.getElementById('all3').disabled = true;
+        
+        document.getElementById('marriages').classList.remove('disabled-button');
+        document.getElementById('marriages').disabled = false;
+        
+        document.getElementById('divorces').classList.remove('disabled-button');
+        document.getElementById('divorces').disabled = false;
+
+        setTimeout(() => {
+            document.getElementById('chart3').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+        
+        updateChart3();
+    });
+
+    if (expandChart3) {
+        const bsCollapse = new bootstrap.Collapse(document.getElementById('chart3Container'), {
+            show: true
+        });
+
+        setTimeout(() => {
+            document.getElementById('chart3').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+    }
+
+    document.getElementById('chart3Container').addEventListener('shown.bs.collapse', function() {
+        updateChart3();
+        
+        setTimeout(() => {
+            document.getElementById('chart3').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+
+        expandChart3 = true;
+        localStorage.setItem('expandedChart3', 'true');
     });
 
     document.getElementById('chart3Container').addEventListener('hidden.bs.collapse', function() {
-      expandChart3 = false;
+        expandChart3 = false;
+        localStorage.setItem('expandedChart3', 'false');
     });
 }
 

@@ -156,11 +156,32 @@
             </button>
             <div class="collapse" id="chart3Container">
                 <div class="card card-body border-0">
-                <div id="chart3"></div>
+                    <div class="chart-wrapper">
+                        <div class="chart-controls">
+                            <div class="dropdown">
+                                <button class="chart-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Change Chart Type
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#" id="bar3">📊 Bar Chart</a>
+                                    <a class="dropdown-item" href="#" id="line3">📈 Line Chart</a>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="chart-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Show Specific
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#" id="marriages">Show Only Marriages</a>
+                                    <a class="dropdown-item" href="#" id="divorces">Show Only Divorces</a>
+                                    <a class="dropdown-item" href="#" id="all3">Show Both</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chart3"></div>
+                    </div>
                 </div>
             </div>
-            </div>
-        </div>
 
         <script src="../js/chart.js" async defer></script>
     </body>
