@@ -9,9 +9,12 @@ if (savedMunicipalityCode === "SSS") {
 let chart1Type = localStorage.getItem('savedChartType') || 'bar'
 let chart2Type = localStorage.getItem('savedChart2Type') || 'bar';
 let chart3Type = localStorage.getItem('savedChart3Type') || 'bar';
+let chart4Type = localStorage.getItem('savedChart4Type') || 'bar';
+
 
 let expandChart2 = localStorage.getItem('expandedChart2') === 'true';
 let expandChart3 = localStorage.getItem('expandedChart3') === 'true';
+let expandChart4 = localStorage.getItem('expandedChart4') === 'true';
 
 const jsonQuery =
 {
@@ -156,10 +159,31 @@ const buildChart = async () => {
         population.push(values[baseIndex + 7]);  // vaesto
     }
 
-    for (let i = 0; i < yearCount; i++) {
+    for (let i = 0; i < yearCount; i++) { // get Net Values
         vitals.push(births[i] - deaths[i]);
         families.push(marriages[i] - divorces[i])
+
     }
+
+
+    function formatNumber(num) {
+        if (num > 0) {
+            return '+' + num;
+        } else {
+            return num;
+        }
+    }
+
+
+
+
+// CHART 1 (Vitals)
+
+
+
+
+
+
 
     let visibleDatasets = {
       births: true,
@@ -183,6 +207,22 @@ const buildChart = async () => {
 
     let title1;
     let color;
+
+    const initialBirths = births[0]
+    const finalBirths = births[births.length - 1];
+    const birthsGrowth = ((finalBirths - initialBirths) / Math.abs(initialBirths || 1)) * 100;
+
+
+    const initialDeaths = deaths[0]
+    const finalDeaths = deaths[deaths.length - 1];
+    const deathsGrowth = ((finalDeaths - initialDeaths) / Math.abs(initialDeaths || 1)) * 100;
+
+
+    const initialVitals = vitals[0]
+    const finalVitals = vitals[vitals.length - 1];
+    const vitalsGrowth = ((finalVitals - initialVitals) / Math.abs(initialVitals || 1)) * 100;
+
+
 
     function updateChart1() {
         document.getElementById('chart').innerHTML = '';
@@ -229,7 +269,7 @@ const buildChart = async () => {
                 values: births,
             }
         ];
-        title1 = `👶 Birth Stats`;
+        title1 = `👶 Birth Stats (${formatNumber(birthsGrowth.toFixed(1))}%)`;
         color = ['#00c9a7'];
         visibleDatasets.births = true;
         visibleDatasets.deaths = false;
@@ -244,6 +284,13 @@ const buildChart = async () => {
         document.getElementById('all1').classList.remove('disabled-button');
         document.getElementById('all1').disabled = false;
 
+        document.getElementById('net1').classList.remove('disabled-button');
+        document.getElementById('net1').disabled = false;
+
+        if(document.getElementById('chartTypeBtn1').style.display == 'none') {
+            document.getElementById('chartTypeBtn1').style.display = 'block';
+        }
+
         updateChart1();
     });
 
@@ -257,7 +304,7 @@ const buildChart = async () => {
                 values: deaths
             }
         ];
-        title1 = `⚰️ Death Stats`;
+        title1 = `⚰️ Death Stats (${formatNumber(deathsGrowth.toFixed(1))}%)`;
         color = ['#ff5e57'];
         visibleDatasets.births = false;
         visibleDatasets.deaths = true;
@@ -274,6 +321,10 @@ const buildChart = async () => {
 
         document.getElementById('net1').classList.remove('disabled-button');
         document.getElementById('net1').disabled = false;
+
+        if(document.getElementById('chartTypeBtn1').style.display == 'none') {
+            document.getElementById('chartTypeBtn1').style.display = 'block';
+        }
 
         updateChart1();
     });
@@ -309,6 +360,10 @@ const buildChart = async () => {
         document.getElementById('net1').classList.remove('disabled-button');
         document.getElementById('net1').disabled = false;
 
+        if(document.getElementById('chartTypeBtn1').style.display == 'none') {
+            document.getElementById('chartTypeBtn1').style.display = 'block';
+        }
+
         updateChart1();
     });
 
@@ -327,7 +382,7 @@ const buildChart = async () => {
             }
         ];
 
-        title1 = `📈 Vitals Evolution`;
+        title1 = `📈 Vitals Evolution (${formatNumber(vitalsGrowth.toFixed(1))}%)`;
         color = ['#808080']
         
         document.getElementById('all1').classList.remove('disabled-button');
@@ -342,6 +397,8 @@ const buildChart = async () => {
         document.getElementById('net1').classList.add('disabled-button');
         document.getElementById('net1').disabled = true;
 
+        document.getElementById('chartTypeBtn1').style.display = 'none';
+
         updateChart1();
     });
 
@@ -353,7 +410,7 @@ const buildChart = async () => {
 
 
 
-
+// CHART 2 (Migration)
 
 
 
@@ -379,6 +436,19 @@ const buildChart = async () => {
     let migrationDataset = chartData2.datasets;
     let title2 = `🧳 Migration Stats`;
     let color2 = ['#00c9a7', '#ff5e57'];
+
+    const initialImmigration = immigration[0]
+    const finalImmigration = immigration[immigration.length - 1];
+    const immigrationGrowth = ((finalImmigration - initialImmigration) / Math.abs(initialImmigration || 1)) * 100;
+
+
+    const initialEmigration = emigration[0]
+    const finalEmigration = emigration[emigration.length - 1];
+    const emigrationGrowth = ((finalEmigration - initialEmigration) / Math.abs(initialEmigration || 1)) * 100;
+
+    const initialMigration = migration[0]
+    const finalMigration = migration[migration.length - 1];
+    const migrationGrowth = ((finalMigration - initialMigration) / Math.abs(initialMigration || 1)) * 100;
     
     function updateChart2() {
         document.getElementById('chart2').innerHTML = '';
@@ -418,7 +488,7 @@ const buildChart = async () => {
                 values: immigration,
             }
         ];
-        title2 = `🛬 Immigration Stats`;
+        title2 = `🛬 Immigration Stats (${formatNumber(immigrationGrowth.toFixed(1))}%)`;
         color2 = ['#00c9a7'];
         
         document.getElementById('immigrations').classList.add('disabled-button');
@@ -429,6 +499,10 @@ const buildChart = async () => {
         
         document.getElementById('all2').classList.remove('disabled-button');
         document.getElementById('all2').disabled = false;
+
+        if(document.getElementById('chartTypeBtn2').style.display == 'none') {
+            document.getElementById('chartTypeBtn2').style.display = 'block';
+        }
 
         setTimeout(() => {
             document.getElementById('chart2').scrollIntoView({
@@ -449,7 +523,7 @@ const buildChart = async () => {
                 values: emigration
             }
         ];
-        title2 = `🛫 Emigration Stats`;
+        title2 = `🛫 Emigration Stats (${formatNumber(emigrationGrowth.toFixed(1))}%)`;
         color2 = ['#ff5e57'];
         
         document.getElementById('emigrations').classList.add('disabled-button');
@@ -463,6 +537,10 @@ const buildChart = async () => {
 
         document.getElementById('net2').classList.remove('disabled-button');
         document.getElementById('net2').disabled = false;
+
+        if(document.getElementById('chartTypeBtn2').style.display == 'none') {
+            document.getElementById('chartTypeBtn2').style.display = 'block';
+        }
 
         setTimeout(() => {
             document.getElementById('chart2').scrollIntoView({
@@ -502,6 +580,10 @@ const buildChart = async () => {
         document.getElementById('net2').classList.remove('disabled-button');
         document.getElementById('net2').disabled = false;
 
+        if(document.getElementById('chartTypeBtn2').style.display == 'none') {
+            document.getElementById('chartTypeBtn2').style.display = 'block';
+        }
+
         setTimeout(() => {
             document.getElementById('chart2').scrollIntoView({
                     behavior: 'smooth',
@@ -515,13 +597,15 @@ const buildChart = async () => {
 
     document.getElementById('net2').addEventListener('click', () => {
         chart2Changed = true;
+        chart2Type = "bar"
+        localStorage.setItem('savedChart2Type', "bar")
         migrationDataset = [
             {
                 name: "Migration",
                 values: migration
             }
         ];
-        title2 = `📈 Migration Evolution (immigration - emigration)`;
+        title2 = `📈 Migration Evolution (${formatNumber(migrationGrowth.toFixed(1))}%)`;
         color2 = ['#808080']
         
         document.getElementById('all2').classList.remove('disabled-button');
@@ -535,6 +619,8 @@ const buildChart = async () => {
 
         document.getElementById('net2').classList.add('disabled-button');
         document.getElementById('net2').disabled = true;
+
+        document.getElementById('chartTypeBtn2').style.display = 'none'
 
         setTimeout(() => {
             document.getElementById('chart2').scrollIntoView({
@@ -586,7 +672,7 @@ const buildChart = async () => {
 
 
 
-
+// CHART 3 (Family)
 
 
 
@@ -613,7 +699,19 @@ const buildChart = async () => {
     let familyDataset = chartData3.datasets;
     let title3 = `👰 Family Stats`;
     let color3 = ['#00c9a7', '#ff5e57'];
-    let chart3Changed = false;
+
+    const initialMarriages = marriages[0]
+    const finalMarriages = marriages[marriages.length - 1];
+    const marriagesGrowth = ((finalMarriages - initialMarriages) / Math.abs(initialMarriages || 1)) * 100;
+
+
+    const initialDivorces = divorces[0]
+    const finalDivorces = divorces[divorces.length - 1];
+    const divorcesGrowth = ((finalDivorces - initialDivorces) / Math.abs(initialDivorces || 1)) * 100;
+
+    const initialFamily = families[0]
+    const finalFamily = families[families.length - 1];
+    const familyGrowth = ((finalFamily - initialFamily) / Math.abs(initialFamily || 1)) * 100;
 
     function updateChart3() {
         document.getElementById('chart3').innerHTML = '';
@@ -653,7 +751,7 @@ const buildChart = async () => {
                 values: marriages,
             }
         ];
-        title3 = `💍 Marriage Stats`;
+        title3 = `💍 Marriage Stats (${formatNumber(marriagesGrowth.toFixed(1))}%)`;
         color3 = ['#00c9a7'];
         
         document.getElementById('marriages').classList.add('disabled-button');
@@ -667,6 +765,10 @@ const buildChart = async () => {
 
         document.getElementById('net3').classList.remove('disabled-button');
         document.getElementById('net3').disabled = false;
+
+        if(document.getElementById('chartTypeBtn3').style.display == 'none') {
+            document.getElementById('chartTypeBtn3').style.display = 'block';
+        }
 
         setTimeout(() => {
             document.getElementById('chart3').scrollIntoView({
@@ -687,7 +789,7 @@ const buildChart = async () => {
                 values: divorces
             }
         ];
-        title3 = `💔 Divorce Stats`;
+        title3 = `💔 Divorce Stats (${formatNumber(divorcesGrowth.toFixed(1))}%)`;
         color3 = ['#ff5e57'];
         
         document.getElementById('divorces').classList.add('disabled-button');
@@ -701,6 +803,10 @@ const buildChart = async () => {
 
         document.getElementById('net3').classList.remove('disabled-button');
         document.getElementById('net3').disabled = false;
+
+        if(document.getElementById('chartTypeBtn3').style.display == 'none') {
+            document.getElementById('chartTypeBtn3').style.display = 'block';
+        }
 
         setTimeout(() => {
             document.getElementById('chart3').scrollIntoView({
@@ -740,6 +846,10 @@ const buildChart = async () => {
         document.getElementById('net3').classList.remove('disabled-button');
         document.getElementById('net3').disabled = false;
 
+        if(document.getElementById('chartTypeBtn3').style.display == 'none') {
+            document.getElementById('chartTypeBtn3').style.display = 'block';
+        }
+
         setTimeout(() => {
             document.getElementById('chart3').scrollIntoView({
                     behavior: 'smooth',
@@ -761,7 +871,7 @@ const buildChart = async () => {
                 values: families
             }
         ];
-        title3 = `📈 Family Evolution (marriages - divorces)`;
+        title3 = `📈 Family Evolution (${formatNumber(familyGrowth.toFixed(1))}%)`;
         color3 = ['#808080']
         
         document.getElementById('all3').classList.remove('disabled-button');
@@ -775,6 +885,8 @@ const buildChart = async () => {
 
         document.getElementById('net3').classList.add('disabled-button');
         document.getElementById('net3').disabled = true;
+
+        document.getElementById('chartTypeBtn3').style.display == 'none'
 
         setTimeout(() => {
             document.getElementById('chart3').scrollIntoView({
@@ -817,7 +929,112 @@ const buildChart = async () => {
         expandChart3 = false;
         localStorage.setItem('expandedChart3', 'false');
     });
+
+
+
+
+
+
+
+
+
+
+
+// CHART 4 (Population)
+
+
+
+
+
+
+
+    const chartData4 = {
+        labels: years,
+        datasets: [
+            {
+                name: "Population",
+                values: population,
+            }
+        ]
+    }
+
+    const initialPopulation = population[0]
+    const finalPopulation = population[population.length - 1];
+
+    const populationGrowth = ((finalPopulation - initialPopulation) / initialPopulation) * 100;
+
+    let title4 = `👥 Population Evolution (${formatNumber(populationGrowth.toFixed(1))}%)`;
+    let color4 = ['#808080'];
+
+    function updateChart4() {
+        document.getElementById('chart4').innerHTML = '';
+        
+        populationChart = new frappe.Chart("#chart4", {
+            title: title4,
+            data: {
+                labels: years,
+                datasets: chartData4.datasets
+            },
+            type: chart4Type,
+            height: 450,
+            colors: color4,
+        });
+    }
+
+    document.getElementById('bar4').addEventListener('click', () => {
+        chart4Type = "bar";
+        localStorage.setItem('savedChart4Type', "bar");
+        location.reload();
+        updateChart4();
+    });
+
+    document.getElementById('line4').addEventListener('click', () => {
+        chart4Type = "line";
+        localStorage.setItem('savedChart4Type', "line");
+        location.reload();
+        updateChart4();
+    });
+
+    if (expandChart4) {
+        const bsCollapse = new bootstrap.Collapse(document.getElementById('chart4Container'), {
+            show: true
+        });
+
+        setTimeout(() => {
+            document.getElementById('chart4').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+    }
+
+    document.getElementById('chart4Container').addEventListener('shown.bs.collapse', function() {
+        updateChart4();
+        
+        setTimeout(() => {
+            document.getElementById('chart4').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+
+        expandChart4 = true;
+        localStorage.setItem('expandedChart4', 'true');
+    });
+
+    document.getElementById('chart4Container').addEventListener('hidden.bs.collapse', function() {
+        expandChart4 = false;
+        localStorage.setItem('expandedChart4', 'false');
+    });
+
 }
+
+
+
+
+
+
+
 
 
 buildChart();
