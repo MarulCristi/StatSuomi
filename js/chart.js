@@ -6,7 +6,10 @@ if (savedMunicipalityCode === "SSS") {
 }
 
 
-let type = localStorage.getItem('savedChartType') || 'bar' 
+let chart1Type = localStorage.getItem('savedChartType') || 'bar'
+let chart2Type = localStorage.getItem('savedChart2Type') || 'bar';
+
+let expandChart2 = localStorage.getItem('expandedChart2') === 'true';
 
 const jsonQuery =
 {
@@ -75,6 +78,7 @@ const getData = async () => {
 }
 
 let changed = false;
+let chart2Changed = false;
 
 const buildChart = async () => {
     const data = await getData();
@@ -171,7 +175,7 @@ const buildChart = async () => {
     let title1;
     let color;
 
-    function updateChart() {
+    function updateChart1() {
         document.getElementById('chart').innerHTML = '';
         if(!changed) {
           title1 = `👶 Vital Stats`
@@ -192,17 +196,17 @@ const buildChart = async () => {
         });
     }
 
-    document.getElementById('bar').addEventListener('click', () => {
-        type = "bar"
+    document.getElementById('bar1').addEventListener('click', () => {
+        chart1Type = "bar"
         localStorage.setItem('savedChartType', "bar")
-        updateChart()
+        updateChart1()
         location.reload(); // Frappe.charts doesn't change without reload :(
     });
     
-    document.getElementById('line').addEventListener('click', () => {
-        type = "line"
+    document.getElementById('line1').addEventListener('click', () => {
+        chart1Type = "line"
         localStorage.setItem('savedChartType', "line")
-        updateChart()
+        updateChart1()
         location.reload(); // Frappe.charts doesn't change without reload :(
     });
 
@@ -228,10 +232,10 @@ const buildChart = async () => {
         document.getElementById('deaths').classList.remove('disabled-button');
         document.getElementById('deaths').disabled = false;
 
-        document.getElementById('all').classList.remove('disabled-button');
-        document.getElementById('all').disabled = false;
+        document.getElementById('all1').classList.remove('disabled-button');
+        document.getElementById('all1').disabled = false;
 
-        updateChart();
+        updateChart1();
     });
 
     document.getElementById('deaths').addEventListener('click', () => {
@@ -256,13 +260,13 @@ const buildChart = async () => {
         document.getElementById('births').classList.remove('disabled-button');
         document.getElementById('births').disabled = false;
 
-        document.getElementById('all').classList.remove('disabled-button');
-        document.getElementById('all').disabled = false;
+        document.getElementById('all1').classList.remove('disabled-button');
+        document.getElementById('all1').disabled = false;
 
-        updateChart();
+        updateChart1();
     });
 
-    document.getElementById('all').addEventListener('click', () => {
+    document.getElementById('all1').addEventListener('click', () => {
         changed = true;
 
         // Show both
@@ -281,8 +285,8 @@ const buildChart = async () => {
         visibleDatasets.births = true;
         visibleDatasets.deaths = true;
 
-        document.getElementById('all').classList.add('disabled-button');
-        document.getElementById('all').disabled = true;
+        document.getElementById('all1').classList.add('disabled-button');
+        document.getElementById('all1').disabled = true;
 
         document.getElementById('births').classList.remove('disabled-button');
         document.getElementById('births').disabled = false;
@@ -290,11 +294,11 @@ const buildChart = async () => {
         document.getElementById('deaths').classList.remove('disabled-button');
         document.getElementById('deaths').disabled = false;
 
-        updateChart();
+        updateChart1();
     });
 
 
-    updateChart();
+    updateChart1();
 
     const chartData2 = {
         labels: years,
@@ -310,24 +314,167 @@ const buildChart = async () => {
         ]
     }
 
-    let expandChart2 = false;
+    let migrationDataset = chartData2.datasets;
+    let title2 = `🧳 Migration Stats`;
+    let color2 = ['#00c9a7', '#ff5e57'];
     
-    document.getElementById('chart2Container').addEventListener('shown.bs.collapse', function() {
-      if (!expandChart2) {
-        const migrationChart = new frappe.Chart("#chart2", {
-          title: `🧳 Migration Stats`,
-          data: chartData2,
-          type: "bar",
-          height: 450,
-          colors: ['#00c9a7', '#ff5e57'],
+    function updateChart2() {
+        document.getElementById('chart2').innerHTML = '';
+        
+        migrationChart = new frappe.Chart("#chart2", {
+            title: title2,
+            data: {
+                labels: years,
+                datasets: migrationDataset
+            },
+            type: chart2Type,
+            height: 450,
+            colors: color2,
         });
-        expandChart2 = true;
-      }
+    }
 
-    document.getElementById('chart2').scrollIntoView({ // Automatic scrolling effect
-        behavior: 'smooth',
-        block: 'start'
-      });
+    document.getElementById('bar2').addEventListener('click', () => {
+        chart2Type = "bar";
+        localStorage.setItem('savedChart2Type', "bar");
+        location.reload()
+        updateChart2();
+    });
+    
+    document.getElementById('line2').addEventListener('click', () => {
+        chart2Type = "line";
+        localStorage.setItem('savedChart2Type', "line");
+        location.reload();
+        updateChart2();
+    });
+    
+    document.getElementById('immigrations').addEventListener('click', () => {
+        chart2Changed = true;
+        
+        migrationDataset = [
+            {
+                name: "Immigration",
+                values: immigration,
+            }
+        ];
+        title2 = `🛬 Immigration Stats`;
+        color2 = ['#00c9a7'];
+        
+        document.getElementById('immigrations').classList.add('disabled-button');
+        document.getElementById('immigrations').disabled = true;
+        
+        document.getElementById('emigrations').classList.remove('disabled-button');
+        document.getElementById('emigrations').disabled = false;
+        
+        document.getElementById('all2').classList.remove('disabled-button');
+        document.getElementById('all2').disabled = false;
+
+        setTimeout(() => {
+            document.getElementById('chart2').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+        
+        updateChart2();
+    });
+    
+    document.getElementById('emigrations').addEventListener('click', () => {
+        chart2Changed = true;
+        
+        migrationDataset = [
+            {
+                name: "Emigration",
+                values: emigration
+            }
+        ];
+        title2 = `🛫 Emigration Stats`;
+        color2 = ['#ff5e57'];
+        
+        document.getElementById('emigrations').classList.add('disabled-button');
+        document.getElementById('emigrations').disabled = true;
+        
+        document.getElementById('immigrations').classList.remove('disabled-button');
+        document.getElementById('immigrations').disabled = false;
+        
+        document.getElementById('all2').classList.remove('disabled-button');
+        document.getElementById('all2').disabled = false;
+
+        setTimeout(() => {
+            document.getElementById('chart2').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+        
+        updateChart2();
+    });
+    
+    document.getElementById('all2').addEventListener('click', () => {
+        chart2Changed = true;
+        
+        migrationDataset = [
+            {
+                name: "Immigration",
+                values: immigration
+            },
+            {
+                name: "Emigration",
+                values: emigration
+            }
+        ];
+        title2 = `🧳 Migration Stats`;
+        color2 = ['#00c9a7', '#ff5e57'];
+        
+        document.getElementById('all2').classList.add('disabled-button');
+        document.getElementById('all2').disabled = true;
+        
+        document.getElementById('immigrations').classList.remove('disabled-button');
+        document.getElementById('immigrations').disabled = false;
+        
+        document.getElementById('emigrations').classList.remove('disabled-button');
+        document.getElementById('emigrations').disabled = false;
+
+        setTimeout(() => {
+            document.getElementById('chart2').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+        
+        updateChart2();
+    });
+
+    if (expandChart2) {
+        
+        const bsCollapse = new bootstrap.Collapse(document.getElementById('chart2Container'), {
+            show: true
+        });
+
+        setTimeout(() => {
+            document.getElementById('chart2').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+    }
+
+    document.getElementById('chart2Container').addEventListener('shown.bs.collapse', function() {
+        updateChart2();
+        
+        setTimeout(() => {
+            document.getElementById('chart2').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+
+        expandChart2 = true;
+        localStorage.setItem('expandedChart2', 'true');
+    });
+
+    document.getElementById('chart2Container').addEventListener('hidden.bs.collapse', function() {
+        expandChart2 = false;
+        localStorage.setItem('expandedChart2', 'false');
     });
 
     const chartData3 = {
@@ -355,7 +502,7 @@ const buildChart = async () => {
           height: 450,
           colors: ['#00c9a7', '#ff5e57'],
         });
-        expandChart2 = true;
+        expandChart3 = true;
       }
 
     document.getElementById('chart3').scrollIntoView({ // Automatic scrolling effect

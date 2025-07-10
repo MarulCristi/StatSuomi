@@ -88,18 +88,18 @@
                             Change Chart Type
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#" id="bar">📊 Bar Chart</a>
-                            <a class="dropdown-item" href="#" id="line">📈 Line Chart</a>
+                            <a class="dropdown-item" href="#" id="bar1">📊 Bar Chart</a>
+                            <a class="dropdown-item" href="#" id="line1">📈 Line Chart</a>
                         </div>
                     </div>
                     <div class="dropdown">
                         <button class="chart-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Show / Hide
+                            Show Specific
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#" id="births">Show Only Births</a>
                             <a class="dropdown-item" href="#" id="deaths">Show Only Deaths</a>
-                            <a class="dropdown-item" href="#" id="all">Show Both</a>
+                            <a class="dropdown-item" href="#" id="all1">Show Both</a>
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,30 @@
             </button>
             <div class="collapse" id="chart2Container">
                 <div class="card card-body border-0">
-                <div id="chart2"></div>
+                    <div class="chart-wrapper">
+                        <div class="chart-controls">
+                            <div class="dropdown">
+                                <button class="chart-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Change Chart Type
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#" id="bar2">📊 Bar Chart</a>
+                                    <a class="dropdown-item" href="#" id="line2">📈 Line Chart</a>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="chart-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Show Specific
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#" id="immigrations">Show Only Immigration</a>
+                                    <a class="dropdown-item" href="#" id="emigrations">Show Only Emigration</a>
+                                    <a class="dropdown-item" href="#" id="all2">Show Both</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chart2"></div>
+                    </div>
                 </div>
             </div>
             </div>
