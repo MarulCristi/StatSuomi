@@ -131,6 +131,7 @@ const buildChart = async () => {
 
     const births = [];
     const deaths = [];
+    const vitals = [];
 
     const population = [];
 
@@ -140,6 +141,7 @@ const buildChart = async () => {
 
     const marriages = [];
     const divorces = [];
+    const families = [];
 
     for (let yearIndex = 0; yearIndex < yearCount; yearIndex++) {
         const baseIndex = yearIndex * metricsPerYear;
@@ -152,6 +154,11 @@ const buildChart = async () => {
         marriages.push(values[baseIndex + 5]);   // vm2126
         divorces.push(values[baseIndex + 6]);    // vm3136
         population.push(values[baseIndex + 7]);  // vaesto
+    }
+
+    for (let i = 0; i < yearCount; i++) {
+        vitals.push(births[i] - deaths[i]);
+        families.push(marriages[i] - divorces[i])
     }
 
     let visibleDatasets = {
@@ -265,6 +272,9 @@ const buildChart = async () => {
         document.getElementById('all1').classList.remove('disabled-button');
         document.getElementById('all1').disabled = false;
 
+        document.getElementById('net1').classList.remove('disabled-button');
+        document.getElementById('net1').disabled = false;
+
         updateChart1();
     });
 
@@ -296,11 +306,61 @@ const buildChart = async () => {
         document.getElementById('deaths').classList.remove('disabled-button');
         document.getElementById('deaths').disabled = false;
 
+        document.getElementById('net1').classList.remove('disabled-button');
+        document.getElementById('net1').disabled = false;
+
         updateChart1();
     });
 
 
     updateChart1();
+
+    document.getElementById('net1').addEventListener('click', () => {
+        changed = true;
+        chart1Type = "bar"
+        localStorage.setItem('savedChartType', "bar")
+
+        newDataset = [
+            {
+                name: "Vitals",
+                values: vitals,
+            }
+        ];
+
+        title1 = `📈 Vitals Evolution`;
+        color = ['#808080']
+        
+        document.getElementById('all1').classList.remove('disabled-button');
+        document.getElementById('all1').disabled = false;
+        
+        document.getElementById('immigrations').classList.remove('disabled-button');
+        document.getElementById('immigrations').disabled = false;
+        
+        document.getElementById('emigrations').classList.remove('disabled-button');
+        document.getElementById('emigrations').disabled = false;
+
+        document.getElementById('net1').classList.add('disabled-button');
+        document.getElementById('net1').disabled = true;
+
+        updateChart1();
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     const chartData2 = {
         labels: years,
@@ -401,6 +461,9 @@ const buildChart = async () => {
         document.getElementById('all2').classList.remove('disabled-button');
         document.getElementById('all2').disabled = false;
 
+        document.getElementById('net2').classList.remove('disabled-button');
+        document.getElementById('net2').disabled = false;
+
         setTimeout(() => {
             document.getElementById('chart2').scrollIntoView({
                     behavior: 'smooth',
@@ -436,6 +499,9 @@ const buildChart = async () => {
         document.getElementById('emigrations').classList.remove('disabled-button');
         document.getElementById('emigrations').disabled = false;
 
+        document.getElementById('net2').classList.remove('disabled-button');
+        document.getElementById('net2').disabled = false;
+
         setTimeout(() => {
             document.getElementById('chart2').scrollIntoView({
                     behavior: 'smooth',
@@ -445,6 +511,40 @@ const buildChart = async () => {
         
         updateChart2();
     });
+
+
+    document.getElementById('net2').addEventListener('click', () => {
+        chart2Changed = true;
+        migrationDataset = [
+            {
+                name: "Migration",
+                values: migration
+            }
+        ];
+        title2 = `📈 Migration Evolution (immigration - emigration)`;
+        color2 = ['#808080']
+        
+        document.getElementById('all2').classList.remove('disabled-button');
+        document.getElementById('all2').disabled = false;
+        
+        document.getElementById('immigrations').classList.remove('disabled-button');
+        document.getElementById('immigrations').disabled = false;
+        
+        document.getElementById('emigrations').classList.remove('disabled-button');
+        document.getElementById('emigrations').disabled = false;
+
+        document.getElementById('net2').classList.add('disabled-button');
+        document.getElementById('net2').disabled = true;
+
+        setTimeout(() => {
+            document.getElementById('chart2').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+
+        updateChart2();
+    })
 
     if (expandChart2) {
 
@@ -478,6 +578,23 @@ const buildChart = async () => {
         expandChart2 = false;
         localStorage.setItem('expandedChart2', 'false');
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     const chartData3 = {
         labels: years,
@@ -548,6 +665,9 @@ const buildChart = async () => {
         document.getElementById('all3').classList.remove('disabled-button');
         document.getElementById('all3').disabled = false;
 
+        document.getElementById('net3').classList.remove('disabled-button');
+        document.getElementById('net3').disabled = false;
+
         setTimeout(() => {
             document.getElementById('chart3').scrollIntoView({
                     behavior: 'smooth',
@@ -578,6 +698,9 @@ const buildChart = async () => {
         
         document.getElementById('all3').classList.remove('disabled-button');
         document.getElementById('all3').disabled = false;
+
+        document.getElementById('net3').classList.remove('disabled-button');
+        document.getElementById('net3').disabled = false;
 
         setTimeout(() => {
             document.getElementById('chart3').scrollIntoView({
@@ -614,6 +737,9 @@ const buildChart = async () => {
         document.getElementById('divorces').classList.remove('disabled-button');
         document.getElementById('divorces').disabled = false;
 
+        document.getElementById('net3').classList.remove('disabled-button');
+        document.getElementById('net3').disabled = false;
+
         setTimeout(() => {
             document.getElementById('chart3').scrollIntoView({
                     behavior: 'smooth',
@@ -621,6 +747,42 @@ const buildChart = async () => {
                 });
         }, 100);
         
+        updateChart3();
+    });
+
+    document.getElementById('net3').addEventListener('click', () => {
+        chart3Changed = true;
+        chart3Type = "bar"
+        localStorage.setItem('savedChart3Type', "bar")
+        
+        familyDataset = [
+            {
+                name: "Family",
+                values: families
+            }
+        ];
+        title3 = `📈 Family Evolution (marriages - divorces)`;
+        color3 = ['#808080']
+        
+        document.getElementById('all3').classList.remove('disabled-button');
+        document.getElementById('all3').disabled = false;
+        
+        document.getElementById('marriages').classList.remove('disabled-button');
+        document.getElementById('marriages').disabled = false;
+        
+        document.getElementById('divorces').classList.remove('disabled-button');
+        document.getElementById('divorces').disabled = false;
+
+        document.getElementById('net3').classList.add('disabled-button');
+        document.getElementById('net3').disabled = true;
+
+        setTimeout(() => {
+            document.getElementById('chart3').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+
         updateChart3();
     });
 
