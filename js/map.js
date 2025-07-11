@@ -365,7 +365,7 @@ let fertility = 0;
 let yearInfo = null;
 let mapLegend;
 
-let currentTab = localStorage.getItem('currentTab') || 'population' // This saves the current tab even after reload.
+let currentTab = localStorage.getItem('currentTab') || 'population' // This saves the current tab even after reload. Used for various things.
 console.log(currentTab)
 
 const closeStatsBtn = document.getElementById('close-stats-btn'); // Close button for specific stats of Cities on the map
@@ -492,7 +492,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
           const descriptionElement = document.querySelector('.stat-description-specific');
           const averageStats = getAverageStats(municipalityName);
 
-          if (currentTab === 'population') { // When population is selected
+          if (currentTab === 'population' || currentTab === 'births' || currentTab === 'deaths'|| currentTab === 'vitals') { // When population/births/deaths/net vitals are selected
 
                 if(currentView === 'year') {
                   const birthsPerCapita = ((currentData.births / currentData.population) * 1000).toFixed(1);
@@ -650,6 +650,9 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
 
 function changeTab() {  
     const populationTab = document.querySelector('.nav-link[data-stat="population"]');
+    const birthTab = document.querySelector('.dropdown-item[data-stat="births"]');
+    const deathTab = document.querySelector('.dropdown-item[data-stat="deaths"]');
+    const vitalTab = document.querySelector('.dropdown-item[data-stat="vitals"]');
     const immigrationTab = document.querySelector('.dropdown-item[data-stat="immigration"]');
     const emigrationTab = document.querySelector('.dropdown-item[data-stat="emigration"]');
     const migrationTab = document.querySelector('.dropdown-item[data-stat="migration"]');
@@ -669,6 +672,39 @@ function changeTab() {
             currentTab = 'population';
             localStorage.setItem('currentTab', currentTab);
             console.log('Population tab clicked:', populationTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
+            updateData();
+            updateLegend();
+        });
+    }
+
+    if (birthTab) {
+        birthTab.addEventListener('click', function(e) {
+            currentTab = 'births';
+            localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
+            updateData();
+            updateLegend();
+        });
+    }
+
+    if (deathTab) {
+        deathTab.addEventListener('click', function(e) {
+            currentTab = 'deaths';
+            localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
+            updateData();
+            updateLegend();
+        });
+    }
+
+    if (vitalTab) {
+        vitalTab.addEventListener('click', function(e) {
+            currentTab = 'vitals';
+            localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
@@ -826,7 +862,43 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
         div.innerHTML += '<i style="background: #fdae61"></i> 2,000 - 5,000<br>';
         div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 2,000<br>';
         div.innerHTML += '<i style="background: #d73027"></i> < 1,000<br>';
-    } else if(currentTab === 'immigration') {
+    } else if(currentTab === 'births') {
+        div.innerHTML = '<h4>Births</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 5,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 5,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 20 - 50<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 20<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
+    } else if(currentTab === 'deaths') {
+        div.innerHTML = '<h4>Deaths</h4>';
+        div.innerHTML += '<i style="background: #d73027"></i> > 5,000<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 5,000<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 20 - 50<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 10 - 20<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #006837"></i> < 5<br>';
+    } else if(currentTab === 'vitals') {
+        div.innerHTML = '<h4>Net Vitals (Births - Deaths)</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> -200 - -100<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < -200<br>';
+      } else if(currentTab === 'immigration') {
         div.innerHTML = '<h4>Immigration</h4>';
         div.innerHTML += '<i style="background: #006837"></i> > 5,000<br>';
         div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 5,000<br>';
@@ -1128,6 +1200,40 @@ const getStyle = (feature) => {
           else if (data.population > 2000) fillColor = '#fdae61';
           else if (data.population > 1000) fillColor = '#f46d43';
           else fillColor = '#d73027';
+    } else if(currentTab === 'births') {
+        if (data.births > 5000) fillColor = '#006837';    
+        else if (data.births > 1000) fillColor = '#1a9850';
+        else if (data.births > 500) fillColor = '#66bd63';
+        else if (data.births > 200) fillColor = '#a6d96a';
+        else if (data.births > 100) fillColor = '#d9ef8b';
+        else if (data.births > 50) fillColor = '#ffffbf';
+        else if (data.births > 20) fillColor = '#fee08b';
+        else if (data.births > 10) fillColor = '#fdae61';
+        else if (data.births > 5) fillColor = '#f46d43';
+        else fillColor = '#d73027';
+    } else if(currentTab === 'deaths') {
+        if (data.deaths > 5000) fillColor = '#d73027';       
+        else if (data.deaths > 1000) fillColor = '#f46d43';
+        else if (data.deaths > 500) fillColor = '#fdae61';
+        else if (data.deaths > 200) fillColor = '#fee08b';
+        else if (data.deaths > 100) fillColor = '#ffffbf';
+        else if (data.deaths > 50) fillColor = '#d9ef8b';
+        else if (data.deaths > 20) fillColor = '#a6d96a';
+        else if (data.deaths > 10) fillColor = '#66bd63';
+        else if (data.deaths > 5) fillColor = '#1a9850';
+        else fillColor = '#006837';
+    } else if(currentTab === 'vitals') {
+        const netVitals = data.births - data.deaths;
+        if (netVitals > 1000) fillColor = '#006837';
+        else if (netVitals > 500) fillColor = '#1a9850';
+        else if (netVitals > 200) fillColor = '#66bd63';
+        else if (netVitals > 100) fillColor = '#a6d96a';
+        else if (netVitals > 50) fillColor = '#d9ef8b';
+        else if (netVitals > 0) fillColor = '#ffffbf';
+        else if (netVitals > -50) fillColor = '#fee08b';
+        else if (netVitals > -100) fillColor = '#fdae61';
+        else if (netVitals > -200) fillColor = '#f46d43';
+        else fillColor = '#d73027';
     } else if (currentTab === 'immigration') {
           if (data.immigration > 5000) fillColor = '#006837';    
           else if (data.immigration > 1000) fillColor = '#1a9850';
