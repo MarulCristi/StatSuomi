@@ -297,3 +297,33 @@ body.loaded #map {
 #close-stats-btn:hover {
   color: #333;
 }
+
+.toggle-btn {
+    background-color: #7dc280;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: 100%;
+    text-align: center;
+}
+
+.toggle-btn:hover {
+    background-color: #3d9c40;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.toggle-btn.active {
+    background-color: #ff6600;
+}
+
+.slider-container.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}

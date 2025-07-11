@@ -364,6 +364,32 @@ let selectedYear = 2024; // Default to 2024
 let fertility = 0;
 let yearInfo = null;
 let mapLegend;
+let isAverageMode = false;
+let currentView = 'average';
+
+
+const averageToggleBtn = document.getElementById('average-toggle');
+const yearSlider = document.getElementById('year-slider');
+const yearDisplay = document.getElementById('year-display');
+const sliderContainer = document.querySelector('.slider-container');
+
+averageToggleBtn.addEventListener('click', function() {
+    isAverageMode = !isAverageMode;
+    currentView = 'average';
+    if (isAverageMode) {
+        averageToggleBtn.textContent = "Show By Year";
+        averageToggleBtn.classList.add('active');
+        sliderContainer.classList.add('disabled');
+        yearDisplay.textContent = "1990-2024";
+    } else {
+        averageToggleBtn.textContent = "Show Averages";
+        averageToggleBtn.classList.remove('active');
+        sliderContainer.classList.remove('disabled');
+        yearDisplay.textContent = selectedYear;
+    }
+    
+    updateData();
+});
 
 let currentTab = localStorage.getItem('currentTab') || 'population' // This saves the current tab even after reload. Used for various things.
 console.log(currentTab)
@@ -443,8 +469,9 @@ const getData = async() => {
 
 const yearTab = document.querySelector('.stat-tab[data-view="year"]');
 const averageTab = document.querySelector('.stat-tab[data-view="average"]');
-let currentView = 'year'; // By Year is the default view for the specific stats of a municipality.
-
+if(!isAverageMode) { 
+    currentView = 'year'; // By Year is the default view for the specific stats of a municipality.
+}
 yearTab.addEventListener('click', function() {
   yearTab.classList.add('active');
   averageTab.classList.remove('active')
@@ -819,18 +846,7 @@ const initMap = (data) => {
 
       // console.log("Map was added.")
 
-      const yearSlider = document.getElementById('year-slider')
-      const yearDisplay = document.getElementById('year-display')
 
-      yearSlider.value = 2024;
-      yearDisplay.textContent = "2024";
-
-      yearSlider.addEventListener('input', function() { // Make year slider work
-          const year = parseInt(this.value);
-          yearDisplay.textContent = year;
-          selectedYear = year;
-          updateData();
-      })
       setTimeout(() => {
           document.querySelector('.loading-overlay').classList.add('fade-out'); // Show loading overlay when the page is loaded.
           document.body.classList.add('loaded');
@@ -850,127 +866,141 @@ const initMap = (data) => {
 function updateLegendContent(div) { // Update Legend content based on the tab selected
     div.innerHTML = '';
 
-    if(currentTab === 'population') {
-        div.innerHTML = '<h4>Population</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 500,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 200,000 - 500,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 100,000 - 200,000<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 50,000 - 100,000<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 20,000 - 50,000<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 10,000 - 20,000<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 5,000 - 10,000<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 2,000 - 5,000<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 2,000<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 1,000<br>';
-    } else if(currentTab === 'births') {
-        div.innerHTML = '<h4>Births</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 5,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 5,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 20 - 50<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 20<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
-    } else if(currentTab === 'deaths') {
-        div.innerHTML = '<h4>Deaths</h4>';
-        div.innerHTML += '<i style="background: #d73027"></i> > 5,000<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 5,000<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 20 - 50<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 10 - 20<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #006837"></i> < 5<br>';
-    } else if(currentTab === 'vitals') {
-        div.innerHTML = '<h4>Net Vitals (Births - Deaths)</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> -200 - -100<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < -200<br>';
-      } else if(currentTab === 'immigration') {
-        div.innerHTML = '<h4>Immigration</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 5,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 5,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 20 - 50<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 20<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
-    } else if(currentTab === 'emigration') {
-        div.innerHTML = '<h4>Emigration</h4>';
-        div.innerHTML += '<i style="background: #d73027"></i> > 5,000<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 5,000<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 20 - 50<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 10 - 20<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #006837"></i> < 5<br>';
-    } else if(currentTab === 'migration') {
-        div.innerHTML = '<h4>Net Migration</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> -200 - -100<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < -200<br>';
-    } else if(currentTab === 'marriages') {
-        div.innerHTML = '<h4>Marriages</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 20 - 50<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 20<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
-    } else if(currentTab === 'divorces') {
-        div.innerHTML = '<h4>Divorces</h4>';
-        div.innerHTML += '<i style="background: #d73027"></i> > 500<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 20 - 50<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 10 - 20<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 2 - 5<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 1 - 2<br>';
-        div.innerHTML += '<i style="background: #006837"></i> < 1<br>';
-    } else if(currentTab === 'family') {
-        div.innerHTML = '<h4>Marriage-Divorce Balance</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 500<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 200 - 500<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 100 - 200<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 20 - 50<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 20<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> -20 - 0<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> -50 - -20<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> -100 - -50<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < -100<br>';
-    }
+    if (isAverageMode && currentTab === 'population') {
+        div.innerHTML = '<h4>Population Growth (1990-2024)</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 50%<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 30% - 50%<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 20% - 30%<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 10% - 20%<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 5% - 10%<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 0% - 5%<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> -5% - 0%<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> -10% - -5%<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> -20% - -10%<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < -20%<br>';
+    } else {
+      if(currentTab === 'population') {
+          div.innerHTML = '<h4>Population</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 500,000<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 200,000 - 500,000<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 100,000 - 200,000<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 50,000 - 100,000<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 20,000 - 50,000<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 10,000 - 20,000<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 5,000 - 10,000<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 2,000 - 5,000<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 2,000<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < 1,000<br>';
+      } else if(currentTab === 'births') {
+          div.innerHTML = '<h4>Births</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 5,000<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 5,000<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 20 - 50<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 10 - 20<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
+      } else if(currentTab === 'deaths') {
+          div.innerHTML = '<h4>Deaths</h4>';
+          div.innerHTML += '<i style="background: #d73027"></i> > 5,000<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 5,000<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 500 - 1,000<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 20 - 50<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 10 - 20<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 5 - 10<br>';
+          div.innerHTML += '<i style="background: #006837"></i> < 5<br>';
+      } else if(currentTab === 'vitals') {
+          div.innerHTML = '<h4>Net Vitals (Births - Deaths)</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> -200 - -100<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < -200<br>';
+        } else if(currentTab === 'immigration') {
+          div.innerHTML = '<h4>Immigration</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 5,000<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 5,000<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 20 - 50<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 10 - 20<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
+      } else if(currentTab === 'emigration') {
+          div.innerHTML = '<h4>Emigration</h4>';
+          div.innerHTML += '<i style="background: #d73027"></i> > 5,000<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 5,000<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 500 - 1,000<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 20 - 50<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 10 - 20<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 5 - 10<br>';
+          div.innerHTML += '<i style="background: #006837"></i> < 5<br>';
+      } else if(currentTab === 'migration') {
+          div.innerHTML = '<h4>Net Migration</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> -200 - -100<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < -200<br>';
+      } else if(currentTab === 'marriages') {
+          div.innerHTML = '<h4>Marriages</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 20 - 50<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 10 - 20<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
+      } else if(currentTab === 'divorces') {
+          div.innerHTML = '<h4>Divorces</h4>';
+          div.innerHTML += '<i style="background: #d73027"></i> > 500<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 20 - 50<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 10 - 20<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 5 - 10<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 2 - 5<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 1 - 2<br>';
+          div.innerHTML += '<i style="background: #006837"></i> < 1<br>';
+      } else if(currentTab === 'family') {
+          div.innerHTML = '<h4>Marriage-Divorce Balance</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 500<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 200 - 500<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 100 - 200<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 50 - 100<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 20 - 50<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 20<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> -20 - 0<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> -50 - -20<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> -100 - -50<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < -100<br>';
+      }
+  }
 }
 
 function updateLegend() {
@@ -1071,8 +1101,18 @@ const updateData = async() => {
     const statName = document.querySelector('.stat-name');
     const statDescription = document.querySelector('.stat-description')
 
-    statName.textContent = currentTab;
-    statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
+    if (isAverageMode) {
+        if (currentTab === 'population') {
+            statName.textContent = 'Population Growth';
+            statDescription.textContent = 'Population growth across Finnish municipalities (1990-2024)';
+        } else {
+            statName.textContent = `Average ${currentTab}`;
+            statDescription.textContent = `Average annual ${currentTab} across Finnish municipalities (1990-2024)`;
+        }
+      } else {
+        statName.textContent = currentTab;
+        statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
+      }
 
     yearInfo = document.querySelector('.stat-year-specific');
     if (currentView === 'year') {
@@ -1136,7 +1176,6 @@ const updateData = async() => {
             }
         }
     }
-
     // console.log(`Data updated for year ${selectedYear}`);
 
 
@@ -1189,121 +1228,261 @@ const getStyle = (feature) => {
     }
 
     let fillColor = '';
-    if(currentTab === 'population') {
-          if (data.population > 500000) fillColor = '#006837';
-          else if (data.population > 200000) fillColor = '#1a9850';
-          else if (data.population > 100000) fillColor = '#66bd63';
-          else if (data.population > 50000) fillColor = '#a6d96a';
-          else if (data.population > 20000) fillColor = '#d9ef8b';
-          else if (data.population > 10000) fillColor = '#ffffbf';
-          else if (data.population > 5000) fillColor = '#fee08b';
-          else if (data.population > 2000) fillColor = '#fdae61';
-          else if (data.population > 1000) fillColor = '#f46d43';
-          else fillColor = '#d73027';
-    } else if(currentTab === 'births') {
-        if (data.births > 5000) fillColor = '#006837';    
-        else if (data.births > 1000) fillColor = '#1a9850';
-        else if (data.births > 500) fillColor = '#66bd63';
-        else if (data.births > 200) fillColor = '#a6d96a';
-        else if (data.births > 100) fillColor = '#d9ef8b';
-        else if (data.births > 50) fillColor = '#ffffbf';
-        else if (data.births > 20) fillColor = '#fee08b';
-        else if (data.births > 10) fillColor = '#fdae61';
-        else if (data.births > 5) fillColor = '#f46d43';
-        else fillColor = '#d73027';
-    } else if(currentTab === 'deaths') {
-        if (data.deaths > 5000) fillColor = '#d73027';       
-        else if (data.deaths > 1000) fillColor = '#f46d43';
-        else if (data.deaths > 500) fillColor = '#fdae61';
-        else if (data.deaths > 200) fillColor = '#fee08b';
-        else if (data.deaths > 100) fillColor = '#ffffbf';
-        else if (data.deaths > 50) fillColor = '#d9ef8b';
-        else if (data.deaths > 20) fillColor = '#a6d96a';
-        else if (data.deaths > 10) fillColor = '#66bd63';
-        else if (data.deaths > 5) fillColor = '#1a9850';
-        else fillColor = '#006837';
-    } else if(currentTab === 'vitals') {
-        const netVitals = data.births - data.deaths;
-        if (netVitals > 1000) fillColor = '#006837';
-        else if (netVitals > 500) fillColor = '#1a9850';
-        else if (netVitals > 200) fillColor = '#66bd63';
-        else if (netVitals > 100) fillColor = '#a6d96a';
-        else if (netVitals > 50) fillColor = '#d9ef8b';
-        else if (netVitals > 0) fillColor = '#ffffbf';
-        else if (netVitals > -50) fillColor = '#fee08b';
-        else if (netVitals > -100) fillColor = '#fdae61';
-        else if (netVitals > -200) fillColor = '#f46d43';
-        else fillColor = '#d73027';
-    } else if (currentTab === 'immigration') {
-          if (data.immigration > 5000) fillColor = '#006837';    
-          else if (data.immigration > 1000) fillColor = '#1a9850';
-          else if (data.immigration > 500) fillColor = '#66bd63';
-          else if (data.immigration > 200) fillColor = '#a6d96a';
-          else if (data.immigration > 100) fillColor = '#d9ef8b';
-          else if (data.immigration > 50) fillColor = '#ffffbf';
-          else if (data.immigration > 20) fillColor = '#fee08b';
-          else if (data.immigration > 10) fillColor = '#fdae61';
-          else if (data.immigration > 5) fillColor = '#f46d43';
-          else fillColor = '#d73027';         
-      } else if (currentTab === 'emigration') {
-          if (data.emigration > 5000) fillColor = '#d73027';       
-          else if (data.emigration > 1000) fillColor = '#f46d43';
-          else if (data.emigration > 500) fillColor = '#fdae61';
-          else if (data.emigration > 200) fillColor = '#fee08b';
-          else if (data.emigration > 100) fillColor = '#ffffbf';
-          else if (data.emigration > 50) fillColor = '#d9ef8b';
-          else if (data.emigration > 20) fillColor = '#a6d96a';
-          else if (data.emigration > 10) fillColor = '#66bd63';
-          else if (data.emigration > 5) fillColor = '#1a9850';
-          else fillColor = '#006837';                               
-      }  else if (currentTab === 'migration') {
-          const netMigration = data.immigration - data.emigration;
-          if (netMigration > 1000) fillColor = '#006837';
-          else if (netMigration > 500) fillColor = '#1a9850';
-          else if (netMigration > 200) fillColor = '#66bd63';
-          else if (netMigration > 100) fillColor = '#a6d96a';
-          else if (netMigration > 50) fillColor = '#d9ef8b';
-          else if (netMigration > 0) fillColor = '#ffffbf';
-          else if (netMigration > -50) fillColor = '#fee08b';
-          else if (netMigration > -100) fillColor = '#fdae61';
-          else if (netMigration > -200) fillColor = '#f46d43';
-          else fillColor = '#d73027';
-    } else if (currentTab === 'marriages') {
-          if (data.marriages > 1000) fillColor = '#006837';        
-          else if (data.marriages > 500) fillColor = '#1a9850';
-          else if (data.marriages > 200) fillColor = '#66bd63';
-          else if (data.marriages > 100) fillColor = '#a6d96a';
-          else if (data.marriages > 50) fillColor = '#d9ef8b';
-          else if (data.marriages > 20) fillColor = '#ffffbf';
-          else if (data.marriages > 10) fillColor = '#fee08b';
-          else if (data.marriages > 5) fillColor = '#fdae61';
-          else if (data.marriages > 1) fillColor = '#f46d43';
-          else fillColor = '#d73027';
-    } else if (currentTab === 'divorces') {
-          if (data.divorces > 500) fillColor = '#d73027';            
-          else if (data.divorces > 200) fillColor = '#f46d43';
-          else if (data.divorces > 100) fillColor = '#fdae61';
-          else if (data.divorces > 50) fillColor = '#fee08b';
-          else if (data.divorces > 20) fillColor = '#ffffbf';
-          else if (data.divorces > 10) fillColor = '#d9ef8b';
-          else if (data.divorces > 5) fillColor = '#a6d96a';
-          else if (data.divorces > 2) fillColor = '#66bd63';
-          else if (data.divorces > 1) fillColor = '#1a9850';
-          else fillColor = '#006837'; 
-    } else if (currentTab === 'family') {
-          const netFamily = data.marriages - data.divorces;
-          
-          if (netFamily > 500) fillColor = '#006837';
-          else if (netFamily > 200) fillColor = '#1a9850';
-          else if (netFamily > 100) fillColor = '#66bd63';
-          else if (netFamily > 50) fillColor = '#a6d96a';
-          else if (netFamily > 20) fillColor = '#d9ef8b';
-          else if (netFamily > 0) fillColor = '#ffffbf';
-          else if (netFamily > -20) fillColor = '#fee08b';
-          else if (netFamily > -50) fillColor = '#fdae61';
-          else if (netFamily > -100) fillColor = '#f46d43';
-          else fillColor = '#d73027';
-    }
+   if (isAverageMode) {
+        // Get average stats for this municipality
+        const avgStats = getAverageStats(name);
+        
+        if(currentTab === 'population') {
+            // For population, show growth instead of average
+            const growthPercent = avgStats.totalGrowth / avgStats.initialPopulation * 100;
+            
+            if (growthPercent > 50) fillColor = '#006837';
+            else if (growthPercent > 30) fillColor = '#1a9850';
+            else if (growthPercent > 20) fillColor = '#66bd63';
+            else if (growthPercent > 10) fillColor = '#a6d96a';
+            else if (growthPercent > 5) fillColor = '#d9ef8b';
+            else if (growthPercent > 0) fillColor = '#ffffbf';
+            else if (growthPercent > -5) fillColor = '#fee08b';
+            else if (growthPercent > -10) fillColor = '#fdae61';
+            else if (growthPercent > -20) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if(currentTab === 'births') {
+            const avgBirths = avgStats.averageBirths;
+            
+            if (avgBirths > 5000) fillColor = '#006837';    
+            else if (avgBirths > 1000) fillColor = '#1a9850';
+            else if (avgBirths > 500) fillColor = '#66bd63';
+            else if (avgBirths > 200) fillColor = '#a6d96a';
+            else if (avgBirths > 100) fillColor = '#d9ef8b';
+            else if (avgBirths > 50) fillColor = '#ffffbf';
+            else if (avgBirths > 20) fillColor = '#fee08b';
+            else if (avgBirths > 10) fillColor = '#fdae61';
+            else if (avgBirths > 5) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if(currentTab === 'deaths') {
+            const avgDeaths = avgStats.averageDeaths;
+            
+            if (avgDeaths > 5000) fillColor = '#d73027';       
+            else if (avgDeaths > 1000) fillColor = '#f46d43';
+            else if (avgDeaths > 500) fillColor = '#fdae61';
+            else if (avgDeaths > 200) fillColor = '#fee08b';
+            else if (avgDeaths > 100) fillColor = '#ffffbf';
+            else if (avgDeaths > 50) fillColor = '#d9ef8b';
+            else if (avgDeaths > 20) fillColor = '#a6d96a';
+            else if (avgDeaths > 10) fillColor = '#66bd63';
+            else if (avgDeaths > 5) fillColor = '#1a9850';
+            else fillColor = '#006837';
+        } else if(currentTab === 'vitals') {
+            const avgFertility = avgStats.averageFertility;
+            
+            if (avgFertility > 1000) fillColor = '#006837';
+            else if (avgFertility > 500) fillColor = '#1a9850';
+            else if (avgFertility > 200) fillColor = '#66bd63';
+            else if (avgFertility > 100) fillColor = '#a6d96a';
+            else if (avgFertility > 50) fillColor = '#d9ef8b';
+            else if (avgFertility > 0) fillColor = '#ffffbf';
+            else if (avgFertility > -50) fillColor = '#fee08b';
+            else if (avgFertility > -100) fillColor = '#fdae61';
+            else if (avgFertility > -200) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if (currentTab === 'immigration') {
+            const avgImmigration = Math.round(avgStats.totalImmigration / avgStats.totalYears);
+            
+            if (avgImmigration > 5000) fillColor = '#006837';    
+            else if (avgImmigration > 1000) fillColor = '#1a9850';
+            else if (avgImmigration > 500) fillColor = '#66bd63';
+            else if (avgImmigration > 200) fillColor = '#a6d96a';
+            else if (avgImmigration > 100) fillColor = '#d9ef8b';
+            else if (avgImmigration > 50) fillColor = '#ffffbf';
+            else if (avgImmigration > 20) fillColor = '#fee08b';
+            else if (avgImmigration > 10) fillColor = '#fdae61';
+            else if (avgImmigration > 5) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if (currentTab === 'emigration') {
+            const avgEmigration = Math.round(avgStats.totalEmigration / avgStats.totalYears);
+            
+            if (avgEmigration > 5000) fillColor = '#d73027';       
+            else if (avgEmigration > 1000) fillColor = '#f46d43';
+            else if (avgEmigration > 500) fillColor = '#fdae61';
+            else if (avgEmigration > 200) fillColor = '#fee08b';
+            else if (avgEmigration > 100) fillColor = '#ffffbf';
+            else if (avgEmigration > 50) fillColor = '#d9ef8b';
+            else if (avgEmigration > 20) fillColor = '#a6d96a';
+            else if (avgEmigration > 10) fillColor = '#66bd63';
+            else if (avgEmigration > 5) fillColor = '#1a9850';
+            else fillColor = '#006837';
+        } else if (currentTab === 'migration') {
+            const netMigration = avgStats.totalImmigration - avgStats.totalEmigration;
+            const avgMigration = Math.round(netMigration / avgStats.totalYears);
+            
+            if (avgMigration > 1000) fillColor = '#006837';
+            else if (avgMigration > 500) fillColor = '#1a9850';
+            else if (avgMigration > 200) fillColor = '#66bd63';
+            else if (avgMigration > 100) fillColor = '#a6d96a';
+            else if (avgMigration > 50) fillColor = '#d9ef8b';
+            else if (avgMigration > 0) fillColor = '#ffffbf';
+            else if (avgMigration > -50) fillColor = '#fee08b';
+            else if (avgMigration > -100) fillColor = '#fdae61';
+            else if (avgMigration > -200) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if (currentTab === 'marriages') {
+            const avgMarriages = Math.round(avgStats.totalMarriages / avgStats.totalYears);
+            
+            if (avgMarriages > 1000) fillColor = '#006837';        
+            else if (avgMarriages > 500) fillColor = '#1a9850';
+            else if (avgMarriages > 200) fillColor = '#66bd63';
+            else if (avgMarriages > 100) fillColor = '#a6d96a';
+            else if (avgMarriages > 50) fillColor = '#d9ef8b';
+            else if (avgMarriages > 20) fillColor = '#ffffbf';
+            else if (avgMarriages > 10) fillColor = '#fee08b';
+            else if (avgMarriages > 5) fillColor = '#fdae61';
+            else if (avgMarriages > 1) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if (currentTab === 'divorces') {
+            const avgDivorces = Math.round(avgStats.totalDivorces / avgStats.totalYears);
+            
+            if (avgDivorces > 500) fillColor = '#d73027';            
+            else if (avgDivorces > 200) fillColor = '#f46d43';
+            else if (avgDivorces > 100) fillColor = '#fdae61';
+            else if (avgDivorces > 50) fillColor = '#fee08b';
+            else if (avgDivorces > 20) fillColor = '#ffffbf';
+            else if (avgDivorces > 10) fillColor = '#d9ef8b';
+            else if (avgDivorces > 5) fillColor = '#a6d96a';
+            else if (avgDivorces > 2) fillColor = '#66bd63';
+            else if (avgDivorces > 1) fillColor = '#1a9850';
+            else fillColor = '#006837';
+        } else if (currentTab === 'family') {
+            const netFamily = avgStats.totalMarriages - avgStats.totalDivorces;
+            const avgFamily = Math.round(netFamily / avgStats.totalYears);
+            
+            if (avgFamily > 500) fillColor = '#006837';
+            else if (avgFamily > 200) fillColor = '#1a9850';
+            else if (avgFamily > 100) fillColor = '#66bd63';
+            else if (avgFamily > 50) fillColor = '#a6d96a';
+            else if (avgFamily > 20) fillColor = '#d9ef8b';
+            else if (avgFamily > 0) fillColor = '#ffffbf';
+            else if (avgFamily > -20) fillColor = '#fee08b';
+            else if (avgFamily > -50) fillColor = '#fdae61';
+            else if (avgFamily > -100) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        }
+      } else {
+        if(currentTab === 'population') {
+            if (data.population > 500000) fillColor = '#006837';
+            else if (data.population > 200000) fillColor = '#1a9850';
+            else if (data.population > 100000) fillColor = '#66bd63';
+            else if (data.population > 50000) fillColor = '#a6d96a';
+            else if (data.population > 20000) fillColor = '#d9ef8b';
+            else if (data.population > 10000) fillColor = '#ffffbf';
+            else if (data.population > 5000) fillColor = '#fee08b';
+            else if (data.population > 2000) fillColor = '#fdae61';
+            else if (data.population > 1000) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if(currentTab === 'births') {
+            if (data.births > 5000) fillColor = '#006837';    
+            else if (data.births > 1000) fillColor = '#1a9850';
+            else if (data.births > 500) fillColor = '#66bd63';
+            else if (data.births > 200) fillColor = '#a6d96a';
+            else if (data.births > 100) fillColor = '#d9ef8b';
+            else if (data.births > 50) fillColor = '#ffffbf';
+            else if (data.births > 20) fillColor = '#fee08b';
+            else if (data.births > 10) fillColor = '#fdae61';
+            else if (data.births > 5) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if(currentTab === 'deaths') {
+            if (data.deaths > 5000) fillColor = '#d73027';       
+            else if (data.deaths > 1000) fillColor = '#f46d43';
+            else if (data.deaths > 500) fillColor = '#fdae61';
+            else if (data.deaths > 200) fillColor = '#fee08b';
+            else if (data.deaths > 100) fillColor = '#ffffbf';
+            else if (data.deaths > 50) fillColor = '#d9ef8b';
+            else if (data.deaths > 20) fillColor = '#a6d96a';
+            else if (data.deaths > 10) fillColor = '#66bd63';
+            else if (data.deaths > 5) fillColor = '#1a9850';
+            else fillColor = '#006837';
+        } else if(currentTab === 'vitals') {
+            const netVitals = data.births - data.deaths;
+            if (netVitals > 1000) fillColor = '#006837';
+            else if (netVitals > 500) fillColor = '#1a9850';
+            else if (netVitals > 200) fillColor = '#66bd63';
+            else if (netVitals > 100) fillColor = '#a6d96a';
+            else if (netVitals > 50) fillColor = '#d9ef8b';
+            else if (netVitals > 0) fillColor = '#ffffbf';
+            else if (netVitals > -50) fillColor = '#fee08b';
+            else if (netVitals > -100) fillColor = '#fdae61';
+            else if (netVitals > -200) fillColor = '#f46d43';
+            else fillColor = '#d73027';
+        } else if (currentTab === 'immigration') {
+              if (data.immigration > 5000) fillColor = '#006837';    
+              else if (data.immigration > 1000) fillColor = '#1a9850';
+              else if (data.immigration > 500) fillColor = '#66bd63';
+              else if (data.immigration > 200) fillColor = '#a6d96a';
+              else if (data.immigration > 100) fillColor = '#d9ef8b';
+              else if (data.immigration > 50) fillColor = '#ffffbf';
+              else if (data.immigration > 20) fillColor = '#fee08b';
+              else if (data.immigration > 10) fillColor = '#fdae61';
+              else if (data.immigration > 5) fillColor = '#f46d43';
+              else fillColor = '#d73027';         
+          } else if (currentTab === 'emigration') {
+              if (data.emigration > 5000) fillColor = '#d73027';       
+              else if (data.emigration > 1000) fillColor = '#f46d43';
+              else if (data.emigration > 500) fillColor = '#fdae61';
+              else if (data.emigration > 200) fillColor = '#fee08b';
+              else if (data.emigration > 100) fillColor = '#ffffbf';
+              else if (data.emigration > 50) fillColor = '#d9ef8b';
+              else if (data.emigration > 20) fillColor = '#a6d96a';
+              else if (data.emigration > 10) fillColor = '#66bd63';
+              else if (data.emigration > 5) fillColor = '#1a9850';
+              else fillColor = '#006837';                               
+          }  else if (currentTab === 'migration') {
+              const netMigration = data.immigration - data.emigration;
+              if (netMigration > 1000) fillColor = '#006837';
+              else if (netMigration > 500) fillColor = '#1a9850';
+              else if (netMigration > 200) fillColor = '#66bd63';
+              else if (netMigration > 100) fillColor = '#a6d96a';
+              else if (netMigration > 50) fillColor = '#d9ef8b';
+              else if (netMigration > 0) fillColor = '#ffffbf';
+              else if (netMigration > -50) fillColor = '#fee08b';
+              else if (netMigration > -100) fillColor = '#fdae61';
+              else if (netMigration > -200) fillColor = '#f46d43';
+              else fillColor = '#d73027';
+        } else if (currentTab === 'marriages') {
+              if (data.marriages > 1000) fillColor = '#006837';        
+              else if (data.marriages > 500) fillColor = '#1a9850';
+              else if (data.marriages > 200) fillColor = '#66bd63';
+              else if (data.marriages > 100) fillColor = '#a6d96a';
+              else if (data.marriages > 50) fillColor = '#d9ef8b';
+              else if (data.marriages > 20) fillColor = '#ffffbf';
+              else if (data.marriages > 10) fillColor = '#fee08b';
+              else if (data.marriages > 5) fillColor = '#fdae61';
+              else if (data.marriages > 1) fillColor = '#f46d43';
+              else fillColor = '#d73027';
+        } else if (currentTab === 'divorces') {
+              if (data.divorces > 500) fillColor = '#d73027';            
+              else if (data.divorces > 200) fillColor = '#f46d43';
+              else if (data.divorces > 100) fillColor = '#fdae61';
+              else if (data.divorces > 50) fillColor = '#fee08b';
+              else if (data.divorces > 20) fillColor = '#ffffbf';
+              else if (data.divorces > 10) fillColor = '#d9ef8b';
+              else if (data.divorces > 5) fillColor = '#a6d96a';
+              else if (data.divorces > 2) fillColor = '#66bd63';
+              else if (data.divorces > 1) fillColor = '#1a9850';
+              else fillColor = '#006837'; 
+        } else if (currentTab === 'family') {
+              const netFamily = data.marriages - data.divorces;
+              
+              if (netFamily > 500) fillColor = '#006837';
+              else if (netFamily > 200) fillColor = '#1a9850';
+              else if (netFamily > 100) fillColor = '#66bd63';
+              else if (netFamily > 50) fillColor = '#a6d96a';
+              else if (netFamily > 20) fillColor = '#d9ef8b';
+              else if (netFamily > 0) fillColor = '#ffffbf';
+              else if (netFamily > -20) fillColor = '#fee08b';
+              else if (netFamily > -50) fillColor = '#fdae61';
+              else if (netFamily > -100) fillColor = '#f46d43';
+              else fillColor = '#d73027';
+        }
+      }
     return {
         fillColor: fillColor,
         weight: 1,
