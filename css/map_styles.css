@@ -111,6 +111,7 @@ body.loaded #map {
     font-weight: bold;
     color: #4CAF50;
     margin-bottom: 5px;
+    text-transform: capitalize;
 }
 
 .stat-description {

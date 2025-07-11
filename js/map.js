@@ -661,11 +661,16 @@ function changeTab() {
     const employmentTab = document.querySelector('.dropdown-item[data-stat="employment"]');
     const trafficTab = document.querySelector('.dropdown-item[data-stat="traffic"]');
 
+    const statName = document.querySelector('.stat-name');
+    const statDescription = document.querySelector('.stat-description')
+
     if (populationTab) {
         populationTab.addEventListener('click', function(e) {
             currentTab = 'population';
             localStorage.setItem('currentTab', currentTab);
             console.log('Population tab clicked:', populationTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
         });
@@ -675,6 +680,8 @@ function changeTab() {
         immigrationTab.addEventListener('click', function(e) {
             currentTab = 'immigration';
             localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
         });
@@ -684,6 +691,8 @@ function changeTab() {
         emigrationTab.addEventListener('click', function(e) {
             currentTab = 'emigration';
             localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
         });
@@ -693,6 +702,8 @@ function changeTab() {
         migrationTab.addEventListener('click', function(e) {
             currentTab = 'migration';
             localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
         });
@@ -702,6 +713,8 @@ function changeTab() {
         marriagesTab.addEventListener('click', function(e) {
             currentTab = 'marriages';
             localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
         });
@@ -711,6 +724,8 @@ function changeTab() {
         divorcesTab.addEventListener('click', function(e) {
             currentTab = 'divorces';
             localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
         });
@@ -720,10 +735,13 @@ function changeTab() {
         familyTab.addEventListener('click', function(e) {
             currentTab = 'family';
             localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
         });
     }
+
 }
 
 const initMap = (data) => {
@@ -809,77 +827,77 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
         div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 2,000<br>';
         div.innerHTML += '<i style="background: #d73027"></i> < 1,000<br>';
     } else if(currentTab === 'immigration') {
-        div.innerHTML = '<h4>Immigration per 1,000 people</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 30<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 20 - 30<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 15 - 20<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 10 - 15<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 7 - 10<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 5 - 7<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 3 - 5<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 2 - 3<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 2<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
+        div.innerHTML = '<h4>Immigration</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 5,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 5,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 20 - 50<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 20<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
     } else if(currentTab === 'emigration') {
-        div.innerHTML = '<h4>Emigration per 1,000 people</h4>';
-        div.innerHTML += '<i style="background: #d73027"></i> > 20<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 15 - 20<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 15<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 7 - 10<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 5 - 7<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 3 - 5<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 2 - 3<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 1 - 2<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 0.5 - 1<br>';
-        div.innerHTML += '<i style="background: #006837"></i> < 0.5<br>';
+        div.innerHTML = '<h4>Emigration</h4>';
+        div.innerHTML += '<i style="background: #d73027"></i> > 5,000<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 5,000<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 20 - 50<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 10 - 20<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #006837"></i> < 5<br>';
     } else if(currentTab === 'migration') {
-        div.innerHTML = '<h4>Net Migration per 1,000 people</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 5%<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 3% - 5%<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 2% - 3%<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 1% - 2%<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 0.5% - 1%<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 0% - 0.5%<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> -0.5% - 0%<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> -1% - -0.5%<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> -2% - -1%<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < -2%<br>';
+        div.innerHTML = '<h4>Net Migration</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> -200 - -100<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < -200<br>';
     } else if(currentTab === 'marriages') {
-        div.innerHTML = '<h4>Marriages per 1,000 people</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 10<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 8 - 10<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 6 - 8<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 5 - 6<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 4 - 5<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 3 - 4<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 2 - 3<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 1 - 2<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 0.5 - 1<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 0.5<br>';
+        div.innerHTML = '<h4>Marriages</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 20 - 50<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 20<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
     } else if(currentTab === 'divorces') {
-        div.innerHTML = '<h4>Divorces per 1,000 people</h4>';
-        div.innerHTML += '<i style="background: #d73027"></i> > 5<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 4 - 5<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 3 - 4<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 2.5 - 3<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 2 - 2.5<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 1.5 - 2<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 1 - 1.5<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 0.5 - 1<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 0.1 - 0.5<br>';
-        div.innerHTML += '<i style="background: #006837"></i> < 0.1<br>';
+        div.innerHTML = '<h4>Divorces</h4>';
+        div.innerHTML += '<i style="background: #d73027"></i> > 500<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 20 - 50<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 10 - 20<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 2 - 5<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 1 - 2<br>';
+        div.innerHTML += '<i style="background: #006837"></i> < 1<br>';
     } else if(currentTab === 'family') {
-        div.innerHTML = '<h4>Marriage-Divorce Ratio per 1,000 people</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 5<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 4 - 5<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 3 - 4<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 2 - 3<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 1 - 2<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 1<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> -1 - 0<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> -2 - -1<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> -3 - -2<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < -3<br>';
+        div.innerHTML = '<h4>Marriage-Divorce Balance</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 500<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 200 - 500<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 100 - 200<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 20 - 50<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 20<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> -20 - 0<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> -50 - -20<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> -100 - -50<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < -100<br>';
     }
 }
 
@@ -977,6 +995,12 @@ const updateData = async() => {
 
     // Set specific year. Before I was creating another API request. I quickly realized that was a bad idea ;)
     const yearIndex = statData.dimension.Vuosi.category.index[selectedYear];
+
+    const statName = document.querySelector('.stat-name');
+    const statDescription = document.querySelector('.stat-description')
+
+    statName.textContent = currentTab;
+    statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
 
     yearInfo = document.querySelector('.stat-year-specific');
     if (currentView === 'year') {
@@ -1076,7 +1100,7 @@ const getFeature = (feature, layer) => {
 // here is where data is actually processed and as a result shows different colors based on the stat.
 const getStyle = (feature) => {
 
-    if(!feature.properties.id) return {fillColor: '#cccccc', weight: 1, color: '#333', fillOpacity: 0.7};
+   if(!feature.properties.id) return {fillColor: '#cccccc', weight: 1, color: '#333', fillOpacity: 0.7};
 
     let name = feature.properties.name;
     let data = null;
@@ -1105,76 +1129,73 @@ const getStyle = (feature) => {
           else if (data.population > 1000) fillColor = '#f46d43';
           else fillColor = '#d73027';
     } else if (currentTab === 'immigration') {
-          let immigrationPerCapita = (data.immigration / data.population) * 1000;
-          if (immigrationPerCapita > 30) fillColor = '#006837';    
-          else if (immigrationPerCapita > 20) fillColor = '#1a9850';
-          else if (immigrationPerCapita > 15) fillColor = '#66bd63';
-          else if (immigrationPerCapita > 10) fillColor = '#a6d96a';
-          else if (immigrationPerCapita > 7) fillColor = '#d9ef8b';
-          else if (immigrationPerCapita > 5) fillColor = '#ffffbf';
-          else if (immigrationPerCapita > 3) fillColor = '#fee08b';
-          else if (immigrationPerCapita > 2) fillColor = '#fdae61';
-          else if (immigrationPerCapita > 1) fillColor = '#f46d43';
+          if (data.immigration > 5000) fillColor = '#006837';    
+          else if (data.immigration > 1000) fillColor = '#1a9850';
+          else if (data.immigration > 500) fillColor = '#66bd63';
+          else if (data.immigration > 200) fillColor = '#a6d96a';
+          else if (data.immigration > 100) fillColor = '#d9ef8b';
+          else if (data.immigration > 50) fillColor = '#ffffbf';
+          else if (data.immigration > 20) fillColor = '#fee08b';
+          else if (data.immigration > 10) fillColor = '#fdae61';
+          else if (data.immigration > 5) fillColor = '#f46d43';
           else fillColor = '#d73027';         
       } else if (currentTab === 'emigration') {
-          let emigrationPerCapita = data.emigration / data.population * 1000;
-          if (emigrationPerCapita > 20) fillColor = '#d73027';       
-          else if (emigrationPerCapita > 15) fillColor = '#f46d43';
-          else if (emigrationPerCapita > 10) fillColor = '#fdae61';
-          else if (emigrationPerCapita > 7) fillColor = '#fee08b';
-          else if (emigrationPerCapita > 5) fillColor = '#ffffbf';
-          else if (emigrationPerCapita > 3) fillColor = '#d9ef8b';
-          else if (emigrationPerCapita > 2) fillColor = '#a6d96a';
-          else if (emigrationPerCapita > 1) fillColor = '#66bd63';
-          else if (emigrationPerCapita > 0.5) fillColor = '#1a9850';
+          if (data.emigration > 5000) fillColor = '#d73027';       
+          else if (data.emigration > 1000) fillColor = '#f46d43';
+          else if (data.emigration > 500) fillColor = '#fdae61';
+          else if (data.emigration > 200) fillColor = '#fee08b';
+          else if (data.emigration > 100) fillColor = '#ffffbf';
+          else if (data.emigration > 50) fillColor = '#d9ef8b';
+          else if (data.emigration > 20) fillColor = '#a6d96a';
+          else if (data.emigration > 10) fillColor = '#66bd63';
+          else if (data.emigration > 5) fillColor = '#1a9850';
           else fillColor = '#006837';                               
       }  else if (currentTab === 'migration') {
-          const migrationPercent = (data.immigration - data.emigration) / data.population * 1000;
-          if (migrationPercent > 5) fillColor = '#006837';
-          else if (migrationPercent > 3) fillColor = '#1a9850';
-          else if (migrationPercent > 2) fillColor = '#66bd63';
-          else if (migrationPercent > 1) fillColor = '#a6d96a';
-          else if (migrationPercent > 0.5) fillColor = '#d9ef8b';
-          else if (migrationPercent > 0) fillColor = '#ffffbf';
-          else if (migrationPercent > -0.5) fillColor = '#fee08b';
-          else if (migrationPercent > -1) fillColor = '#fdae61';
-          else if (migrationPercent > -2) fillColor = '#f46d43';
+          const netMigration = data.immigration - data.emigration;
+          if (netMigration > 1000) fillColor = '#006837';
+          else if (netMigration > 500) fillColor = '#1a9850';
+          else if (netMigration > 200) fillColor = '#66bd63';
+          else if (netMigration > 100) fillColor = '#a6d96a';
+          else if (netMigration > 50) fillColor = '#d9ef8b';
+          else if (netMigration > 0) fillColor = '#ffffbf';
+          else if (netMigration > -50) fillColor = '#fee08b';
+          else if (netMigration > -100) fillColor = '#fdae61';
+          else if (netMigration > -200) fillColor = '#f46d43';
           else fillColor = '#d73027';
     } else if (currentTab === 'marriages') {
-          let marriagesPerCapita = (data.marriages / data.population) * 1000;
-          if (marriagesPerCapita > 10) fillColor = '#006837';        
-          else if (marriagesPerCapita > 8) fillColor = '#1a9850';
-          else if (marriagesPerCapita > 6) fillColor = '#66bd63';
-          else if (marriagesPerCapita > 5) fillColor = '#a6d96a';
-          else if (marriagesPerCapita > 4) fillColor = '#d9ef8b';
-          else if (marriagesPerCapita > 3) fillColor = '#ffffbf';
-          else if (marriagesPerCapita > 2) fillColor = '#fee08b';
-          else if (marriagesPerCapita > 1) fillColor = '#fdae61';
-          else if (marriagesPerCapita > 0.5) fillColor = '#f46d43';
+          if (data.marriages > 1000) fillColor = '#006837';        
+          else if (data.marriages > 500) fillColor = '#1a9850';
+          else if (data.marriages > 200) fillColor = '#66bd63';
+          else if (data.marriages > 100) fillColor = '#a6d96a';
+          else if (data.marriages > 50) fillColor = '#d9ef8b';
+          else if (data.marriages > 20) fillColor = '#ffffbf';
+          else if (data.marriages > 10) fillColor = '#fee08b';
+          else if (data.marriages > 5) fillColor = '#fdae61';
+          else if (data.marriages > 1) fillColor = '#f46d43';
           else fillColor = '#d73027';
     } else if (currentTab === 'divorces') {
-          let divorcesPerCapita = (data.divorces / data.population) * 1000;
-          if (divorcesPerCapita > 5) fillColor = '#d73027';            
-          else if (divorcesPerCapita > 3) fillColor = '#fdae61';
-          else if (divorcesPerCapita > 2.5) fillColor = '#fee08b';
-          else if (divorcesPerCapita > 2) fillColor = '#ffffbf';
-          else if (divorcesPerCapita > 1.5) fillColor = '#d9ef8b';
-          else if (divorcesPerCapita > 1) fillColor = '#a6d96a';
-          else if (divorcesPerCapita > 0.5) fillColor = '#66bd63';
-          else if (divorcesPerCapita > 0.1) fillColor = '#1a9850';
+          if (data.divorces > 500) fillColor = '#d73027';            
+          else if (data.divorces > 200) fillColor = '#f46d43';
+          else if (data.divorces > 100) fillColor = '#fdae61';
+          else if (data.divorces > 50) fillColor = '#fee08b';
+          else if (data.divorces > 20) fillColor = '#ffffbf';
+          else if (data.divorces > 10) fillColor = '#d9ef8b';
+          else if (data.divorces > 5) fillColor = '#a6d96a';
+          else if (data.divorces > 2) fillColor = '#66bd63';
+          else if (data.divorces > 1) fillColor = '#1a9850';
           else fillColor = '#006837'; 
     } else if (currentTab === 'family') {
-          const netFamily = (data.marriages - data.divorces) / data.population * 1000;
+          const netFamily = data.marriages - data.divorces;
           
-          if (netFamily > 5) fillColor = '#006837';
-          else if (netFamily > 4) fillColor = '#1a9850';
-          else if (netFamily > 3) fillColor = '#66bd63';
-          else if (netFamily > 2) fillColor = '#a6d96a';
-          else if (netFamily > 1) fillColor = '#d9ef8b';
+          if (netFamily > 500) fillColor = '#006837';
+          else if (netFamily > 200) fillColor = '#1a9850';
+          else if (netFamily > 100) fillColor = '#66bd63';
+          else if (netFamily > 50) fillColor = '#a6d96a';
+          else if (netFamily > 20) fillColor = '#d9ef8b';
           else if (netFamily > 0) fillColor = '#ffffbf';
-          else if (netFamily > -1) fillColor = '#fee08b';
-          else if (netFamily > -2) fillColor = '#fdae61';
-          else if (netFamily > -3) fillColor = '#f46d43';
+          else if (netFamily > -20) fillColor = '#fee08b';
+          else if (netFamily > -50) fillColor = '#fdae61';
+          else if (netFamily > -100) fillColor = '#f46d43';
           else fillColor = '#d73027';
     }
     return {
