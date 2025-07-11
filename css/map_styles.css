@@ -151,7 +151,7 @@ body.loaded #map {
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    width: 290px;
+    width: 320px;
     display: none; /* Hide by default */
     border-top: 4px solid #4CAF50;
 }
@@ -277,4 +277,22 @@ body.loaded #map {
   margin-right: 8px;
   opacity: 0.7;
   border-radius: 3px;
+}
+
+#close-stats-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: #999;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+#close-stats-btn:hover {
+  color: #333;
 }

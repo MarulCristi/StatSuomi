@@ -365,8 +365,13 @@ let fertility = 0;
 let yearInfo = null;
 let mapLegend;
 
-let currentTab = localStorage.getItem('currentTab') || 'population'
+let currentTab = localStorage.getItem('currentTab') || 'population' // This saves the current tab even after reload.
 console.log(currentTab)
+
+const closeStatsBtn = document.getElementById('close-stats-btn'); // Close button for specific stats of Cities on the map
+closeStatsBtn.addEventListener('click', function() {
+    document.getElementById('statistic-display-specific').style.display = 'none';
+});
 
 const getData = async() => {
 
@@ -398,27 +403,20 @@ const getData = async() => {
       const municipalities = statData.dimension.Alue.category.label
       const allValues = statData.value
       
-
-
-
-
-      // MAKE NAVIGATION MENU. WHEN CLICKED, THAT SPECIFIC STATISTIC FOR THE WHOLE COUNTRY AND EVERY MUNICIPALITY WILL SHOW.
       
       const metricsPerMunicipality = 8;
       const municipalityKeys = Object.keys(municipalities);
 
       const allMunicipalities = [];
-      municipalityKeys.forEach(key => {
+      municipalityKeys.forEach(key => { // Get all municipalities
           allMunicipalities.push({
               code: key,
               name: municipalities[key]
           });
       });
 
-      localStorage.setItem('allMunicipalities', JSON.stringify(allMunicipalities));
 
-
-      for (let i = 0; i < municipalityKeys.length; i++) {
+      for (let i = 0; i < municipalityKeys.length; i++) { // Save every municipality with their stats.
           let key = municipalityKeys[i];
           const baseIndex = i * metricsPerMunicipality;
           
@@ -438,14 +436,14 @@ const getData = async() => {
 
       console.log(statData)
       
-      changeTab();
-      initMap(geoData)
+      changeTab(); // Make sure correct tab shows.
+      initMap(geoData) // Create map with the data.
       updateData();
 }
 
 const yearTab = document.querySelector('.stat-tab[data-view="year"]');
 const averageTab = document.querySelector('.stat-tab[data-view="average"]');
-let currentView = 'year';
+let currentView = 'year'; // By Year is the default view for the specific stats of a municipality.
 
 yearTab.addEventListener('click', function() {
   yearTab.classList.add('active');
@@ -463,13 +461,13 @@ averageTab.addEventListener('click', function() {
 
 function formatNumber(num) {
   if (num > 0) {
-    return '+' + num;
+    return '+' + num; // Add + to positive numbers
   } else {
     return num;
   }
 }
 
-function updateSelectedMunicipalityDisplay() {
+function updateSelectedMunicipalityDisplay() { // Show all details of the municipality in the container
   const information = document.getElementById('statistic-display-specific');
   
   if (currentView === 'year') {
@@ -494,158 +492,163 @@ function updateSelectedMunicipalityDisplay() {
           const descriptionElement = document.querySelector('.stat-description-specific');
           const averageStats = getAverageStats(municipalityName);
 
-          if (currentTab === 'population') {
-
-                const fertilityPercentage = ((fertility / currentData.population) * 100).toFixed(2);
+          if (currentTab === 'population') { // When population is selected
 
                 if(currentView === 'year') {
+                  const birthsPerCapita = ((currentData.births / currentData.population) * 1000).toFixed(1);
+                  const deathsPerCapita = ((currentData.deaths / currentData.population) * 1000).toFixed(1);
+                  const fertilityPerCapita = ((birthsPerCapita - deathsPerCapita ) / currentData.population * 1000).toFixed(2);
+
                   descriptionElement.innerHTML = 
                   `Population: <b>${currentData.population}</b><br>
-                  Births: <b>${formatNumber(currentData.births)}</b><br>
-                  Deaths: <b>-${currentData.deaths}</b><br>
-                  Net Fertility: <b>${formatNumber(fertility)}</b> <small>(${fertilityPercentage}%)</small>`;
+                  Births: <b>${formatNumber(currentData.births)}</b> <small>(${birthsPerCapita} per 1,000 people)</small><br>
+                  Deaths: <b>-${currentData.deaths}</b> <small>(${deathsPerCapita} per 1,000 people)</small><br>
+                  Net Fertility: <b>${formatNumber(fertility)}</b> <small>(${fertilityPerCapita} per 1,000 people)</small>`;
                 } else {
                   const growthPercentage = ((averageStats.totalGrowth / averageStats.initialPopulation) * 100).toFixed(2);
-                  const fertilityPercentage = ((averageStats.averageFertility / averageStats.averagePopulation) * 100).toFixed(2);
+                  const avgBirthsPerCapita = ((averageStats.averageBirths / averageStats.averagePopulation) * 1000).toFixed(1);
+                  const avgDeathsPerCapita = ((averageStats.averageDeaths / averageStats.averagePopulation) * 1000).toFixed(1);
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
-                  Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b> <small>(${growthPercentage}%)</small><br>
+                  Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b> <small>(${growthPercentage}% change)</small><br>
                   Total Births: <b>${formatNumber(averageStats.totalBirths)}</b><br>
                   Total Deaths: <b>-${averageStats.totalDeaths}</b><br>
                   <br>
                   <h4>Average stats:</h4>
-                  Births by year: <b>${formatNumber(averageStats.averageBirths)}</b><br>
-                  Deaths by year: <b>-${averageStats.averageDeaths}</b><br>
-                  Net Fertility: <b>${formatNumber(averageStats.averageFertility)}</b> <small>(${fertilityPercentage}%)</small><br>`
+                  Births by year: <b>${formatNumber(averageStats.averageBirths)}</b> <small>(${avgBirthsPerCapita} per 1,000 people)</small><br>
+                  Deaths by year: <b>-${averageStats.averageDeaths}</b> <small>(${avgDeathsPerCapita} per 1,000 people)</small><br>
+                  Net Fertility: <b>${formatNumber(averageStats.averageFertility)}</b><br>`;
                 }
-                } else if (currentTab === 'immigration') {
-                const immigrationPercentage = ((currentData.immigration / currentData.population) * 100).toFixed(2);
+        } else if (currentTab === 'immigration') { // When immigration is selected
                 
                 if(currentView === 'year') {
+                  const immigrationPerCapita = ((currentData.immigration / currentData.population) * 1000).toFixed(1);
+
                   descriptionElement.innerHTML = 
                   `Population: <b>${currentData.population}</b><br>
-                  Immigration: <b>${formatNumber(currentData.immigration)}</b> <small>(${immigrationPercentage}%)</small><br>`;
+                  Immigration: <b>${formatNumber(currentData.immigration)}</b> <small>(${immigrationPerCapita} per 1,000 people)</small><br>`;
                 } else {
                   const avgImmigrationPerYear = Math.round(averageStats.totalImmigration / averageStats.totalYears);
-                  const avgImmigrationPercentage = ((avgImmigrationPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  const avgImmigrationPerCapita = ((avgImmigrationPerYear / averageStats.averagePopulation) * 1000).toFixed(1);
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
                   Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
-                  Immigration by year: <b>${formatNumber(avgImmigrationPerYear)}</b> <small>(${avgImmigrationPercentage}%)</small><br>`;
+                  Immigration by year: <b>${formatNumber(avgImmigrationPerYear)}</b> <small>(${avgImmigrationPerCapita} per 1,000 people)</small><br>`;
                 }
-        } else if (currentTab === 'emigration') {
-                const emigrationPercentage = ((currentData.emigration / currentData.population) * 100).toFixed(2);
+        } else if (currentTab === 'emigration') { // When emigration is selected
                 
                 if(currentView === 'year') {
+                  const emigrationPerCapita = ((currentData.emigration / currentData.population) * 1000).toFixed(1);
                   descriptionElement.innerHTML = 
                   `Population: <b>${currentData.population}</b><br>
-                  Emigration: <b>${formatNumber(currentData.emigration)}</b> <small>(${emigrationPercentage}%)</small><br>`;
+                  Emigration: <b>${formatNumber(currentData.emigration)}</b> <small>(${emigrationPerCapita} per 1,000 people)</small><br>`;
                 } else {
                   const avgEmigrationPerYear = Math.round(averageStats.totalEmigration / averageStats.totalYears);
-                  const avgEmigrationPercentage = ((avgEmigrationPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  const avgEmigrationPerCapita = ((avgEmigrationPerYear / averageStats.averagePopulation) * 1000).toFixed(1);
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
                   Total Emigration: <b>${formatNumber(averageStats.totalEmigration)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
-                  Emigration by year: <b>${formatNumber(avgEmigrationPerYear)}</b> <small>(${avgEmigrationPercentage}%)</small><br>`;
+                  Emigration by year: <b>${formatNumber(avgEmigrationPerYear)}</b> <small>(${avgEmigrationPerCapita} per 1,000 people)</small><br>`;
                 }
-        } else if (currentTab === 'migration') {
-                const migrationPercentage = ((currentData.migration / currentData.population) * 100).toFixed(2);
+        } else if (currentTab === 'migration') { // When Net Migration is selected
+                const migrationPerCapita = ((currentData.migration / currentData.population) * 1000).toFixed(1);
                 
                 if(currentView === 'year') {
                   descriptionElement.innerHTML = 
                   `Population: <b>${currentData.population}</b><br>
                   Immigration: <b>${formatNumber(currentData.immigration)}</b><br>
                   Emigration: <b>-${currentData.emigration}</b><br>
-                  Net Migration: <b>${formatNumber(currentData.migration)}</b> <small>(${migrationPercentage}%)</small>`;
+                  Net Migration: <b>${formatNumber(currentData.migration)}</b> <small>(${migrationPerCapita} per 1,000 people)</small>`;
                 } else {
                   const netMigration = averageStats.totalImmigration - averageStats.totalEmigration;
-                  const netMigrationPercentage = ((netMigration / averageStats.initialPopulation) * 100).toFixed(2);
                   const avgMigrationPerYear = Math.round(netMigration / averageStats.totalYears);
-                  const avgMigrationPercentage = ((avgMigrationPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  const avgMigrationPerCapita = ((avgMigrationPerYear / averageStats.averagePopulation) * 1000).toFixed(1);
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
                   Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
                   Total Emigration: <b>-${averageStats.totalEmigration}</b><br>
-                  Net Migration: <b>${formatNumber(netMigration)}</b> <small>(${netMigrationPercentage}%)</small><br>
+                  Net Migration: <b>${formatNumber(netMigration)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
-                  Net Migration by year: <b>${formatNumber(avgMigrationPerYear)}</b> <small>(${avgMigrationPercentage}%)</small><br>`;
+                  Net Migration by year: <b>${formatNumber(avgMigrationPerYear)}</b> <small>(${avgMigrationPerCapita} per 1,000 people)</small><br>`;
                 }
         } else if (currentTab === 'marriages') {
-                const marriagesPercentage = ((currentData.marriages / currentData.population) * 100).toFixed(2);
-                
+                  if(currentView === 'year') {
+                      const marriagesPerCapita = ((currentData.marriages / currentData.population) * 1000).toFixed(1);
+                      
+                      descriptionElement.innerHTML = 
+                      `Population: <b>${currentData.population}</b><br>
+                      Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPerCapita} per 1,000 people)</small><br>`;
+                  } else {
+                      const avgMarriagesPerYear = Math.round(averageStats.totalMarriages / averageStats.totalYears);
+                      const avgMarriagesPerCapita = ((avgMarriagesPerYear / averageStats.averagePopulation) * 1000).toFixed(1);
+                      
+                      descriptionElement.innerHTML = 
+                      `<h4>Total stats:</h4>
+                      Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
+                      <br>
+                      <h4>Average stats:</h4>
+                      Marriages by year: <b>${formatNumber(avgMarriagesPerYear)}</b> <small>(${avgMarriagesPerCapita} per 1,000 people)</small><br>`;
+                  }
+                } else if (currentTab === 'divorces') {
                 if(currentView === 'year') {
-                  descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
-                  Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPercentage}%)</small><br>`;
+                    const divorcesPerCapita = ((currentData.divorces / currentData.population) * 1000).toFixed(1);
+                    
+                    descriptionElement.innerHTML = 
+                    `Population: <b>${currentData.population}</b><br>
+                    Divorces: <b>${formatNumber(currentData.divorces)}</b> <small>(${divorcesPerCapita} per 1,000 people)</small><br>`;
                 } else {
-                  const avgMarriagesPerYear = Math.round(averageStats.totalMarriages / averageStats.totalYears);
-                  const avgMarriagesPercentage = ((avgMarriagesPerYear / averageStats.averagePopulation) * 100).toFixed(2);
-                  
-                  descriptionElement.innerHTML = 
-                  `<h4>Total stats:</h4>
-                  Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
-                  <br>
-                  <h4>Average stats:</h4>
-                  Marriages by year: <b>${formatNumber(avgMarriagesPerYear)}</b> <small>(${avgMarriagesPercentage}%)</small><br>`;
-                }
-        } else if (currentTab === 'divorces') {
-                const divorcesPercentage = ((currentData.divorces / currentData.population) * 100).toFixed(2);
-                
-                if(currentView === 'year') {
-                  descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
-                  Divorces: <b>${formatNumber(currentData.divorces)}</b> <small>(${divorcesPercentage}%)</small><br>`;
-                } else {
-                  const avgDivorcesPerYear = Math.round(averageStats.totalDivorces / averageStats.totalYears);
-                  const avgDivorcesPercentage = ((avgDivorcesPerYear / averageStats.averagePopulation) * 100).toFixed(2);
-                  
-                  descriptionElement.innerHTML = 
-                  `<h4>Total stats:</h4>
-                  Total Divorces: <b>${formatNumber(averageStats.totalDivorces)}</b><br>
-                  <br>
-                  <h4>Average stats:</h4>
-                  Divorces by year: <b>${formatNumber(avgDivorcesPerYear)}</b> <small>(${avgDivorcesPercentage}%)</small><br>`;
+                    const avgDivorcesPerYear = Math.round(averageStats.totalDivorces / averageStats.totalYears);
+                    const avgDivorcesPerCapita = ((avgDivorcesPerYear / averageStats.averagePopulation) * 1000).toFixed(1);
+                    
+                    descriptionElement.innerHTML = 
+                    `<h4>Total stats:</h4>
+                    Total Divorces: <b>${formatNumber(averageStats.totalDivorces)}</b><br>
+                    <br>
+                    <h4>Average stats:</h4>
+                    Divorces by year: <b>${formatNumber(avgDivorcesPerYear)}</b> <small>(${avgDivorcesPerCapita} per 1,000 people)</small><br>`;
                 }
         } else if (currentTab === 'family') {
-                const marriageDivorceRatio = currentData.divorces > 0 ? (currentData.marriages / currentData.divorces).toFixed(2) : "∞";
                 
                 if(currentView === 'year') {
+                  const marriagesPerCapita = ((currentData.marriages / currentData.population) * 1000).toFixed(1);
+                  const divorcesPerCapita = ((currentData.divorces / currentData.population) * 1000).toFixed(1);
+                  const netFamilyPerCapita = (marriagesPerCapita - divorcesPerCapita).toFixed(1);
+                  const marriageDivorceRatio = currentData.divorces > 0 ? (currentData.marriages / currentData.divorces).toFixed(2) : "∞";
+                  
                   descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
-                  Marriages: <b>${formatNumber(currentData.marriages)}</b><br>
-                  Divorces: <b>-${currentData.divorces}</b><br>
+                  `Population: <b>${currentData.population.toLocaleString()}</b><br>
+                  Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPerCapita} per 1,000 people)</small><br>
+                  Divorces: <b>-${currentData.divorces}</b> <small>(${divorcesPerCapita} per 1,000 people)</small><br>
+                  Net Family Balance: <b>${netFamilyPerCapita}</b> <small>(per 1,000 people)</small><br>
                   Marriage/Divorce ratio: <b>${marriageDivorceRatio}</b>`;
                 } else {
-                  const totalRatio = averageStats.totalDivorces > 0 ? (averageStats.totalMarriages / averageStats.totalDivorces).toFixed(2) : "∞";
-                  const avgMarriagesPerYear = Math.round(averageStats.totalMarriages / averageStats.totalYears);
-                  const avgDivorcesPerYear = Math.round(averageStats.totalDivorces / averageStats.totalYears);
-                  const yearlyRatio = avgDivorcesPerYear > 0 ? (avgMarriagesPerYear / avgDivorcesPerYear).toFixed(2) : "∞";
+                  const netFamily = averageStats.totalMarriages - averageStats.totalDivorces;
+                  const avgFamilyPerYear = Math.round(netFamily / averageStats.totalYears);
+                  const avgFamilyPerCapita = ((avgFamilyPerYear / averageStats.averagePopulation) * 1000).toFixed(1);
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
                   Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
                   Total Divorces: <b>-${averageStats.totalDivorces}</b><br>
-                  Marriage/Divorce ratio: <b>${totalRatio}</b><br>
+                  Net Family: <b>${formatNumber(netFamily)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
-                  Marriages by year: <b>${formatNumber(avgMarriagesPerYear)}</b><br>
-                  Divorces by year: <b>-${avgDivorcesPerYear}</b><br>
-                  Marriage/Divorce ratio: <b>${yearlyRatio}</b>`;
+                  Net Family by year: <b>${formatNumber(avgFamilyPerYear)}</b> <small>(${avgFamilyPerCapita} per 1,000 people)</small><br>`;
                 }
+          }
         }
       }
     }
-  }
 
-function changeTab() {
+function changeTab() {  
     const populationTab = document.querySelector('.nav-link[data-stat="population"]');
     const immigrationTab = document.querySelector('.dropdown-item[data-stat="immigration"]');
     const emigrationTab = document.querySelector('.dropdown-item[data-stat="emigration"]');
@@ -745,7 +748,7 @@ const initMap = (data) => {
             attribution: "© OpenStreetMap"
       }).addTo(map)
 
-      mapLegend = L.control({ position: 'bottomright' });
+      mapLegend = L.control({ position: 'bottomright' }); // Add map legend as default
       mapLegend.onAdd = function(map) {
           var div = L.DomUtil.create('div', 'legend');
           updateLegendContent(div);
@@ -758,9 +761,9 @@ const initMap = (data) => {
 
       map.fitBounds(geoJson.getBounds())
 
-      map.setView([65.5, 26.0], 5);
+      map.setView([65.5, 26.0], 5); // Middle of Finland
 
-      console.log("Map was added.")
+      // console.log("Map was added.")
 
       const yearSlider = document.getElementById('year-slider')
       const yearDisplay = document.getElementById('year-display')
@@ -768,14 +771,14 @@ const initMap = (data) => {
       yearSlider.value = 2024;
       yearDisplay.textContent = "2024";
 
-      yearSlider.addEventListener('input', function() {
+      yearSlider.addEventListener('input', function() { // Make year slider work
           const year = parseInt(this.value);
           yearDisplay.textContent = year;
           selectedYear = year;
           updateData();
       })
       setTimeout(() => {
-          document.querySelector('.loading-overlay').classList.add('fade-out');
+          document.querySelector('.loading-overlay').classList.add('fade-out'); // Show loading overlay when the page is loaded.
           document.body.classList.add('loaded');
           
           setTimeout(() => {
@@ -787,19 +790,10 @@ const initMap = (data) => {
       }, 500);
 
       changeTab();
-
-    //   // Clicking outside the Finnish map will close the specific statistics display
-    //   map.on('click', function(e) {
-    //       const container = document.getElementById('statistic-display-specific');
-    //       if (container.style.display === 'block') {
-    //           const clickedInside = container.contains(e.originalEvent.target);
-    //           if (!clickedInside) 
-    //   }
-    // });
   }
 
 
-function updateLegendContent(div) {
+function updateLegendContent(div) { // Update Legend content based on the tab selected
     div.innerHTML = '';
 
     if(currentTab === 'population') {
@@ -815,31 +809,31 @@ function updateLegendContent(div) {
         div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 2,000<br>';
         div.innerHTML += '<i style="background: #d73027"></i> < 1,000<br>';
     } else if(currentTab === 'immigration') {
-        div.innerHTML = '<h4>Immigration</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 25 - 50<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 25<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
+        div.innerHTML = '<h4>Immigration per 1,000 people</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 30<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 20 - 30<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 15 - 20<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 10 - 15<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 7 - 10<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 5 - 7<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 3 - 5<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 2 - 3<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 2<br>';
         div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
     } else if(currentTab === 'emigration') {
-        div.innerHTML = '<h4>Emigration</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 25 - 50<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 25<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
+        div.innerHTML = '<h4>Emigration per 1,000 people</h4>';
+        div.innerHTML += '<i style="background: #d73027"></i> > 20<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 15 - 20<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 15<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 7 - 10<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 5 - 7<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 3 - 5<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 2 - 3<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 1 - 2<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 0.5 - 1<br>';
+        div.innerHTML += '<i style="background: #006837"></i> < 0.5<br>';
     } else if(currentTab === 'migration') {
-        div.innerHTML = '<h4>Migration (% of population)</h4>';
+        div.innerHTML = '<h4>Net Migration per 1,000 people</h4>';
         div.innerHTML += '<i style="background: #006837"></i> > 5%<br>';
         div.innerHTML += '<i style="background: #1a9850"></i> 3% - 5%<br>';
         div.innerHTML += '<i style="background: #66bd63"></i> 2% - 3%<br>';
@@ -851,41 +845,41 @@ function updateLegendContent(div) {
         div.innerHTML += '<i style="background: #f46d43"></i> -2% - -1%<br>';
         div.innerHTML += '<i style="background: #d73027"></i> < -2%<br>';
     } else if(currentTab === 'marriages') {
-        div.innerHTML = '<h4>Marriages</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 2,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 2,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 250 - 500<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 250<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 25 - 50<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 25<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
+        div.innerHTML = '<h4>Marriages per 1,000 people</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 10<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 8 - 10<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 6 - 8<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 5 - 6<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 4 - 5<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 3 - 4<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 2 - 3<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 1 - 2<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 0.5 - 1<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 0.5<br>';
     } else if(currentTab === 'divorces') {
-        div.innerHTML = '<h4>Divorces</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 25 - 50<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 25<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
+        div.innerHTML = '<h4>Divorces per 1,000 people</h4>';
+        div.innerHTML += '<i style="background: #d73027"></i> > 5<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 4 - 5<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 3 - 4<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 2.5 - 3<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 2 - 2.5<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 1.5 - 2<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 1 - 1.5<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 0.5 - 1<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 0.1 - 0.5<br>';
+        div.innerHTML += '<i style="background: #006837"></i> < 0.1<br>';
     } else if(currentTab === 'family') {
-        div.innerHTML = '<h4>Net Family (births - deaths)</h4>';
-        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> -250 - -100<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < -250<br>';
+        div.innerHTML = '<h4>Marriage-Divorce Ratio per 1,000 people</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 5<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 4 - 5<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 3 - 4<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 2 - 3<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 1 - 2<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 1<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> -1 - 0<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> -2 - -1<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> -3 - -2<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < -3<br>';
     }
 }
 
@@ -902,7 +896,7 @@ function updateLegend() {
     }
 }
 
-function getAverageStats(municipalityName) {
+function getAverageStats(municipalityName) { // Get average stats on every stat
     let years = Object.keys(statData.dimension.Vuosi.category.label);
     let totalYears = years.length;
 
@@ -965,6 +959,10 @@ function getAverageStats(municipalityName) {
         totalBirths,
         totalDeaths,
         totalGrowth,
+        totalImmigration,
+        totalEmigration,
+        totalMarriages,
+        totalDivorces,
         initialPopulation,
         finalPopulation,
         averageBirths,
@@ -1048,7 +1046,6 @@ const updateData = async() => {
 
 }
 
-
 const getFeature = (feature, layer) => {
     if(!feature.properties.id) return;
 
@@ -1076,6 +1073,7 @@ const getFeature = (feature, layer) => {
   });
 }
 
+// here is where data is actually processed and as a result shows different colors based on the stat.
 const getStyle = (feature) => {
 
     if(!feature.properties.id) return {fillColor: '#cccccc', weight: 1, color: '#333', fillOpacity: 0.7};
@@ -1107,29 +1105,31 @@ const getStyle = (feature) => {
           else if (data.population > 1000) fillColor = '#f46d43';
           else fillColor = '#d73027';
     } else if (currentTab === 'immigration') {
-          if (data.immigration > 1000) fillColor = '#006837';
-          else if (data.immigration > 500) fillColor = '#1a9850';
-          else if (data.immigration > 250) fillColor = '#66bd63';
-          else if (data.immigration > 100) fillColor = '#a6d96a';
-          else if (data.immigration > 50) fillColor = '#d9ef8b';
-          else if (data.immigration > 25) fillColor = '#ffffbf';
-          else if (data.immigration > 10) fillColor = '#fee08b';
-          else if (data.immigration > 5) fillColor = '#fdae61';
-          else if (data.immigration > 1) fillColor = '#f46d43';
-          else fillColor = '#d73027';
+          let immigrationPerCapita = (data.immigration / data.population) * 1000;
+          if (immigrationPerCapita > 30) fillColor = '#006837';    
+          else if (immigrationPerCapita > 20) fillColor = '#1a9850';
+          else if (immigrationPerCapita > 15) fillColor = '#66bd63';
+          else if (immigrationPerCapita > 10) fillColor = '#a6d96a';
+          else if (immigrationPerCapita > 7) fillColor = '#d9ef8b';
+          else if (immigrationPerCapita > 5) fillColor = '#ffffbf';
+          else if (immigrationPerCapita > 3) fillColor = '#fee08b';
+          else if (immigrationPerCapita > 2) fillColor = '#fdae61';
+          else if (immigrationPerCapita > 1) fillColor = '#f46d43';
+          else fillColor = '#d73027';         
       } else if (currentTab === 'emigration') {
-          if (data.emigration > 1000) fillColor = '#d73027';         
-          else if (data.emigration > 500) fillColor = '#f46d43';
-          else if (data.emigration > 250) fillColor = '#fdae61';
-          else if (data.emigration > 100) fillColor = '#fee08b';
-          else if (data.emigration > 50) fillColor = '#ffffbf';
-          else if (data.emigration > 25) fillColor = '#d9ef8b';
-          else if (data.emigration > 10) fillColor = '#a6d96a';
-          else if (data.emigration > 5) fillColor = '#66bd63';
-          else if (data.emigration > 1) fillColor = '#1a9850';
+          let emigrationPerCapita = data.emigration / data.population * 1000;
+          if (emigrationPerCapita > 20) fillColor = '#d73027';       
+          else if (emigrationPerCapita > 15) fillColor = '#f46d43';
+          else if (emigrationPerCapita > 10) fillColor = '#fdae61';
+          else if (emigrationPerCapita > 7) fillColor = '#fee08b';
+          else if (emigrationPerCapita > 5) fillColor = '#ffffbf';
+          else if (emigrationPerCapita > 3) fillColor = '#d9ef8b';
+          else if (emigrationPerCapita > 2) fillColor = '#a6d96a';
+          else if (emigrationPerCapita > 1) fillColor = '#66bd63';
+          else if (emigrationPerCapita > 0.5) fillColor = '#1a9850';
           else fillColor = '#006837';                               
       }  else if (currentTab === 'migration') {
-          const migrationPercent = (data.migration / data.immigration) * 100;
+          const migrationPercent = (data.immigration - data.emigration) / data.population * 1000;
           if (migrationPercent > 5) fillColor = '#006837';
           else if (migrationPercent > 3) fillColor = '#1a9850';
           else if (migrationPercent > 2) fillColor = '#66bd63';
@@ -1141,39 +1141,40 @@ const getStyle = (feature) => {
           else if (migrationPercent > -2) fillColor = '#f46d43';
           else fillColor = '#d73027';
     } else if (currentTab === 'marriages') {
-          if (data.marriages > 2000) fillColor = '#006837';
-          else if (data.marriages > 1000) fillColor = '#1a9850';
-          else if (data.marriages > 500) fillColor = '#66bd63';
-          else if (data.marriages > 250) fillColor = '#a6d96a';
-          else if (data.marriages > 100) fillColor = '#d9ef8b';
-          else if (data.marriages > 50) fillColor = '#ffffbf';
-          else if (data.marriages > 25) fillColor = '#fee08b';
-          else if (data.marriages > 10) fillColor = '#fdae61';
-          else if (data.marriages > 5) fillColor = '#f46d43';
+          let marriagesPerCapita = (data.marriages / data.population) * 1000;
+          if (marriagesPerCapita > 10) fillColor = '#006837';        
+          else if (marriagesPerCapita > 8) fillColor = '#1a9850';
+          else if (marriagesPerCapita > 6) fillColor = '#66bd63';
+          else if (marriagesPerCapita > 5) fillColor = '#a6d96a';
+          else if (marriagesPerCapita > 4) fillColor = '#d9ef8b';
+          else if (marriagesPerCapita > 3) fillColor = '#ffffbf';
+          else if (marriagesPerCapita > 2) fillColor = '#fee08b';
+          else if (marriagesPerCapita > 1) fillColor = '#fdae61';
+          else if (marriagesPerCapita > 0.5) fillColor = '#f46d43';
           else fillColor = '#d73027';
     } else if (currentTab === 'divorces') {
-          if (data.divorces > 1000) fillColor = '#d73027';
-          else if (data.divorces > 500) fillColor = '#f46d43';
-          else if (data.divorces > 250) fillColor = '#fdae61';
-          else if (data.divorces > 100) fillColor = '#fee08b';
-          else if (data.divorces > 50) fillColor = '#ffffbf';
-          else if (data.divorces > 25) fillColor = '#d9ef8b';
-          else if (data.divorces > 10) fillColor = '#a6d96a';
-          else if (data.divorces > 5) fillColor = '#66bd63';
-          else if (data.divorces > 1) fillColor = '#1a9850';
-          else fillColor = '#006837';
+          let divorcesPerCapita = (data.divorces / data.population) * 1000;
+          if (divorcesPerCapita > 5) fillColor = '#d73027';            
+          else if (divorcesPerCapita > 3) fillColor = '#fdae61';
+          else if (divorcesPerCapita > 2.5) fillColor = '#fee08b';
+          else if (divorcesPerCapita > 2) fillColor = '#ffffbf';
+          else if (divorcesPerCapita > 1.5) fillColor = '#d9ef8b';
+          else if (divorcesPerCapita > 1) fillColor = '#a6d96a';
+          else if (divorcesPerCapita > 0.5) fillColor = '#66bd63';
+          else if (divorcesPerCapita > 0.1) fillColor = '#1a9850';
+          else fillColor = '#006837'; 
     } else if (currentTab === 'family') {
-          const netFamily = (data.marriages / data.divorces) * 100;
+          const netFamily = (data.marriages - data.divorces) / data.population * 1000;
           
-          if (netFamily > 1000) fillColor = '#006837';
-          else if (netFamily > 500) fillColor = '#1a9850';
-          else if (netFamily > 250) fillColor = '#66bd63';
-          else if (netFamily > 100) fillColor = '#a6d96a';
-          else if (netFamily > 50) fillColor = '#d9ef8b';
+          if (netFamily > 5) fillColor = '#006837';
+          else if (netFamily > 4) fillColor = '#1a9850';
+          else if (netFamily > 3) fillColor = '#66bd63';
+          else if (netFamily > 2) fillColor = '#a6d96a';
+          else if (netFamily > 1) fillColor = '#d9ef8b';
           else if (netFamily > 0) fillColor = '#ffffbf';
-          else if (netFamily > -50) fillColor = '#fee08b';
-          else if (netFamily > -100) fillColor = '#fdae61';
-          else if (netFamily > -250) fillColor = '#f46d43';
+          else if (netFamily > -1) fillColor = '#fee08b';
+          else if (netFamily > -2) fillColor = '#fdae61';
+          else if (netFamily > -3) fillColor = '#f46d43';
           else fillColor = '#d73027';
     }
     return {
@@ -1184,6 +1185,7 @@ const getStyle = (feature) => {
     };
 }
 
+// Clicking view details opens the chart-visualizer.
 const viewDetailsBtn = document.getElementById('view-details-btn');
 viewDetailsBtn.addEventListener('click', function() {
     const savedMunicipalityName = document.querySelector('.stat-name-specific').textContent;
