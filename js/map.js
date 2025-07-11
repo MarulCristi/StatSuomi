@@ -391,6 +391,12 @@ averageToggleBtn.addEventListener('click', function() {
     updateData();
 });
 
+yearSlider.addEventListener('input', function() {
+    selectedYear = parseInt(yearSlider.value);
+    yearDisplay.textContent = selectedYear;
+    updateData();
+});
+
 let currentTab = localStorage.getItem('currentTab') || 'population' // This saves the current tab even after reload. Used for various things.
 console.log(currentTab)
 
