@@ -82,8 +82,12 @@ const getData = async () => {
     return statData
 }
 
+
+
 let changed = false;
 let chart2Changed = false;
+
+
 
 const buildChart = async () => {
     const data = await getData();
@@ -1028,13 +1032,6 @@ const buildChart = async () => {
     });
 
 }
-
-
-
-
-
-
-
 
 
 buildChart();

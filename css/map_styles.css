@@ -247,3 +247,34 @@ body.loaded #map {
 .nav-item {
     margin-left: 15px;
 }
+
+.legend {
+  background: white;
+  padding: 10px;
+  line-height: 18px;
+  bottom: 30px;
+  right: 10px;
+  color: #333;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  max-width: 220px;
+}
+
+.legend h4 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #4CAF50;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+  border-radius: 3px;
+}

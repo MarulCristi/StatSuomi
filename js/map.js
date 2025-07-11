@@ -363,10 +363,14 @@ let geoJson;
 let selectedYear = 2024; // Default to 2024
 let fertility = 0;
 let yearInfo = null;
+let mapLegend;
+
+let currentTab = localStorage.getItem('currentTab') || 'population'
+console.log(currentTab)
 
 const getData = async() => {
 
-      // Get a lot of useful Finnish Data
+      // Get a lot of useful Finnish Data (Population, vitals, migration, family.)
       const url1 = "https://statfin.stat.fi:443/PxWeb/api/v1/en/StatFin/ssaaty/statfin_ssaaty_pxt_121w.px"
     
       const res = await fetch(url1, {
@@ -434,7 +438,7 @@ const getData = async() => {
 
       console.log(statData)
       
-
+      changeTab();
       initMap(geoData)
       updateData();
 }
@@ -467,7 +471,7 @@ function formatNumber(num) {
 
 function updateSelectedMunicipalityDisplay() {
   const information = document.getElementById('statistic-display-specific');
-
+  
   if (currentView === 'year') {
     yearInfo.innerHTML = `<b>${selectedYear}</b>`;
   } else {
@@ -490,27 +494,234 @@ function updateSelectedMunicipalityDisplay() {
           const descriptionElement = document.querySelector('.stat-description-specific');
           const averageStats = getAverageStats(municipalityName);
 
-          if(currentView === 'year') {
-            descriptionElement.innerHTML = 
-            `Population: <b>${currentData.population}</b><br>
-            Births: <b>${formatNumber(currentData.births)}</b><br>
-            Deaths: <b>-${currentData.deaths}</b><br>
-            Net Fertility: <b>${formatNumber(fertility)}</b>`;
-          } else {
-            descriptionElement.innerHTML = 
-            `<h4>Total stats:</h4>
-            Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b><br>
-            Total Births: <b>${formatNumber(averageStats.totalBirths)}</b><br>
-            Total Deaths: <b>-${averageStats.totalDeaths}</b><br>
-            <br>
-            <h4>Average stats:</h4>
-            Births by year: <b>${formatNumber(averageStats.averageBirths)}</b><br>
-            Deaths by year: <b>-${averageStats.averageDeaths}</b><br>
-            Net Fertility: <b>${formatNumber(averageStats.averageFertility)}</b><br>`
-          }
+          if (currentTab === 'population') {
+
+                const fertilityPercentage = ((fertility / currentData.population) * 100).toFixed(2);
+
+                if(currentView === 'year') {
+                  descriptionElement.innerHTML = 
+                  `Population: <b>${currentData.population}</b><br>
+                  Births: <b>${formatNumber(currentData.births)}</b><br>
+                  Deaths: <b>-${currentData.deaths}</b><br>
+                  Net Fertility: <b>${formatNumber(fertility)}</b> <small>(${fertilityPercentage}%)</small>`;
+                } else {
+                  const growthPercentage = ((averageStats.totalGrowth / averageStats.initialPopulation) * 100).toFixed(2);
+                  const fertilityPercentage = ((averageStats.averageFertility / averageStats.averagePopulation) * 100).toFixed(2);
+                  descriptionElement.innerHTML = 
+                  `<h4>Total stats:</h4>
+                  Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b> <small>(${growthPercentage}%)</small><br>
+                  Total Births: <b>${formatNumber(averageStats.totalBirths)}</b><br>
+                  Total Deaths: <b>-${averageStats.totalDeaths}</b><br>
+                  <br>
+                  <h4>Average stats:</h4>
+                  Births by year: <b>${formatNumber(averageStats.averageBirths)}</b><br>
+                  Deaths by year: <b>-${averageStats.averageDeaths}</b><br>
+                  Net Fertility: <b>${formatNumber(averageStats.averageFertility)}</b> <small>(${fertilityPercentage}%)</small><br>`
+                }
+                } else if (currentTab === 'immigration') {
+                const immigrationPercentage = ((currentData.immigration / currentData.population) * 100).toFixed(2);
+                
+                if(currentView === 'year') {
+                  descriptionElement.innerHTML = 
+                  `Population: <b>${currentData.population}</b><br>
+                  Immigration: <b>${formatNumber(currentData.immigration)}</b> <small>(${immigrationPercentage}%)</small><br>`;
+                } else {
+                  const avgImmigrationPerYear = Math.round(averageStats.totalImmigration / averageStats.totalYears);
+                  const avgImmigrationPercentage = ((avgImmigrationPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  
+                  descriptionElement.innerHTML = 
+                  `<h4>Total stats:</h4>
+                  Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
+                  <br>
+                  <h4>Average stats:</h4>
+                  Immigration by year: <b>${formatNumber(avgImmigrationPerYear)}</b> <small>(${avgImmigrationPercentage}%)</small><br>`;
+                }
+        } else if (currentTab === 'emigration') {
+                const emigrationPercentage = ((currentData.emigration / currentData.population) * 100).toFixed(2);
+                
+                if(currentView === 'year') {
+                  descriptionElement.innerHTML = 
+                  `Population: <b>${currentData.population}</b><br>
+                  Emigration: <b>${formatNumber(currentData.emigration)}</b> <small>(${emigrationPercentage}%)</small><br>`;
+                } else {
+                  const avgEmigrationPerYear = Math.round(averageStats.totalEmigration / averageStats.totalYears);
+                  const avgEmigrationPercentage = ((avgEmigrationPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  
+                  descriptionElement.innerHTML = 
+                  `<h4>Total stats:</h4>
+                  Total Emigration: <b>${formatNumber(averageStats.totalEmigration)}</b><br>
+                  <br>
+                  <h4>Average stats:</h4>
+                  Emigration by year: <b>${formatNumber(avgEmigrationPerYear)}</b> <small>(${avgEmigrationPercentage}%)</small><br>`;
+                }
+        } else if (currentTab === 'migration') {
+                const migrationPercentage = ((currentData.migration / currentData.population) * 100).toFixed(2);
+                
+                if(currentView === 'year') {
+                  descriptionElement.innerHTML = 
+                  `Population: <b>${currentData.population}</b><br>
+                  Immigration: <b>${formatNumber(currentData.immigration)}</b><br>
+                  Emigration: <b>-${currentData.emigration}</b><br>
+                  Net Migration: <b>${formatNumber(currentData.migration)}</b> <small>(${migrationPercentage}%)</small>`;
+                } else {
+                  const netMigration = averageStats.totalImmigration - averageStats.totalEmigration;
+                  const netMigrationPercentage = ((netMigration / averageStats.initialPopulation) * 100).toFixed(2);
+                  const avgMigrationPerYear = Math.round(netMigration / averageStats.totalYears);
+                  const avgMigrationPercentage = ((avgMigrationPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  
+                  descriptionElement.innerHTML = 
+                  `<h4>Total stats:</h4>
+                  Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
+                  Total Emigration: <b>-${averageStats.totalEmigration}</b><br>
+                  Net Migration: <b>${formatNumber(netMigration)}</b> <small>(${netMigrationPercentage}%)</small><br>
+                  <br>
+                  <h4>Average stats:</h4>
+                  Net Migration by year: <b>${formatNumber(avgMigrationPerYear)}</b> <small>(${avgMigrationPercentage}%)</small><br>`;
+                }
+        } else if (currentTab === 'marriages') {
+                const marriagesPercentage = ((currentData.marriages / currentData.population) * 100).toFixed(2);
+                
+                if(currentView === 'year') {
+                  descriptionElement.innerHTML = 
+                  `Population: <b>${currentData.population}</b><br>
+                  Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPercentage}%)</small><br>`;
+                } else {
+                  const avgMarriagesPerYear = Math.round(averageStats.totalMarriages / averageStats.totalYears);
+                  const avgMarriagesPercentage = ((avgMarriagesPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  
+                  descriptionElement.innerHTML = 
+                  `<h4>Total stats:</h4>
+                  Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
+                  <br>
+                  <h4>Average stats:</h4>
+                  Marriages by year: <b>${formatNumber(avgMarriagesPerYear)}</b> <small>(${avgMarriagesPercentage}%)</small><br>`;
+                }
+        } else if (currentTab === 'divorces') {
+                const divorcesPercentage = ((currentData.divorces / currentData.population) * 100).toFixed(2);
+                
+                if(currentView === 'year') {
+                  descriptionElement.innerHTML = 
+                  `Population: <b>${currentData.population}</b><br>
+                  Divorces: <b>${formatNumber(currentData.divorces)}</b> <small>(${divorcesPercentage}%)</small><br>`;
+                } else {
+                  const avgDivorcesPerYear = Math.round(averageStats.totalDivorces / averageStats.totalYears);
+                  const avgDivorcesPercentage = ((avgDivorcesPerYear / averageStats.averagePopulation) * 100).toFixed(2);
+                  
+                  descriptionElement.innerHTML = 
+                  `<h4>Total stats:</h4>
+                  Total Divorces: <b>${formatNumber(averageStats.totalDivorces)}</b><br>
+                  <br>
+                  <h4>Average stats:</h4>
+                  Divorces by year: <b>${formatNumber(avgDivorcesPerYear)}</b> <small>(${avgDivorcesPercentage}%)</small><br>`;
+                }
+        } else if (currentTab === 'family') {
+                const marriageDivorceRatio = currentData.divorces > 0 ? (currentData.marriages / currentData.divorces).toFixed(2) : "∞";
+                
+                if(currentView === 'year') {
+                  descriptionElement.innerHTML = 
+                  `Population: <b>${currentData.population}</b><br>
+                  Marriages: <b>${formatNumber(currentData.marriages)}</b><br>
+                  Divorces: <b>-${currentData.divorces}</b><br>
+                  Marriage/Divorce ratio: <b>${marriageDivorceRatio}</b>`;
+                } else {
+                  const totalRatio = averageStats.totalDivorces > 0 ? (averageStats.totalMarriages / averageStats.totalDivorces).toFixed(2) : "∞";
+                  const avgMarriagesPerYear = Math.round(averageStats.totalMarriages / averageStats.totalYears);
+                  const avgDivorcesPerYear = Math.round(averageStats.totalDivorces / averageStats.totalYears);
+                  const yearlyRatio = avgDivorcesPerYear > 0 ? (avgMarriagesPerYear / avgDivorcesPerYear).toFixed(2) : "∞";
+                  
+                  descriptionElement.innerHTML = 
+                  `<h4>Total stats:</h4>
+                  Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
+                  Total Divorces: <b>-${averageStats.totalDivorces}</b><br>
+                  Marriage/Divorce ratio: <b>${totalRatio}</b><br>
+                  <br>
+                  <h4>Average stats:</h4>
+                  Marriages by year: <b>${formatNumber(avgMarriagesPerYear)}</b><br>
+                  Divorces by year: <b>-${avgDivorcesPerYear}</b><br>
+                  Marriage/Divorce ratio: <b>${yearlyRatio}</b>`;
+                }
+        }
       }
+    }
   }
-  }
+
+function changeTab() {
+    const populationTab = document.querySelector('.nav-link[data-stat="population"]');
+    const immigrationTab = document.querySelector('.dropdown-item[data-stat="immigration"]');
+    const emigrationTab = document.querySelector('.dropdown-item[data-stat="emigration"]');
+    const migrationTab = document.querySelector('.dropdown-item[data-stat="migration"]');
+    const marriagesTab = document.querySelector('.dropdown-item[data-stat="marriages"]');
+    const divorcesTab = document.querySelector('.dropdown-item[data-stat="divorces"]');
+    const familyTab = document.querySelector('.dropdown-item[data-stat="family"]');
+
+    const universityTab = document.querySelector('.dropdown-item[data-stat="university"]');
+    const employmentTab = document.querySelector('.dropdown-item[data-stat="employment"]');
+    const trafficTab = document.querySelector('.dropdown-item[data-stat="traffic"]');
+
+    if (populationTab) {
+        populationTab.addEventListener('click', function(e) {
+            currentTab = 'population';
+            localStorage.setItem('currentTab', currentTab);
+            console.log('Population tab clicked:', populationTab);
+            updateData();
+            updateLegend();
+        });
+    }
+    
+    if (immigrationTab) {
+        immigrationTab.addEventListener('click', function(e) {
+            currentTab = 'immigration';
+            localStorage.setItem('currentTab', currentTab);
+            updateData();
+            updateLegend();
+        });
+    }
+    
+    if (emigrationTab) {
+        emigrationTab.addEventListener('click', function(e) {
+            currentTab = 'emigration';
+            localStorage.setItem('currentTab', currentTab);
+            updateData();
+            updateLegend();
+        });
+    }
+    
+    if (migrationTab) {
+        migrationTab.addEventListener('click', function(e) {
+            currentTab = 'migration';
+            localStorage.setItem('currentTab', currentTab);
+            updateData();
+            updateLegend();
+        });
+    }
+    
+    if (marriagesTab) {
+        marriagesTab.addEventListener('click', function(e) {
+            currentTab = 'marriages';
+            localStorage.setItem('currentTab', currentTab);
+            updateData();
+            updateLegend();
+        });
+    }
+    
+    if (divorcesTab) {
+        divorcesTab.addEventListener('click', function(e) {
+            currentTab = 'divorces';
+            localStorage.setItem('currentTab', currentTab);
+            updateData();
+            updateLegend();
+        });
+    }
+    
+    if (familyTab) {
+        familyTab.addEventListener('click', function(e) {
+            currentTab = 'family';
+            localStorage.setItem('currentTab', currentTab);
+            updateData();
+            updateLegend();
+        });
+    }
+}
 
 const initMap = (data) => {
   if (!map) {
@@ -533,6 +744,17 @@ const initMap = (data) => {
       let osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: "© OpenStreetMap"
       }).addTo(map)
+
+      mapLegend = L.control({ position: 'bottomright' });
+      mapLegend.onAdd = function(map) {
+          var div = L.DomUtil.create('div', 'legend');
+          updateLegendContent(div);
+          return div;
+      };
+        mapLegend.addTo(map);
+      };
+
+      mapLegend.addTo(map);
 
       map.fitBounds(geoJson.getBounds())
 
@@ -564,6 +786,8 @@ const initMap = (data) => {
           }, 1000);
       }, 500);
 
+      changeTab();
+
     //   // Clicking outside the Finnish map will close the specific statistics display
     //   map.on('click', function(e) {
     //       const container = document.getElementById('statistic-display-specific');
@@ -573,6 +797,109 @@ const initMap = (data) => {
     //   }
     // });
   }
+
+
+function updateLegendContent(div) {
+    div.innerHTML = '';
+
+    if(currentTab === 'population') {
+        div.innerHTML = '<h4>Population</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 500,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 200,000 - 500,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 100,000 - 200,000<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 50,000 - 100,000<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 20,000 - 50,000<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 10,000 - 20,000<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 5,000 - 10,000<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 2,000 - 5,000<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1,000 - 2,000<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 1,000<br>';
+    } else if(currentTab === 'immigration') {
+        div.innerHTML = '<h4>Immigration</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 25 - 50<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 25<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
+    } else if(currentTab === 'emigration') {
+        div.innerHTML = '<h4>Emigration</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 25 - 50<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 25<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
+    } else if(currentTab === 'migration') {
+        div.innerHTML = '<h4>Migration (% of population)</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 5%<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 3% - 5%<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 2% - 3%<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 1% - 2%<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 0.5% - 1%<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 0% - 0.5%<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> -0.5% - 0%<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> -1% - -0.5%<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> -2% - -1%<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < -2%<br>';
+    } else if(currentTab === 'marriages') {
+        div.innerHTML = '<h4>Marriages</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 2,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 1,000 - 2,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 250 - 500<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 100 - 250<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 25 - 50<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 10 - 25<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 5<br>';
+    } else if(currentTab === 'divorces') {
+        div.innerHTML = '<h4>Divorces</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 25 - 50<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> 10 - 25<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> 5 - 10<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> 1 - 5<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < 1<br>';
+    } else if(currentTab === 'family') {
+        div.innerHTML = '<h4>Net Family (births - deaths)</h4>';
+        div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
+        div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
+        div.innerHTML += '<i style="background: #66bd63"></i> 250 - 500<br>';
+        div.innerHTML += '<i style="background: #a6d96a"></i> 100 - 250<br>';
+        div.innerHTML += '<i style="background: #d9ef8b"></i> 50 - 100<br>';
+        div.innerHTML += '<i style="background: #ffffbf"></i> 0 - 50<br>';
+        div.innerHTML += '<i style="background: #fee08b"></i> -50 - 0<br>';
+        div.innerHTML += '<i style="background: #fdae61"></i> -100 - -50<br>';
+        div.innerHTML += '<i style="background: #f46d43"></i> -250 - -100<br>';
+        div.innerHTML += '<i style="background: #d73027"></i> < -250<br>';
+    }
+}
+
+function updateLegend() {
+    if (map && mapLegend) {
+        map.removeControl(mapLegend);
+        mapLegend = L.control({ position: 'bottomright' });
+        mapLegend.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'legend');
+            updateLegendContent(div);
+            return div;
+        };
+        mapLegend.addTo(map);
+    }
 }
 
 function getAverageStats(municipalityName) {
@@ -638,6 +965,8 @@ function getAverageStats(municipalityName) {
         totalBirths,
         totalDeaths,
         totalGrowth,
+        initialPopulation,
+        finalPopulation,
         averageBirths,
         averageDeaths,
         averagePopulation,
@@ -706,7 +1035,7 @@ const updateData = async() => {
                 }
             });
 
-            fertility = updatedData.births - updatedData.deaths
+            // fertility = updatedData.births - updatedData.deaths
             
             if (updatedData) {
               updateSelectedMunicipalityDisplay()
@@ -766,17 +1095,87 @@ const getStyle = (feature) => {
     }
 
     let fillColor = '';
-    if (data.population > 500000) fillColor = '#006837';
-    else if (data.population > 200000) fillColor = '#1a9850';
-    else if (data.population > 100000) fillColor = '#66bd63';
-    else if (data.population > 50000) fillColor = '#a6d96a';
-    else if (data.population > 20000) fillColor = '#d9ef8b';
-    else if (data.population > 10000) fillColor = '#ffffbf';
-    else if (data.population > 5000) fillColor = '#fee08b';
-    else if (data.population > 2000) fillColor = '#fdae61';
-    else if (data.population > 1000) fillColor = '#f46d43';
-    else fillColor = '#d73027';
-
+    if(currentTab === 'population') {
+          if (data.population > 500000) fillColor = '#006837';
+          else if (data.population > 200000) fillColor = '#1a9850';
+          else if (data.population > 100000) fillColor = '#66bd63';
+          else if (data.population > 50000) fillColor = '#a6d96a';
+          else if (data.population > 20000) fillColor = '#d9ef8b';
+          else if (data.population > 10000) fillColor = '#ffffbf';
+          else if (data.population > 5000) fillColor = '#fee08b';
+          else if (data.population > 2000) fillColor = '#fdae61';
+          else if (data.population > 1000) fillColor = '#f46d43';
+          else fillColor = '#d73027';
+    } else if (currentTab === 'immigration') {
+          if (data.immigration > 1000) fillColor = '#006837';
+          else if (data.immigration > 500) fillColor = '#1a9850';
+          else if (data.immigration > 250) fillColor = '#66bd63';
+          else if (data.immigration > 100) fillColor = '#a6d96a';
+          else if (data.immigration > 50) fillColor = '#d9ef8b';
+          else if (data.immigration > 25) fillColor = '#ffffbf';
+          else if (data.immigration > 10) fillColor = '#fee08b';
+          else if (data.immigration > 5) fillColor = '#fdae61';
+          else if (data.immigration > 1) fillColor = '#f46d43';
+          else fillColor = '#d73027';
+      } else if (currentTab === 'emigration') {
+          if (data.emigration > 1000) fillColor = '#d73027';         
+          else if (data.emigration > 500) fillColor = '#f46d43';
+          else if (data.emigration > 250) fillColor = '#fdae61';
+          else if (data.emigration > 100) fillColor = '#fee08b';
+          else if (data.emigration > 50) fillColor = '#ffffbf';
+          else if (data.emigration > 25) fillColor = '#d9ef8b';
+          else if (data.emigration > 10) fillColor = '#a6d96a';
+          else if (data.emigration > 5) fillColor = '#66bd63';
+          else if (data.emigration > 1) fillColor = '#1a9850';
+          else fillColor = '#006837';                               
+      }  else if (currentTab === 'migration') {
+          const migrationPercent = (data.migration / data.immigration) * 100;
+          if (migrationPercent > 5) fillColor = '#006837';
+          else if (migrationPercent > 3) fillColor = '#1a9850';
+          else if (migrationPercent > 2) fillColor = '#66bd63';
+          else if (migrationPercent > 1) fillColor = '#a6d96a';
+          else if (migrationPercent > 0.5) fillColor = '#d9ef8b';
+          else if (migrationPercent > 0) fillColor = '#ffffbf';
+          else if (migrationPercent > -0.5) fillColor = '#fee08b';
+          else if (migrationPercent > -1) fillColor = '#fdae61';
+          else if (migrationPercent > -2) fillColor = '#f46d43';
+          else fillColor = '#d73027';
+    } else if (currentTab === 'marriages') {
+          if (data.marriages > 2000) fillColor = '#006837';
+          else if (data.marriages > 1000) fillColor = '#1a9850';
+          else if (data.marriages > 500) fillColor = '#66bd63';
+          else if (data.marriages > 250) fillColor = '#a6d96a';
+          else if (data.marriages > 100) fillColor = '#d9ef8b';
+          else if (data.marriages > 50) fillColor = '#ffffbf';
+          else if (data.marriages > 25) fillColor = '#fee08b';
+          else if (data.marriages > 10) fillColor = '#fdae61';
+          else if (data.marriages > 5) fillColor = '#f46d43';
+          else fillColor = '#d73027';
+    } else if (currentTab === 'divorces') {
+          if (data.divorces > 1000) fillColor = '#d73027';
+          else if (data.divorces > 500) fillColor = '#f46d43';
+          else if (data.divorces > 250) fillColor = '#fdae61';
+          else if (data.divorces > 100) fillColor = '#fee08b';
+          else if (data.divorces > 50) fillColor = '#ffffbf';
+          else if (data.divorces > 25) fillColor = '#d9ef8b';
+          else if (data.divorces > 10) fillColor = '#a6d96a';
+          else if (data.divorces > 5) fillColor = '#66bd63';
+          else if (data.divorces > 1) fillColor = '#1a9850';
+          else fillColor = '#006837';
+    } else if (currentTab === 'family') {
+          const netFamily = (data.marriages / data.divorces) * 100;
+          
+          if (netFamily > 1000) fillColor = '#006837';
+          else if (netFamily > 500) fillColor = '#1a9850';
+          else if (netFamily > 250) fillColor = '#66bd63';
+          else if (netFamily > 100) fillColor = '#a6d96a';
+          else if (netFamily > 50) fillColor = '#d9ef8b';
+          else if (netFamily > 0) fillColor = '#ffffbf';
+          else if (netFamily > -50) fillColor = '#fee08b';
+          else if (netFamily > -100) fillColor = '#fdae61';
+          else if (netFamily > -250) fillColor = '#f46d43';
+          else fillColor = '#d73027';
+    }
     return {
         fillColor: fillColor,
         weight: 1,
