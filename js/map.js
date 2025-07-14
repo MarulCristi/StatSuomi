@@ -356,11 +356,370 @@ const jsonQuery =
   }
 }
 
+const jsonQuery2 = 
+{
+  "query": [
+    {
+      "code": "Alue",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "SSS",
+          "KU020",
+          "KU005",
+          "KU009",
+          "KU010",
+          "KU016",
+          "KU018",
+          "KU019",
+          "KU035",
+          "KU043",
+          "KU046",
+          "KU047",
+          "KU049",
+          "KU050",
+          "KU051",
+          "KU052",
+          "KU060",
+          "KU061",
+          "KU062",
+          "KU065",
+          "KU069",
+          "KU071",
+          "KU072",
+          "KU074",
+          "KU075",
+          "KU076",
+          "KU077",
+          "KU078",
+          "KU079",
+          "KU081",
+          "KU082",
+          "KU086",
+          "KU111",
+          "KU090",
+          "KU091",
+          "KU097",
+          "KU098",
+          "KU102",
+          "KU103",
+          "KU105",
+          "KU106",
+          "KU108",
+          "KU109",
+          "KU139",
+          "KU140",
+          "KU142",
+          "KU143",
+          "KU145",
+          "KU146",
+          "KU153",
+          "KU148",
+          "KU149",
+          "KU151",
+          "KU152",
+          "KU165",
+          "KU167",
+          "KU169",
+          "KU170",
+          "KU171",
+          "KU172",
+          "KU176",
+          "KU177",
+          "KU178",
+          "KU179",
+          "KU181",
+          "KU182",
+          "KU186",
+          "KU202",
+          "KU204",
+          "KU205",
+          "KU208",
+          "KU211",
+          "KU213",
+          "KU214",
+          "KU216",
+          "KU217",
+          "KU218",
+          "KU224",
+          "KU226",
+          "KU230",
+          "KU231",
+          "KU232",
+          "KU233",
+          "KU235",
+          "KU236",
+          "KU239",
+          "KU240",
+          "KU320",
+          "KU241",
+          "KU322",
+          "KU244",
+          "KU245",
+          "KU249",
+          "KU250",
+          "KU256",
+          "KU257",
+          "KU260",
+          "KU261",
+          "KU263",
+          "KU265",
+          "KU271",
+          "KU272",
+          "KU273",
+          "KU275",
+          "KU276",
+          "KU280",
+          "KU284",
+          "KU285",
+          "KU286",
+          "KU287",
+          "KU288",
+          "KU290",
+          "KU291",
+          "KU295",
+          "KU297",
+          "KU300",
+          "KU301",
+          "KU304",
+          "KU305",
+          "KU312",
+          "KU316",
+          "KU317",
+          "KU318",
+          "KU398",
+          "KU399",
+          "KU400",
+          "KU407",
+          "KU402",
+          "KU403",
+          "KU405",
+          "KU408",
+          "KU410",
+          "KU416",
+          "KU417",
+          "KU418",
+          "KU420",
+          "KU421",
+          "KU422",
+          "KU423",
+          "KU425",
+          "KU426",
+          "KU444",
+          "KU430",
+          "KU433",
+          "KU434",
+          "KU435",
+          "KU436",
+          "KU438",
+          "KU440",
+          "KU441",
+          "KU475",
+          "KU478",
+          "KU480",
+          "KU481",
+          "KU483",
+          "KU484",
+          "KU489",
+          "KU491",
+          "KU494",
+          "KU495",
+          "KU498",
+          "KU499",
+          "KU500",
+          "KU503",
+          "KU504",
+          "KU505",
+          "KU508",
+          "KU507",
+          "KU529",
+          "KU531",
+          "KU535",
+          "KU536",
+          "KU538",
+          "KU541",
+          "KU543",
+          "KU545",
+          "KU560",
+          "KU561",
+          "KU562",
+          "KU563",
+          "KU564",
+          "KU309",
+          "KU576",
+          "KU577",
+          "KU578",
+          "KU445",
+          "KU580",
+          "KU581",
+          "KU599",
+          "KU583",
+          "KU854",
+          "KU584",
+          "KU588",
+          "KU592",
+          "KU593",
+          "KU595",
+          "KU598",
+          "KU601",
+          "KU604",
+          "KU607",
+          "KU608",
+          "KU609",
+          "KU611",
+          "KU638",
+          "KU614",
+          "KU615",
+          "KU616",
+          "KU619",
+          "KU620",
+          "KU623",
+          "KU624",
+          "KU625",
+          "KU626",
+          "KU630",
+          "KU631",
+          "KU635",
+          "KU636",
+          "KU678",
+          "KU710",
+          "KU680",
+          "KU681",
+          "KU683",
+          "KU684",
+          "KU686",
+          "KU687",
+          "KU689",
+          "KU691",
+          "KU694",
+          "KU697",
+          "KU698",
+          "KU700",
+          "KU702",
+          "KU704",
+          "KU707",
+          "KU729",
+          "KU732",
+          "KU734",
+          "KU736",
+          "KU790",
+          "KU738",
+          "KU739",
+          "KU740",
+          "KU742",
+          "KU743",
+          "KU746",
+          "KU747",
+          "KU748",
+          "KU791",
+          "KU749",
+          "KU751",
+          "KU753",
+          "KU755",
+          "KU758",
+          "KU759",
+          "KU761",
+          "KU762",
+          "KU765",
+          "KU766",
+          "KU768",
+          "KU771",
+          "KU777",
+          "KU778",
+          "KU781",
+          "KU783",
+          "KU831",
+          "KU832",
+          "KU833",
+          "KU834",
+          "KU837",
+          "KU844",
+          "KU845",
+          "KU846",
+          "KU848",
+          "KU849",
+          "KU850",
+          "KU851",
+          "KU853",
+          "KU857",
+          "KU858",
+          "KU859",
+          "KU886",
+          "KU887",
+          "KU889",
+          "KU890",
+          "KU892",
+          "KU893",
+          "KU895",
+          "KU785",
+          "KU905",
+          "KU908",
+          "KU092",
+          "KU915",
+          "KU918",
+          "KU921",
+          "KU922",
+          "KU924",
+          "KU925",
+          "KU927",
+          "KU931",
+          "KU934",
+          "KU935",
+          "KU936",
+          "KU941",
+          "KU946",
+          "KU976",
+          "KU977",
+          "KU980",
+          "KU981",
+          "KU989",
+          "KU992"
+        ]
+      }
+    },
+    {
+      "code": "Toimiala", // All Industries
+      "selection": {
+        "filter": "item",
+        "values": [
+          "SSS"
+        ]
+      }
+    },
+    {
+      "code": "Sukupuoli", // Both female and men
+      "selection": {
+        "filter": "item",
+        "values": [
+          "SSS"
+        ]
+      }
+    },
+    {
+      "code": "Vuosi",
+      "selection": {
+        "filter": "item",
+        "values": [
+           "2007", "2008", "2009", "2010", "2011",
+           "2012", "2013", "2014", "2015", "2016", "2017",
+           "2018", "2019", "2020", "2021", "2022", "2023"
+          ]
+      }
+    },
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
+
+
 selectedData = {}
 let statData = null;
+let employmentData = null;
 let map; // global so it can be updated in real time
-let geoJson; 
-let selectedYear = 2024; // Default to 2024
+let geoJson;
+let lastYear = new Date().getFullYear() - 1;
+let selectedYear = lastYear; // Default to 2024
 let fertility = 0;
 let yearInfo = null;
 let mapLegend;
@@ -380,7 +739,11 @@ averageToggleBtn.addEventListener('click', function() {
         averageToggleBtn.textContent = "Show By Year";
         averageToggleBtn.classList.add('active');
         sliderContainer.classList.add('disabled');
-        yearDisplay.textContent = "1990-2024";
+        if(currentTab !== "employment") {
+          yearDisplay.textContent = `1990-${lastYear}`;
+        } else {
+          yearDisplay.textContent = `2007-${lastYear-1}`;
+        }
     } else {
         averageToggleBtn.textContent = "Show Averages";
         averageToggleBtn.classList.remove('active');
@@ -400,7 +763,7 @@ yearSlider.addEventListener('input', function() {
 let currentTab = localStorage.getItem('currentTab') || 'population' // This saves the current tab even after reload. Used for various things.
 console.log(currentTab)
 
-const closeStatsBtn = document.getElementById('close-stats-btn'); // Close button for specific stats of Cities on the map
+const closeStatsBtn = document.getElementById('close-stats-btn'); // Close button for specific stats of Cities on the map. Useful for phone
 closeStatsBtn.addEventListener('click', function() {
     document.getElementById('statistic-display-specific').style.display = 'none';
 });
@@ -422,30 +785,61 @@ const getData = async() => {
       statData = await res.json()
       // console.log(statData)
 
-      
-
-      
+      // Get employment stats
+      const url2 = "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tyokay/statfin_tyokay_pxt_115i.px"
+      const res2 = await fetch(url2, {
+              method: "POST",
+              headers: {"content-type": "application/json"},
+              body: JSON.stringify(jsonQuery2)
+      })
+      employmentData = await res2.json()
+      // console.log(employmentData)
 
       // Get Finnish Municipalities Bounds
-      const url2 = "https://geo.stat.fi/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=tilastointialueet:kunta4500k&outputFormat=json&srsName=EPSG:4326"
-      const res2 = await fetch(url2)
-      const geoData = await res2.json()
+      const url3 = "https://geo.stat.fi/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=tilastointialueet:kunta4500k&outputFormat=json&srsName=EPSG:4326"
+      const res3 = await fetch(url3)
+      const geoData = await res3.json()
       // console.log(geoData)
 
       const municipalities = statData.dimension.Alue.category.label
+      const municipalities2 = employmentData.dimension.Alue.category.label
       const allValues = statData.value
+      const allValues2 = employmentData.value
       
       
       const metricsPerMunicipality = 8;
       const municipalityKeys = Object.keys(municipalities);
 
-      const allMunicipalities = [];
-      municipalityKeys.forEach(key => { // Get all municipalities
-          allMunicipalities.push({
-              code: key,
-              name: municipalities[key]
-          });
-      });
+      const municipalityKeysEmployment = Object.keys(employmentData.dimension.Alue.category.label)
+
+      // const allMunicipalities = [];
+      // municipalityKeys.forEach(key => { // Get all municipalities
+      //     allMunicipalities.push({
+      //         code: key,
+      //         name: municipalities[key]
+      //     });
+      // });
+
+      // const allMunicipalitiesEmployment = [];
+      // municipalityKeysEmployment.forEach(key => { // Get all municipalities for employment
+      //     allMunicipalitiesEmployment.push({
+      //         code: key,
+      //         name: municipalities[key]
+      //     });
+      // });
+
+      // I DID THIS TO SEE IF THEY'RE THE SAME. There's a mismatch :(
+
+      
+      employmentValues = {}
+      const initialYearIndex = employmentData.dimension.Vuosi.category.index[selectedYear];
+      const initialMunicipalityCount = municipalityKeysEmployment.length;
+      const initialYearOffset = initialYearIndex * initialMunicipalityCount;
+
+      for (let i = 0; i < municipalityKeysEmployment.length; i++) {
+          const employmentCode = municipalityKeysEmployment[i];
+          employmentValues[employmentCode] = allValues2[initialYearOffset + i];
+      }
 
 
       for (let i = 0; i < municipalityKeys.length; i++) { // Save every municipality with their stats.
@@ -462,11 +856,13 @@ const getData = async() => {
               migration: allValues[baseIndex + 4],
               marriages: allValues[baseIndex + 5],
               divorces: allValues[baseIndex + 6],
-              population: allValues[baseIndex + 7]
+              population: allValues[baseIndex + 7],
+              employment: employmentValues[key], // Only matched by the key (mun. code, not by iteration)
           }
+          // console.log(key, key2)
       }
 
-      console.log(statData)
+      console.log(selectedData)
       
       changeTab(); // Make sure correct tab shows.
       initMap(geoData) // Create map with the data.
@@ -506,7 +902,11 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
   if (currentView === 'year') {
     yearInfo.innerHTML = `<b>${selectedYear}</b>`;
   } else {
-    yearInfo.innerHTML = `<b>1990-2024</b>`;
+    if(currentTab !== "employment") {
+      yearInfo.innerHTML = `<b>1990-${lastYear}</b>`;
+    } else {
+      yearInfo.innerHTML = `<b>2007-${lastYear-1}</b>`;
+    }
   }
 
   if (information.style.display === 'block') {
@@ -594,7 +994,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                 
                 if(currentView === 'year') {
                   descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
+                  `Total population: <b>${formatNumber(currentData.population)}</b><br>
                   Immigration: <b>${formatNumber(currentData.immigration)}</b><br>
                   Emigration: <b>-${currentData.emigration}</b><br>
                   Net Migration: <b>${formatNumber(currentData.migration)}</b> <small>(${migrationPerCapita} per 1,000 people)</small>`;
@@ -605,11 +1005,13 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
+                  Total population: <b>${formatNumber(currentData.population)}</b><br>
                   Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
                   Total Emigration: <b>-${averageStats.totalEmigration}</b><br>
                   Net Migration: <b>${formatNumber(netMigration)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
+                  Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b> <small>(${growthPercentage}% change)</small><br>
                   Net Migration by year: <b>${formatNumber(avgMigrationPerYear)}</b> <small>(${avgMigrationPerCapita} per 1,000 people)</small><br>`;
                 }
         } else if (currentTab === 'marriages') {
@@ -625,12 +1027,13 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                       
                       descriptionElement.innerHTML = 
                       `<h4>Total stats:</h4>
+                      Total population: <b>${formatNumber(currentData.population)}</b><br>
                       Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
                       <br>
                       <h4>Average stats:</h4>
                       Marriages by year: <b>${formatNumber(avgMarriagesPerYear)}</b> <small>(${avgMarriagesPerCapita} per 1,000 people)</small><br>`;
                   }
-                } else if (currentTab === 'divorces') {
+        } else if (currentTab === 'divorces') {
                 if(currentView === 'year') {
                     const divorcesPerCapita = ((currentData.divorces / currentData.population) * 1000).toFixed(1);
                     
@@ -643,6 +1046,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                     
                     descriptionElement.innerHTML = 
                     `<h4>Total stats:</h4>
+                    Total population: <b>${formatNumber(currentData.population)}</b><br>
                     Total Divorces: <b>${formatNumber(averageStats.totalDivorces)}</b><br>
                     <br>
                     <h4>Average stats:</h4>
@@ -669,12 +1073,34 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
+                  Total population: <b>${formatNumber(currentData.population)}</b><br>
                   Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
                   Total Divorces: <b>-${averageStats.totalDivorces}</b><br>
                   Net Family: <b>${formatNumber(netFamily)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
                   Net Family by year: <b>${formatNumber(avgFamilyPerYear)}</b> <small>(${avgFamilyPerCapita} per 1,000 people)</small><br>`;
+                }
+        } else if (currentTab === 'employment') {
+                if(currentView === 'year') {
+                    const employmentPercentage = ((currentData.employment / currentData.population) * 100).toFixed(1);
+                    descriptionElement.innerHTML = 
+                    `Population: <b>${currentData.population} people</b><br>
+                    Total Employment: <b>${currentData.employment} people</b><br>
+                    % of Employed: <b>${employmentPercentage}%</b>`;
+                } else {
+                    console.log("It does work it just doens't show.")
+                    const avgEmploymentPerYear = Math.round(averageStats.totalEmployments / averageStats.totalYears2);
+                    const avgPopulation = averageStats.averagePopulation;
+                    const avgEmploymentPercentage = ((avgEmploymentPerYear / avgPopulation) * 100).toFixed(1);
+                    
+                    descriptionElement.innerHTML = 
+                    `<h4>Total stats:</h4>
+                    Total population: <b>${currentData.population} people</b><br>
+                    Total employed: <b>${averageStats.totalEmployments} people</b><br>
+                    <h4>Average stats:</h4>
+                    Employments by year: <b>${avgEmploymentPerYear} people</b><br>
+                    Population employed: <b>${formatNumber(avgEmploymentPercentage)}%</b>`
                 }
           }
         }
@@ -702,6 +1128,9 @@ function changeTab() {
 
     if (populationTab) {
         populationTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+
             currentTab = 'population';
             localStorage.setItem('currentTab', currentTab);
             console.log('Population tab clicked:', populationTab);
@@ -714,6 +1143,9 @@ function changeTab() {
 
     if (birthTab) {
         birthTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+
             currentTab = 'births';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -725,6 +1157,9 @@ function changeTab() {
 
     if (deathTab) {
         deathTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'deaths';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -736,6 +1171,9 @@ function changeTab() {
 
     if (vitalTab) {
         vitalTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'vitals';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -747,6 +1185,9 @@ function changeTab() {
     
     if (immigrationTab) {
         immigrationTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'immigration';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -758,6 +1199,9 @@ function changeTab() {
     
     if (emigrationTab) {
         emigrationTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'emigration';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -769,6 +1213,9 @@ function changeTab() {
     
     if (migrationTab) {
         migrationTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'migration';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -780,6 +1227,9 @@ function changeTab() {
     
     if (marriagesTab) {
         marriagesTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'marriages';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -791,6 +1241,9 @@ function changeTab() {
     
     if (divorcesTab) {
         divorcesTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'divorces';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -802,10 +1255,33 @@ function changeTab() {
     
     if (familyTab) {
         familyTab.addEventListener('click', function(e) {
+            yearSlider.min = 1990;
+            yearSlider.max = 2024;
+            
             currentTab = 'family';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
+            updateData();
+            updateLegend();
+        });
+    }
+
+    if (employmentTab) {
+        employmentTab.addEventListener('click', function(e) {
+            currentTab = 'employment';
+            localStorage.setItem('currentTab', currentTab);
+            statName.textContent = currentTab;
+            statDescription.textContent = `Employment rates across Finnish municipalities (2007-2023)`;
+            if (selectedYear < 2007 || selectedYear > lastYear) {
+                selectedYear = lastYear;
+                yearDisplay.textContent = selectedYear;
+                yearSlider.value = selectedYear;
+            }
+
+            yearSlider.min = 2007;
+            yearSlider.max = 2023;
+
             updateData();
             updateLegend();
         });
@@ -873,7 +1349,7 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
     div.innerHTML = '';
 
     if (isAverageMode && currentTab === 'population') {
-        div.innerHTML = '<h4>Population Growth (1990-2024)</h4>';
+        div.innerHTML = `<h4>Population Growth (1990-${lastYear})</h4>`;
         div.innerHTML += '<i style="background: #006837"></i> > 50%<br>';
         div.innerHTML += '<i style="background: #1a9850"></i> 30% - 50%<br>';
         div.innerHTML += '<i style="background: #66bd63"></i> 20% - 30%<br>';
@@ -1005,6 +1481,18 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
           div.innerHTML += '<i style="background: #fdae61"></i> -50 - -20<br>';
           div.innerHTML += '<i style="background: #f46d43"></i> -100 - -50<br>';
           div.innerHTML += '<i style="background: #d73027"></i> < -100<br>';
+      } else if (currentTab === 'employment') {
+          div.innerHTML = '<h4>Employment Rate (%)</h4>';
+          div.innerHTML += '<i style="background: #006837"></i> > 80%<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 75% - 80%<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 70% - 75%<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 65% - 70%<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 60% - 65%<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 55% - 60%<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> 50% - 55%<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> 45% - 50%<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> 40% - 45%<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < 40%<br>';
       }
   }
 }
@@ -1023,8 +1511,13 @@ function updateLegend() {
 }
 
 function getAverageStats(municipalityName) { // Get average stats on every stat
-    let years = Object.keys(statData.dimension.Vuosi.category.label);
-    let totalYears = years.length;
+    let years1 = Object.keys(statData.dimension.Vuosi.category.label);
+    let totalYears = years1.length;
+
+    let years2 = Object.keys(employmentData.dimension.Vuosi.category.label);
+    let totalYears2 = years2.length;
+
+    let totalEmployments = 0;
 
     let totalBirths = 0;
     let totalDeaths = 0;
@@ -1037,8 +1530,10 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
     let finalPopulation = 0;
 
     for (let i = 0; i < totalYears; i++) {
-      const year = years[i];
+      const year = years1[i];
       const yearIndex = statData.dimension.Vuosi.category.index[year];
+
+
       
       const municipalities = statData.dimension.Alue.category.label;
       const allValues = statData.value;
@@ -1047,7 +1542,7 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
       const municipalityCount = Object.keys(municipalities).length;
       const yearOffset = yearIndex * municipalityCount * metricsPerMunicipality; // This makes sure we access the right year.
 
-        for (let j = 0; j < municipalityKeys.length; j++) {
+      for (let j = 0; j < municipalityKeys.length; j++) { // for vital, family, migration.
             let key = municipalityKeys[j];
             if (municipalities[key] === municipalityName) {
                 const baseIndex = yearOffset + (j * metricsPerMunicipality);
@@ -1065,10 +1560,30 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
                 }
                 
 
-                if (i === years.length - 1) {
+                if (i === years1.length - 1) {
                     finalPopulation = allValues[baseIndex + 7];
                 }
                 
+                break;
+            }
+        }
+    }
+
+  for (let i = 0; i < totalYears2; i++) { // for employments
+        const year = years2[i];
+        const yearIndex = employmentData.dimension.Vuosi.category.index[year];
+
+        const municipalities2 = employmentData.dimension.Alue.category.label;
+        const allValues2 = employmentData.value;
+        const municipalityKeys2 = Object.keys(municipalities2);
+        const municipalityCount2 = municipalityKeys2.length;
+        const yearOffset = yearIndex * municipalityCount2;
+
+        for (let j = 0; j < municipalityKeys2.length; j++) {
+            let key = municipalityKeys2[j];
+            if (municipalities2[key] === municipalityName) {
+                const baseIndex = yearOffset + j;
+                totalEmployments += allValues2[baseIndex];
                 break;
             }
         }
@@ -1082,6 +1597,7 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
     
     return {
         totalYears,
+        totalYears2,
         totalBirths,
         totalDeaths,
         totalGrowth,
@@ -1089,6 +1605,8 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
         totalEmigration,
         totalMarriages,
         totalDivorces,
+        totalPopulation,
+        totalEmployments,
         initialPopulation,
         finalPopulation,
         averageBirths,
@@ -1103,6 +1621,7 @@ const updateData = async() => {
 
     // Set specific year. Before I was creating another API request. I quickly realized that was a bad idea ;)
     const yearIndex = statData.dimension.Vuosi.category.index[selectedYear];
+    const yearIndex2 = employmentData.dimension.Vuosi.category.index[selectedYear];
 
     const statName = document.querySelector('.stat-name');
     const statDescription = document.querySelector('.stat-description')
@@ -1110,10 +1629,14 @@ const updateData = async() => {
     if (isAverageMode) {
         if (currentTab === 'population') {
             statName.textContent = 'Population Growth';
-            statDescription.textContent = 'Population growth across Finnish municipalities (1990-2024)';
+            statDescription.textContent = `Population growth across Finnish municipalities (1990-${lastYear})`;
         } else {
             statName.textContent = `Average ${currentTab}`;
-            statDescription.textContent = `Average annual ${currentTab} across Finnish municipalities (1990-2024)`;
+            if (currentTab !== "employment") {
+              statDescription.textContent = `Average annual ${currentTab} across Finnish municipalities (1990-${lastYear})`;
+            } else {
+              statDescription.textContent = `Average annual ${currentTab} across Finnish municipalities (2007-${lastYear-1})`;
+            }
         }
       } else {
         statName.textContent = currentTab;
@@ -1124,7 +1647,11 @@ const updateData = async() => {
     if (currentView === 'year') {
       yearInfo.innerHTML = `<b>${selectedYear}</b>`;
     } else {
-      yearInfo.innerHTML = `<b>1990-2024</b>`;
+      if(currentTab !== "employment") {
+        yearInfo.innerHTML = `<b>1990-${lastYear}</b>`;
+      } else {
+        yearInfo.innerHTML = `<b>2007-${lastYear-1}</b>`;
+      }
     }
 
     if (yearIndex === undefined) {
@@ -1132,21 +1659,33 @@ const updateData = async() => {
         return;
     }
       
-      
-    const municipalities = statData.dimension.Alue.category.label;
-    const allValues = statData.value;
-    const municipalityKeys = Object.keys(municipalities);
-      
     // Clear previous data
     selectedData = {};
 
-    const metricsPerMunicipality = 8;
+    const municipalities = statData.dimension.Alue.category.label;
+    const allValues = statData.value;
+    const municipalityKeys = Object.keys(municipalities);
     const municipalityCount = Object.keys(municipalities).length;
+    const metricsPerMunicipality = 8;
     const yearOffset = yearIndex * municipalityCount * metricsPerMunicipality; // This makes sure we access the right year.
+
+
+    const municipalities2 = employmentData.dimension.Alue.category.label;
+    const allValues2 = employmentData.value;
+    const municipalityKeys2 = Object.keys(municipalities2);
+    const municipalityCount2 = municipalityKeys2.length;
+    const yearOffset2 = yearIndex2 * municipalityCount2;
+
+    employmentValues = {}
+    for (let i = 0; i < municipalityKeys2.length; i++) {
+          const employmentCode = municipalityKeys2[i];
+          employmentValues[employmentCode] = allValues2[yearOffset2 + i];
+    }
 
     for (let i = 0; i < municipalityKeys.length; i++) {
         let key = municipalityKeys[i];
-        const baseIndex = yearOffset + (i * metricsPerMunicipality);
+
+        const baseIndex = yearOffset + (i * metricsPerMunicipality); // For name-population
         
         selectedData[key] = {
             name: municipalities[key],
@@ -1158,9 +1697,13 @@ const updateData = async() => {
             migration: allValues[baseIndex + 4],
             marriages: allValues[baseIndex + 5],
             divorces: allValues[baseIndex + 6],
-            population: allValues[baseIndex + 7]
+            population: allValues[baseIndex + 7],
+            employment: employmentValues[key]
         }
     }
+
+
+    
 
     if (geoJson) {
         geoJson.setStyle(getStyle);
@@ -1206,7 +1749,11 @@ const getFeature = (feature, layer) => {
           if (currentView === 'year') {
             yearInfo.innerHTML = `<b>${selectedYear}</b>`;
           } else {
-            yearInfo.innerHTML = `<b>1990-2024</b>`;
+            if(currentTab !== "employment") {
+              yearInfo.innerHTML = `<b>1990-${lastYear}</b>`;
+            } else {
+              yearInfo.innerHTML = `<b>2007-${lastYear-1}</b>`;
+            }
           }
           document.getElementById('statistic-display-specific').style.display = 'block';
           updateSelectedMunicipalityDisplay();
@@ -1371,6 +1918,21 @@ const getStyle = (feature) => {
             else if (avgFamily > -50) fillColor = '#fdae61';
             else if (avgFamily > -100) fillColor = '#f46d43';
             else fillColor = '#d73027';
+        } else if (currentTab === 'employment') {
+            const avgEmploymentPerYear = Math.round(avgStats.totalEmployments / avgStats.totalYears2);
+            const avgPopulation = avgStats.averagePopulation;
+            const avgEmploymentRate = (avgEmploymentPerYear / avgPopulation) * 100;
+            
+            if (avgEmploymentRate > 80) fillColor = '#006837';
+            else if (avgEmploymentRate > 75) fillColor = '#1a9850';
+            else if (avgEmploymentRate > 70) fillColor = '#66bd63';
+            else if (avgEmploymentRate > 65) fillColor = '#a6d96a';
+            else if (avgEmploymentRate > 60) fillColor = '#d9ef8b';
+            else if (avgEmploymentRate > 55) fillColor = '#ffffbf';
+            else if (avgEmploymentRate > 50) fillColor = '#fee08b';
+            else if (avgEmploymentRate > 45) fillColor = '#fdae61';
+            else if (avgEmploymentRate > 40) fillColor = '#f46d43';
+            else fillColor = '#d73027';
         }
       } else {
         if(currentTab === 'population') {
@@ -1487,6 +2049,19 @@ const getStyle = (feature) => {
               else if (netFamily > -50) fillColor = '#fdae61';
               else if (netFamily > -100) fillColor = '#f46d43';
               else fillColor = '#d73027';
+        } else if (currentTab === 'employment') {
+            const employmentRate = ((data.employment / data.population) * 100).toFixed(2)
+
+            if (employmentRate > 80) fillColor = '#006837';
+            else if (employmentRate > 75) fillColor = '#1a9850';
+            else if (employmentRate > 70) fillColor = '#66bd63';
+            else if (employmentRate > 65) fillColor = '#a6d96a';
+            else if (employmentRate > 60) fillColor = '#d9ef8b';
+            else if (employmentRate > 55) fillColor = '#ffffbf';
+            else if (employmentRate > 50) fillColor = '#fee08b';
+            else if (employmentRate > 45) fillColor = '#fdae61';
+            else if (employmentRate > 40) fillColor = '#f46d43';
+            else fillColor = '#d73027';
         }
       }
     return {
