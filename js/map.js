@@ -801,17 +801,6 @@ const getData = async() => {
       const geoData = await res3.json()
       // console.log(geoData)
 
-      const municipalities = statData.dimension.Alue.category.label
-      const municipalities2 = employmentData.dimension.Alue.category.label
-      const allValues = statData.value
-      const allValues2 = employmentData.value
-      
-      
-      const metricsPerMunicipality = 8;
-      const municipalityKeys = Object.keys(municipalities);
-
-      const municipalityKeysEmployment = Object.keys(employmentData.dimension.Alue.category.label)
-
       // const allMunicipalities = [];
       // municipalityKeys.forEach(key => { // Get all municipalities
       //     allMunicipalities.push({
@@ -832,14 +821,29 @@ const getData = async() => {
 
       
       employmentValues = {}
-      const initialYearIndex = employmentData.dimension.Vuosi.category.index[selectedYear];
-      const initialMunicipalityCount = municipalityKeysEmployment.length;
-      const initialYearOffset = initialYearIndex * initialMunicipalityCount;
+      const municipalities2 = employmentData.dimension.Alue.category.label
+      const municipalityKeys2 = Object.keys(municipalities2)
+      const allValues2 = employmentData.value
+      const municipalityCount = municipalityKeys2.length;
+      const yearCount = 2024 - 2007 + 1;
 
-      for (let i = 0; i < municipalityKeysEmployment.length; i++) {
-          const employmentCode = municipalityKeysEmployment[i];
-          employmentValues[employmentCode] = allValues2[initialYearOffset + i];
+      for (let i = 0; i < municipalityCount; i++) {
+          const employmentCode = municipalityKeys2[i];
+          employmentValues[employmentCode] = [];
+          for (let y = 0; y < yearCount; y++) {
+              const index = i * yearCount + y;
+              employmentValues[employmentCode].push(allValues2[index]);
+          }
       }
+
+      console.log(employmentValues)
+
+      const municipalities = statData.dimension.Alue.category.label
+      const allValues = statData.value
+      
+      
+      const metricsPerMunicipality = 8;
+      const municipalityKeys = Object.keys(municipalities);
 
 
       for (let i = 0; i < municipalityKeys.length; i++) { // Save every municipality with their stats.
@@ -1483,16 +1487,14 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
           div.innerHTML += '<i style="background: #d73027"></i> < -100<br>';
       } else if (currentTab === 'employment') {
           div.innerHTML = '<h4>Employment Rate (%)</h4>';
-          div.innerHTML += '<i style="background: #006837"></i> > 80%<br>';
-          div.innerHTML += '<i style="background: #1a9850"></i> 75% - 80%<br>';
-          div.innerHTML += '<i style="background: #66bd63"></i> 70% - 75%<br>';
-          div.innerHTML += '<i style="background: #a6d96a"></i> 65% - 70%<br>';
-          div.innerHTML += '<i style="background: #d9ef8b"></i> 60% - 65%<br>';
-          div.innerHTML += '<i style="background: #ffffbf"></i> 55% - 60%<br>';
-          div.innerHTML += '<i style="background: #fee08b"></i> 50% - 55%<br>';
-          div.innerHTML += '<i style="background: #fdae61"></i> 45% - 50%<br>';
-          div.innerHTML += '<i style="background: #f46d43"></i> 40% - 45%<br>';
-          div.innerHTML += '<i style="background: #d73027"></i> < 40%<br>';
+          div.innerHTML += '<i style="background: #006837"></i> > 55%<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 50% - 55%<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 45% - 50%<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 40% - 45%<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 35% - 40%<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 30% - 35%<br>';
+          div.innerHTML += '<i style="background: #d74d27ff"></i> 25% - 30%<br>';
+          div.innerHTML += '<i style="background: #d73027"></i> < 25%<br>';
       }
   }
 }
@@ -1670,16 +1672,17 @@ const updateData = async() => {
     const yearOffset = yearIndex * municipalityCount * metricsPerMunicipality; // This makes sure we access the right year.
 
 
-    const municipalities2 = employmentData.dimension.Alue.category.label;
-    const allValues2 = employmentData.value;
-    const municipalityKeys2 = Object.keys(municipalities2);
-    const municipalityCount2 = municipalityKeys2.length;
-    const yearOffset2 = yearIndex2 * municipalityCount2;
 
-    employmentValues = {}
-    for (let i = 0; i < municipalityKeys2.length; i++) {
-          const employmentCode = municipalityKeys2[i];
-          employmentValues[employmentCode] = allValues2[yearOffset2 + i];
+    const municipalities2 = employmentData.dimension.Alue.category.label
+    const municipalityKeys2 = Object.keys(municipalities2)
+    const allValues2 = employmentData.value
+    const municipalityCount2 = municipalityKeys2.length;
+    const yearCount = 2024 - 2007;
+
+    for (let i = 0; i < municipalityCount2; i++) {
+        const employmentCode = municipalityKeys2[i];
+        const index = i * yearCount + yearIndex2;
+        employmentValues[employmentCode] = allValues2[index];
     }
 
     for (let i = 0; i < municipalityKeys.length; i++) {
@@ -1922,16 +1925,14 @@ const getStyle = (feature) => {
             const avgEmploymentPerYear = Math.round(avgStats.totalEmployments / avgStats.totalYears2);
             const avgPopulation = avgStats.averagePopulation;
             const avgEmploymentRate = (avgEmploymentPerYear / avgPopulation) * 100;
-            
-            if (avgEmploymentRate > 80) fillColor = '#006837';
-            else if (avgEmploymentRate > 75) fillColor = '#1a9850';
-            else if (avgEmploymentRate > 70) fillColor = '#66bd63';
-            else if (avgEmploymentRate > 65) fillColor = '#a6d96a';
-            else if (avgEmploymentRate > 60) fillColor = '#d9ef8b';
-            else if (avgEmploymentRate > 55) fillColor = '#ffffbf';
-            else if (avgEmploymentRate > 50) fillColor = '#fee08b';
-            else if (avgEmploymentRate > 45) fillColor = '#fdae61';
-            else if (avgEmploymentRate > 40) fillColor = '#f46d43';
+
+            if (avgEmploymentRate > 55) fillColor = '#006837';
+            else if (avgEmploymentRate > 50) fillColor = '#1a9850';
+            else if (avgEmploymentRate > 45) fillColor = '#66bd63';
+            else if (avgEmploymentRate > 40) fillColor = '#a6d96a';
+            else if (avgEmploymentRate > 35) fillColor = '#d9ef8b';
+            else if (avgEmploymentRate > 30) fillColor = '#ffffbf';
+            else if (avgEmploymentRate > 25) fillColor = '#d73027';
             else fillColor = '#d73027';
         }
       } else {
@@ -2050,17 +2051,15 @@ const getStyle = (feature) => {
               else if (netFamily > -100) fillColor = '#f46d43';
               else fillColor = '#d73027';
         } else if (currentTab === 'employment') {
-            const employmentRate = ((data.employment / data.population) * 100).toFixed(2)
+            const employmentRate = ((data.employment / data.population) * 100).toFixed(2);
 
-            if (employmentRate > 80) fillColor = '#006837';
-            else if (employmentRate > 75) fillColor = '#1a9850';
-            else if (employmentRate > 70) fillColor = '#66bd63';
-            else if (employmentRate > 65) fillColor = '#a6d96a';
-            else if (employmentRate > 60) fillColor = '#d9ef8b';
-            else if (employmentRate > 55) fillColor = '#ffffbf';
-            else if (employmentRate > 50) fillColor = '#fee08b';
-            else if (employmentRate > 45) fillColor = '#fdae61';
-            else if (employmentRate > 40) fillColor = '#f46d43';
+            if (employmentRate > 55) fillColor = '#006837';
+            else if (employmentRate > 50) fillColor = '#1a9850';
+            else if (employmentRate > 45) fillColor = '#66bd63';
+            else if (employmentRate > 40) fillColor = '#a6d96a';
+            else if (employmentRate > 35) fillColor = '#d9ef8b';
+            else if (employmentRate > 30) fillColor = '#ffffbf';
+            else if (employmentRate > 25) fillColor = '#d73027';
             else fillColor = '#d73027';
         }
       }
