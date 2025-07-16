@@ -725,6 +725,10 @@ let yearInfo = null;
 let mapLegend;
 let isAverageMode = false;
 let currentView = 'average';
+const WORKING_AGE_RATIO = 0.60; // Doing this so data becomes more real.
+let printPlugin;
+let population2AverageValue = 0;
+let population2TotalValue = 0;
 
 
 const averageToggleBtn = document.getElementById('average-toggle');
@@ -762,6 +766,13 @@ yearSlider.addEventListener('input', function() {
 
 let currentTab = localStorage.getItem('currentTab') || 'population' // This saves the current tab even after reload. Used for various things.
 console.log(currentTab)
+
+if (currentTab === 'employment') {
+    currentTab = 'population';
+    selectedYear = 2023;
+    yearDisplay.textContent = selectedYear;
+    localStorage.setItem('currentTab', currentTab);
+}
 
 const closeStatsBtn = document.getElementById('close-stats-btn'); // Close button for specific stats of Cities on the map. Useful for phone
 closeStatsBtn.addEventListener('click', function() {
@@ -817,7 +828,7 @@ const getData = async() => {
       //     });
       // });
 
-      // I DID THIS TO SEE IF THEY'RE THE SAME. There's a mismatch :(
+      // I DID THIS TO SEE IF THEY'RE THE SAME. There's a mismatch. So I cannot loop at the same index. :(
 
       
       employmentValues = {}
@@ -952,6 +963,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   Total Deaths: <b>-${averageStats.totalDeaths}</b><br>
                   <br>
                   <h4>Average stats:</h4>
+                  Average Population: <b>${averageStats.averagePopulation} people</b><br>
                   Births by year: <b>${formatNumber(averageStats.averageBirths)}</b> <small>(${avgBirthsPerCapita} per 1,000 people)</small><br>
                   Deaths by year: <b>-${averageStats.averageDeaths}</b> <small>(${avgDeathsPerCapita} per 1,000 people)</small><br>
                   Net Fertility: <b>${formatNumber(averageStats.averageFertility)}</b><br>`;
@@ -973,6 +985,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
+                  Average Population: <b>${averageStats.averagePopulation} people</b><br>
                   Immigration by year: <b>${formatNumber(avgImmigrationPerYear)}</b> <small>(${avgImmigrationPerCapita} per 1,000 people)</small><br>`;
                 }
         } else if (currentTab === 'emigration') { // When emigration is selected
@@ -991,6 +1004,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   Total Emigration: <b>${formatNumber(averageStats.totalEmigration)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
+                  Average Population: <b>${averageStats.averagePopulation} people</b><br>
                   Emigration by year: <b>${formatNumber(avgEmigrationPerYear)}</b> <small>(${avgEmigrationPerCapita} per 1,000 people)</small><br>`;
                 }
         } else if (currentTab === 'migration') { // When Net Migration is selected
@@ -998,7 +1012,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                 
                 if(currentView === 'year') {
                   descriptionElement.innerHTML = 
-                  `Total population: <b>${formatNumber(currentData.population)}</b><br>
+                  `Total population: <b>${currentData.population}</b><br>
                   Immigration: <b>${formatNumber(currentData.immigration)}</b><br>
                   Emigration: <b>-${currentData.emigration}</b><br>
                   Net Migration: <b>${formatNumber(currentData.migration)}</b> <small>(${migrationPerCapita} per 1,000 people)</small>`;
@@ -1031,10 +1045,11 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                       
                       descriptionElement.innerHTML = 
                       `<h4>Total stats:</h4>
-                      Total population: <b>${formatNumber(currentData.population)}</b><br>
+                      Total population: <b>${currentData.population}</b><br>
                       Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
                       <br>
                       <h4>Average stats:</h4>
+                      Average Population: <b>${averageStats.averagePopulation} people</b><br>
                       Marriages by year: <b>${formatNumber(avgMarriagesPerYear)}</b> <small>(${avgMarriagesPerCapita} per 1,000 people)</small><br>`;
                   }
         } else if (currentTab === 'divorces') {
@@ -1050,10 +1065,11 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                     
                     descriptionElement.innerHTML = 
                     `<h4>Total stats:</h4>
-                    Total population: <b>${formatNumber(currentData.population)}</b><br>
+                    Total population: <b>${currentData.population}</b><br>
                     Total Divorces: <b>${formatNumber(averageStats.totalDivorces)}</b><br>
                     <br>
                     <h4>Average stats:</h4>
+                    Average Population: <b>${averageStats.averagePopulation} people</b><br>
                     Divorces by year: <b>${formatNumber(avgDivorcesPerYear)}</b> <small>(${avgDivorcesPerCapita} per 1,000 people)</small><br>`;
                 }
         } else if (currentTab === 'family') {
@@ -1065,7 +1081,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   const marriageDivorceRatio = currentData.divorces > 0 ? (currentData.marriages / currentData.divorces).toFixed(2) : "∞";
                   
                   descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population.toLocaleString()}</b><br>
+                  `Population: <b>${currentData.population}</b><br>
                   Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPerCapita} per 1,000 people)</small><br>
                   Divorces: <b>-${currentData.divorces}</b> <small>(${divorcesPerCapita} per 1,000 people)</small><br>
                   Net Family Balance: <b>${netFamilyPerCapita}</b> <small>(per 1,000 people)</small><br>
@@ -1077,34 +1093,36 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
-                  Total population: <b>${formatNumber(currentData.population)}</b><br>
+                  Total population: <b>${currentData.population}</b><br>
                   Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
                   Total Divorces: <b>-${averageStats.totalDivorces}</b><br>
                   Net Family: <b>${formatNumber(netFamily)}</b><br>
                   <br>
                   <h4>Average stats:</h4>
+                  Average Population: <b>${averageStats.averagePopulation} people</b><br>
                   Net Family by year: <b>${formatNumber(avgFamilyPerYear)}</b> <small>(${avgFamilyPerCapita} per 1,000 people)</small><br>`;
                 }
         } else if (currentTab === 'employment') {
                 if(currentView === 'year') {
-                    const employmentPercentage = ((currentData.employment / currentData.population) * 100).toFixed(1);
+                    const employmentPercentage = ((currentData.employment / (currentData.population * WORKING_AGE_RATIO)) * 100).toFixed(1);
                     descriptionElement.innerHTML = 
                     `Population: <b>${currentData.population} people</b><br>
                     Total Employment: <b>${currentData.employment} people</b><br>
                     % of Employed: <b>${employmentPercentage}%</b>`;
                 } else {
                     console.log("It does work it just doens't show.")
-                    const avgEmploymentPerYear = Math.round(averageStats.totalEmployments / averageStats.totalYears2);
-                    const avgPopulation = averageStats.averagePopulation;
-                    const avgEmploymentPercentage = ((avgEmploymentPerYear / avgPopulation) * 100).toFixed(1);
+                    const avgEmploymentPerYear = Math.round(averageStats.totalEmployments / averageStats.countedYears2);
+                    const avgPopulation = averageStats.averagePopulation2;
+                    const avgEmploymentPercentage = ((avgEmploymentPerYear / (avgPopulation * WORKING_AGE_RATIO)) * 100).toFixed(1);
                     
                     descriptionElement.innerHTML = 
                     `<h4>Total stats:</h4>
                     Total population: <b>${currentData.population} people</b><br>
                     Total employed: <b>${averageStats.totalEmployments} people</b><br>
                     <h4>Average stats:</h4>
+                    Average Population: <b>${avgPopulation} people</b><br>
                     Employments by year: <b>${avgEmploymentPerYear} people</b><br>
-                    Population employed: <b>${formatNumber(avgEmploymentPercentage)}%</b>`
+                    Population employed: <b>${avgEmploymentPercentage}%</b>`
                 }
           }
         }
@@ -1123,9 +1141,7 @@ function changeTab() {
     const divorcesTab = document.querySelector('.dropdown-item[data-stat="divorces"]');
     const familyTab = document.querySelector('.dropdown-item[data-stat="family"]');
 
-    const universityTab = document.querySelector('.dropdown-item[data-stat="university"]');
-    const employmentTab = document.querySelector('.dropdown-item[data-stat="employment"]');
-    const trafficTab = document.querySelector('.dropdown-item[data-stat="traffic"]');
+    const employmentTab = document.querySelector('.nav-link[data-stat="employment"]');
 
     const statName = document.querySelector('.stat-name');
     const statDescription = document.querySelector('.stat-description')
@@ -1278,7 +1294,7 @@ function changeTab() {
             statName.textContent = currentTab;
             statDescription.textContent = `Employment rates across Finnish municipalities (2007-2023)`;
             if (selectedYear < 2007 || selectedYear > lastYear) {
-                selectedYear = lastYear;
+                selectedYear = lastYear - 1;
                 yearDisplay.textContent = selectedYear;
                 yearSlider.value = selectedYear;
             }
@@ -1332,6 +1348,13 @@ const initMap = (data) => {
 
       // console.log("Map was added.")
 
+      printPlugin = L.easyPrint({
+          title: 'Download map',
+          sizeModes: ['A4Landscape'],
+          exportOnly: true,
+          hideControlContainer: true
+      }).addTo(map);
+
 
       setTimeout(() => {
           document.querySelector('.loading-overlay').classList.add('fade-out'); // Show loading overlay when the page is loaded.
@@ -1347,6 +1370,12 @@ const initMap = (data) => {
 
       changeTab();
   }
+
+
+const downloadMapBtn = document.getElementById('download-map-btn');
+downloadMapBtn.addEventListener('click', function() {
+    printPlugin.printMap('CurrentSize', `Finland_${currentTab}_${selectedYear}`);
+});
 
 
 function updateLegendContent(div) { // Update Legend content based on the tab selected
@@ -1487,14 +1516,14 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
           div.innerHTML += '<i style="background: #d73027"></i> < -100<br>';
       } else if (currentTab === 'employment') {
           div.innerHTML = '<h4>Employment Rate (%)</h4>';
-          div.innerHTML += '<i style="background: #006837"></i> > 55%<br>';
-          div.innerHTML += '<i style="background: #1a9850"></i> 50% - 55%<br>';
-          div.innerHTML += '<i style="background: #66bd63"></i> 45% - 50%<br>';
-          div.innerHTML += '<i style="background: #a6d96a"></i> 40% - 45%<br>';
-          div.innerHTML += '<i style="background: #d9ef8b"></i> 35% - 40%<br>';
-          div.innerHTML += '<i style="background: #ffffbf"></i> 30% - 35%<br>';
-          div.innerHTML += '<i style="background: #d74d27ff"></i> 25% - 30%<br>';
-          div.innerHTML += '<i style="background: #d73027"></i> < 25%<br>';
+          div.innerHTML += '<i style="background: #006837"></i> > 75% (Excellent)<br>';
+          div.innerHTML += '<i style="background: #31a354"></i> 70% - 75% (Very Good)<br>';
+          div.innerHTML += '<i style="background: #74c476"></i> 65% - 70% (Good)<br>';
+          div.innerHTML += '<i style="background: #bae4b3"></i> 60% - 65% (Fair)<br>';
+          div.innerHTML += '<i style="background: #ffffcc"></i> 55% - 60% (Neutral)<br>';
+          div.innerHTML += '<i style="background: #fd8d3c"></i> 50% - 55% (Poor)<br>';
+          div.innerHTML += '<i style="background: #f03b20"></i> 45% - 50% (Very Poor)<br>';
+          div.innerHTML += '<i style="background: #bd0026"></i> < 45% (Critical)<br>';
       }
   }
 }
@@ -1524,6 +1553,8 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
     let totalBirths = 0;
     let totalDeaths = 0;
     let totalPopulation = 0;
+    let totalPopulation2 = 0;
+    let countedYears2 = 0;
     let totalImmigration = 0;
     let totalEmigration = 0;
     let totalMarriages = 0;
@@ -1556,6 +1587,11 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
                 totalMarriages += allValues[baseIndex + 5];
                 totalDivorces += allValues[baseIndex + 6];
                 totalPopulation += allValues[baseIndex + 7];
+
+                if(parseInt(year) >= 2007) {
+                  totalPopulation2 += allValues[baseIndex + 7];
+                  countedYears2++;
+                }
                 
                 if (i === 0) {
                     initialPopulation = allValues[baseIndex + 7];
@@ -1571,21 +1607,19 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
         }
     }
 
-  for (let i = 0; i < totalYears2; i++) { // for employments
+    for (let i = 0; i < totalYears2; i++) { // for employments
         const year = years2[i];
         const yearIndex = employmentData.dimension.Vuosi.category.index[year];
 
         const municipalities2 = employmentData.dimension.Alue.category.label;
         const allValues2 = employmentData.value;
         const municipalityKeys2 = Object.keys(municipalities2);
-        const municipalityCount2 = municipalityKeys2.length;
-        const yearOffset = yearIndex * municipalityCount2;
 
         for (let j = 0; j < municipalityKeys2.length; j++) {
             let key = municipalityKeys2[j];
             if (municipalities2[key] === municipalityName) {
-                const baseIndex = yearOffset + j;
-                totalEmployments += allValues2[baseIndex];
+                const index = j * totalYears2 + i;
+                totalEmployments += allValues2[index];
                 break;
             }
         }
@@ -1594,6 +1628,8 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
     const averageBirths = Math.round(totalBirths / totalYears);
     const averageDeaths = Math.round(totalDeaths / totalYears);
     const averagePopulation = Math.round(totalPopulation / totalYears);
+    const averagePopulation2 = Math.round(totalPopulation2 / countedYears2);
+    population2AverageValue = averagePopulation2;
     const totalGrowth = finalPopulation - initialPopulation;
     const averageFertility = Math.round((totalBirths - totalDeaths) / totalYears);
     
@@ -1608,12 +1644,15 @@ function getAverageStats(municipalityName) { // Get average stats on every stat
         totalMarriages,
         totalDivorces,
         totalPopulation,
+        totalPopulation2,
         totalEmployments,
+        countedYears2,
         initialPopulation,
         finalPopulation,
         averageBirths,
         averageDeaths,
         averagePopulation,
+        averagePopulation2,
         averageFertility
     };
 }
@@ -1922,18 +1961,18 @@ const getStyle = (feature) => {
             else if (avgFamily > -100) fillColor = '#f46d43';
             else fillColor = '#d73027';
         } else if (currentTab === 'employment') {
-            const avgEmploymentPerYear = Math.round(avgStats.totalEmployments / avgStats.totalYears2);
-            const avgPopulation = avgStats.averagePopulation;
-            const avgEmploymentRate = (avgEmploymentPerYear / avgPopulation) * 100;
+            const avgEmploymentPerYear = Math.round(avgStats.totalEmployments / avgStats.countedYears2);
+            const avgPopulation = population2AverageValue;
+            const avgEmploymentRate = (avgEmploymentPerYear / (avgPopulation * WORKING_AGE_RATIO)) * 100;
 
-            if (avgEmploymentRate > 55) fillColor = '#006837';
-            else if (avgEmploymentRate > 50) fillColor = '#1a9850';
-            else if (avgEmploymentRate > 45) fillColor = '#66bd63';
-            else if (avgEmploymentRate > 40) fillColor = '#a6d96a';
-            else if (avgEmploymentRate > 35) fillColor = '#d9ef8b';
-            else if (avgEmploymentRate > 30) fillColor = '#ffffbf';
-            else if (avgEmploymentRate > 25) fillColor = '#d73027';
-            else fillColor = '#d73027';
+            if (avgEmploymentRate > 75) fillColor = '#006837';
+            else if (avgEmploymentRate > 70) fillColor = '#31a354';
+            else if (avgEmploymentRate > 65) fillColor = '#74c476';
+            else if (avgEmploymentRate > 60) fillColor = '#bae4b3';
+            else if (avgEmploymentRate > 55) fillColor = '#ffffcc';
+            else if (avgEmploymentRate > 50) fillColor = '#fd8d3c';
+            else if (avgEmploymentRate > 45) fillColor = '#f03b20';
+            else fillColor = '#bd0026';
         }
       } else {
         if(currentTab === 'population') {
@@ -2051,16 +2090,16 @@ const getStyle = (feature) => {
               else if (netFamily > -100) fillColor = '#f46d43';
               else fillColor = '#d73027';
         } else if (currentTab === 'employment') {
-            const employmentRate = ((data.employment / data.population) * 100).toFixed(2);
+            const employmentRate = ((data.employment / (data.population * WORKING_AGE_RATIO)) * 100).toFixed(2);
 
-            if (employmentRate > 55) fillColor = '#006837';
-            else if (employmentRate > 50) fillColor = '#1a9850';
-            else if (employmentRate > 45) fillColor = '#66bd63';
-            else if (employmentRate > 40) fillColor = '#a6d96a';
-            else if (employmentRate > 35) fillColor = '#d9ef8b';
-            else if (employmentRate > 30) fillColor = '#ffffbf';
-            else if (employmentRate > 25) fillColor = '#d73027';
-            else fillColor = '#d73027';
+            if (employmentRate > 75) fillColor = '#006837';
+            else if (employmentRate > 70) fillColor = '#31a354';
+            else if (employmentRate > 65) fillColor = '#74c476';
+            else if (employmentRate > 60) fillColor = '#bae4b3';
+            else if (employmentRate > 55) fillColor = '#ffffcc';
+            else if (employmentRate > 50) fillColor = '#fd8d3c';
+            else if (employmentRate > 45) fillColor = '#f03b20';
+            else fillColor = '#bd0026';
         }
       }
     return {

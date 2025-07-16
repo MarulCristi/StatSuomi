@@ -1,4 +1,5 @@
 #map {
+    width: 100vw;
     height: 100vh;
     opacity: 0;            /* Make some animation, so it doesnt flicker */
     transition: opacity 1.2s ease-in-out;
@@ -326,4 +327,29 @@ body.loaded #map {
 .slider-container.disabled {
     opacity: 0.5;
     pointer-events: none;
+}
+
+#download-map-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: 100%;
+    text-align: center;
+}
+
+#download-map-btn:hover {
+    background-color: #3d9c40;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.leaflet-control-easyPrint {
+    display: none !important;
 }
