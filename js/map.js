@@ -1374,7 +1374,14 @@ const initMap = (data) => {
 
 const downloadMapBtn = document.getElementById('download-map-btn');
 downloadMapBtn.addEventListener('click', function() {
-    printPlugin.printMap('CurrentSize', `Finland_${currentTab}_${selectedYear}`);
+    map.setView([65.5, 26.0], 5); // This makes sure that the map is centered before saving the map
+    setTimeout(() => {
+      if(currentView !== "average") {
+        printPlugin.printMap('CurrentSize', `Finland_${currentTab}_${selectedYear}`);
+      } else {
+        printPlugin.printMap('CurrentSize', `Finland_${currentTab}_2007_${lastYear}_average`);
+      }
+    }, 1000);
 });
 
 
