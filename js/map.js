@@ -1170,15 +1170,14 @@ function changeData(selectedData) {
           yearSelect.appendChild(option);
         }
     }
-    let population = null;
 
     const municipalitySelect = document.getElementById('municipalitySelect');
     municipalitySelect.innerHTML = '';
 
-    const defaultOption2 = document.createElement('option');
-    defaultOption2.text = selectedCity;
-    defaultOption2.selected = true;
-    municipalitySelect.appendChild(defaultOption2);
+
+    dataInput.innerHTML = '';
+
+    let selectedCityCode;
 
     const allMunicipalities = localStorage.getItem('allMunicipalities');
     const municipalities = JSON.parse(allMunicipalities)
@@ -1188,8 +1187,16 @@ function changeData(selectedData) {
             option.value = municipality.code;
             option.textContent = municipality.name;
             municipalitySelect.appendChild(option);
-          
+            if(municipality.name === selectedCity) {
+                selectedCityCode = municipality.code;
+            }
     });
+
+    const defaultOption2 = document.createElement('option');
+    defaultOption2.text = selectedCity;
+    defaultOption2.value = selectedCityCode;
+    defaultOption2.selected = true;
+    municipalitySelect.appendChild(defaultOption2);
 
 
     yearSelect.addEventListener('change', () => {
@@ -1204,11 +1211,39 @@ function changeData(selectedData) {
         const municipalityIndex = municipalityKeys.indexOf(selectedMunicipalityCode);
         
         baseIndex = yearIndex * municipalityCount * metricsPerMunicipality + municipalityIndex * metricsPerMunicipality;
-        currentPopulation = statData.value[baseIndex + 7];
+        
 
-        if (currentPopulation !== undefined) {
-            infoStat.textContent = `Population in ${selectedYearValue}: ${currentPopulation}`;
-            dataInput.value = currentPopulation;
+        let metricOffset = 7;
+        let label = 'Population';
+
+        if (currentTab === 'births') {
+            metricOffset = 0;
+            label = 'Births';
+        } else if (currentTab === 'deaths') {
+            metricOffset = 1;
+            label = 'Deaths';
+        } else if (currentTab === 'immigration') {
+            metricOffset = 2;
+            label = 'Immigration';
+        } else if (currentTab === 'emigration') {
+            metricOffset = 3;
+            label = 'Emigration';
+        } else if (currentTab === 'migration') {
+            metricOffset = 4;
+            label = 'Net Migration';
+        } else if (currentTab === 'marriages') {
+            metricOffset = 5;
+            label = 'Marriages';
+        } else if (currentTab === 'divorces') {
+            metricOffset = 6;
+            label = 'Divorces';
+        }
+
+        const currentValue = statData.value[baseIndex + metricOffset];
+
+        if (currentValue !== undefined) {
+            infoStat.textContent = `${label} in ${selectedYearValue}: ${currentValue}`;
+            dataInput.value = currentValue;
             dataInput.disabled = false;
             saveChangesBtn.disabled = false;
         } else {
@@ -1233,10 +1268,28 @@ function changeData(selectedData) {
         if (baseIndex !== null && dataInput.value) {
             const newValue = parseInt(dataInput.value, 10);
             if (!isNaN(newValue) && newValue !== 0 && newValue > 0) {
-                statData.value[baseIndex + 7] = newValue;
+
+                let metricOffset = 7;
+
+                if (currentTab === 'births') metricOffset = 0;
+                else if (currentTab === 'deaths') metricOffset = 1;
+                else if (currentTab === 'immigration') metricOffset = 2;
+                else if (currentTab === 'emigration') metricOffset = 3;
+                else if (currentTab === 'migration') metricOffset = 4;
+                else if (currentTab === 'marriages') metricOffset = 5;
+                else if (currentTab === 'divorces') metricOffset = 6;
+
+                statData.value[baseIndex + metricOffset] = newValue;
                 
                 if (selectedMunicipalityCode && selectedData[selectedMunicipalityCode]) {
-                    selectedData[selectedMunicipalityCode].population = newValue;
+                    if (currentTab === 'births') selectedData[selectedMunicipalityCode].births = newValue;
+                    else if (currentTab === 'deaths') selectedData[selectedMunicipalityCode].deaths = newValue;
+                    else if (currentTab === 'immigration') selectedData[selectedMunicipalityCode].immigration = newValue;
+                    else if (currentTab === 'emigration') selectedData[selectedMunicipalityCode].emigration = newValue;
+                    else if (currentTab === 'migration') selectedData[selectedMunicipalityCode].migration = newValue;
+                    else if (currentTab === 'marriages') selectedData[selectedMunicipalityCode].marriages = newValue;
+                    else if (currentTab === 'divorces') selectedData[selectedMunicipalityCode].divorces = newValue;
+                    else if (currentTab === 'population') selectedData[selectedMunicipalityCode].population = newValue;
                 }
                 
                 infoStat.textContent = `Data updated! Population in ${selectedYearValue}: ${newValue}`;
