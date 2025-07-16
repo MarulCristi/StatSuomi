@@ -126,8 +126,10 @@ const getData = async () => {
           return;
     }
     statData = await res.json()
-    console.log(statData);
 
+    applyDataModifications(statData);
+
+    console.log(statData);
     return statData
 }
 
@@ -145,6 +147,38 @@ const getEmploymentData = async() => {
     return employmentData;
 }
 
+
+function applyDataModifications(data) {
+    const dataModifications = JSON.parse(localStorage.getItem('dataModifications') || '[]');
+    
+    if (dataModifications.length === 0) return;
+    
+    const relevantModifications = dataModifications.filter(modif => 
+        modif.municipalityCode === savedMunicipalityCode
+    );
+    
+    if (relevantModifications.length === 0) return;
+    
+    relevantModifications.forEach(modif => {
+        const yearIndex = data.dimension.Vuosi.category.index[modif.year];
+        
+        if (yearIndex === undefined) return;
+        
+        const baseIndex = yearIndex * 8;
+        
+        let metricOffset = 7;
+        
+        if (modif.metric === 'births') metricOffset = 0;
+        else if (modif.metric === 'deaths') metricOffset = 1;
+        else if (modif.metric === 'immigration') metricOffset = 2;
+        else if (modif.metric === 'emigration') metricOffset = 3;
+        else if (modif.metric === 'migration') metricOffset = 4;
+        else if (modif.metric === 'marriages') metricOffset = 5;
+        else if (modif.metric === 'divorces') metricOffset = 6;
+        
+        data.value[baseIndex + metricOffset] = modif.value;
+    });
+}
 
 
 let changed = false;

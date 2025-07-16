@@ -730,6 +730,7 @@ let printPlugin;
 let population2AverageValue = 0;
 let population2TotalValue = 0;
 let selectedCity = null;
+let dataWasModified = localStorage.getItem('dataModified') || 'false';
 
 
 const averageToggleBtn = document.getElementById('average-toggle');
@@ -798,6 +799,8 @@ const getData = async() => {
       }
       statData = await res.json()
       // console.log(statData)
+
+      applyDataModifications(statData)
 
       // Get employment stats
       const url2 = "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tyokay/statfin_tyokay_pxt_115i.px"
@@ -914,6 +917,36 @@ function formatNumber(num) {
   } else {
     return num;
   }
+}
+
+function applyDataModifications(data) {
+    const dataModifications = JSON.parse(localStorage.getItem('dataModifications') || '[]');
+    
+    if (dataModifications.length === 0) return;
+    
+    dataModifications.forEach(mun => {
+        const yearIndex = data.dimension.Vuosi.category.index[mun.year];
+        const municipalityKeys = Object.keys(data.dimension.Alue.category.label);
+        const municipalityCount = municipalityKeys.length;
+        const metricsPerMunicipality = 8;
+        const municipalityIndex = municipalityKeys.indexOf(mun.municipalityCode);
+        
+        if (yearIndex === undefined || municipalityIndex === -1) return;
+        
+        const baseIndex = yearIndex * municipalityCount * metricsPerMunicipality + municipalityIndex * metricsPerMunicipality;
+        
+        let metricOffset = 7; // Default to population-
+        
+        if (mun.metric === 'births') metricOffset = 0;
+        else if (mun.metric === 'deaths') metricOffset = 1;
+        else if (mun.metric === 'immigration') metricOffset = 2;
+        else if (mun.metric === 'emigration') metricOffset = 3;
+        else if (mun.metric === 'migration') metricOffset = 4;
+        else if (mun.metric === 'marriages') metricOffset = 5;
+        else if (mun.metric === 'divorces') metricOffset = 6;
+        
+        data.value[baseIndex + metricOffset] = mun.value;
+    });
 }
 
 function updateSelectedMunicipalityDisplay() { // Show all details of the municipality in the container
@@ -1141,6 +1174,22 @@ changeDataBtn.addEventListener('click', () => {
     $('#changeDataModal').modal('show');
 })
 
+const resetDataBtn = document.querySelector(".reset-button");
+resetDataBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to reset all your data modifications?')) {
+        localStorage.setItem('dataModified', 'false')
+        localStorage.removeItem('dataModifications');
+        location.reload();
+    }
+});
+
+if(localStorage.getItem('dataModified') === 'false') {
+  resetDataBtn.style.display = 'none';
+} else {
+  resetDataBtn.style.display = 'inline';
+}
+
+
 function changeData(selectedData) {
     const yearSelect = document.getElementById('yearSelect');
     const infoStat = document.getElementById('infoStat');
@@ -1182,7 +1231,7 @@ function changeData(selectedData) {
     const allMunicipalities = localStorage.getItem('allMunicipalities');
     const municipalities = JSON.parse(allMunicipalities)
 
-    municipalities.forEach(municipality => {
+    municipalities.slice(1).forEach(municipality => {
             const option = document.createElement('option');
             option.value = municipality.code;
             option.textContent = municipality.name;
@@ -1291,6 +1340,32 @@ function changeData(selectedData) {
                     else if (currentTab === 'divorces') selectedData[selectedMunicipalityCode].divorces = newValue;
                     else if (currentTab === 'population') selectedData[selectedMunicipalityCode].population = newValue;
                 }
+
+                const modifiedData = {
+                    municipalityCode: selectedMunicipalityCode,
+                    year: selectedYearValue,
+                    tab: currentTab,
+                    value: newValue,
+                    timestamp: new Date().getTime()
+                };
+
+                let dataModifications = JSON.parse(localStorage.getItem('dataModifications') || '[]');
+
+                const existingIndex = dataModifications.findIndex(
+                    municipality => municipality.municipalityCode === selectedMunicipalityCode && 
+                          municipality.year === selectedYearValue && 
+                          municipality.tab === currentTab
+                );
+                
+                if (existingIndex >= 0) {
+                    dataModifications[existingIndex] = modifiedData;
+                } else {
+                    dataModifications.push(modifiedData);
+                }
+
+                localStorage.setItem('dataModifications', JSON.stringify(dataModifications));
+                console.log(`Data modified! ${modifiedData.timestamp}`)
+                localStorage.setItem('dataModified', 'true')
                 
                 infoStat.textContent = `Data updated! Population in ${selectedYearValue}: ${newValue}`;
                 

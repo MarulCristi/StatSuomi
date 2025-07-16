@@ -13,6 +13,28 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" integrity="sha384-7qAoOXltbVP82dhxHAUje59V5r2YsVfBafyUDxEdApLPmcdhBPg1DKg1ERo0BZlK" crossorigin="anonymous"></script>
     </head>
     <body>
+    <div class="modal" id="changeDataModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <select id="yearSelect" class="form-control"></select>
+                        <select id="municipalitySelect" class="form-control"></select>
+                        <span id="infoStat"></span><br>
+                        <input type="text" id="dataInput" class="small-input mt-2" placeholder="Enter new value">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <a class="navbar-brand" href="map.html"> <!-- Go to map menu --> 
             <span class="text-success font-weight-bold">StatSuomi</span>
@@ -75,6 +97,7 @@
             <div class="chart-wrapper">
                 <div class="chart-controls">
                     <div class="dropdown">
+                        <button class="change1">Change Data</button>
                         <button class="chart-btn dropdown-toggle" type="button" id="chartTypeBtn1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Change Chart Type
                         </button>
@@ -113,6 +136,7 @@
                     <div class="chart-wrapper">
                         <div class="chart-controls">
                             <div class="dropdown">
+                                <button class="change2">Change Data</button>
                                 <button class="chart-btn dropdown-toggle" type="button" id="chartTypeBtn2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Change Chart Type
                                 </button>
@@ -152,6 +176,7 @@
                     <div class="chart-wrapper">
                         <div class="chart-controls">
                             <div class="dropdown">
+                                <button class="change3">Change Data</button>
                                 <button class="chart-btn dropdown-toggle" type="button" id="chartTypeBtn3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Change Chart Type
                                 </button>
@@ -190,6 +215,7 @@
                     <div class="chart-wrapper">
                         <div class="chart-controls">
                             <div class="dropdown">
+                                <button class="change4">Change Data</button>
                                 <button class="chart-btn dropdown-toggle" type="button" id="chartTypeBtn4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Change Chart Type
                                 </button>
@@ -217,6 +243,7 @@
                     <div class="chart-wrapper">
                         <div class="chart-controls">
                             <div class="dropdown">
+                                <button class="change5">Change Data</button>
                                 <button class="chart-btn dropdown-toggle" type="button" id="chartTypeBtn5" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Change Chart Type
                                 </button>
