@@ -725,10 +725,11 @@ let yearInfo = null;
 let mapLegend;
 let isAverageMode = false;
 let currentView = 'average';
-const WORKING_AGE_RATIO = 0.60; // Doing this so data becomes more real.
+const WORKING_AGE_RATIO = 0.60; // Doing this so data becomes more real. Data only shows the number, not the total working population. ~2% error
 let printPlugin;
 let population2AverageValue = 0;
 let population2TotalValue = 0;
+let selectedCity = null;
 
 
 const averageToggleBtn = document.getElementById('average-toggle');
@@ -756,6 +757,7 @@ averageToggleBtn.addEventListener('click', function() {
     }
     
     updateData();
+    updateLegend();
 });
 
 yearSlider.addEventListener('input', function() {
@@ -768,10 +770,11 @@ let currentTab = localStorage.getItem('currentTab') || 'population' // This save
 console.log(currentTab)
 
 if (currentTab === 'employment') {
-    currentTab = 'population';
     selectedYear = 2023;
+    yearSlider.min = 2007;
+    yearSlider.max = 2023;
+    yearSlider.value = selectedYear;
     yearDisplay.textContent = selectedYear;
-    localStorage.setItem('currentTab', currentTab);
 }
 
 const closeStatsBtn = document.getElementById('close-stats-btn'); // Close button for specific stats of Cities on the map. Useful for phone
@@ -812,24 +815,6 @@ const getData = async() => {
       const geoData = await res3.json()
       // console.log(geoData)
 
-      // const allMunicipalities = [];
-      // municipalityKeys.forEach(key => { // Get all municipalities
-      //     allMunicipalities.push({
-      //         code: key,
-      //         name: municipalities[key]
-      //     });
-      // });
-
-      // const allMunicipalitiesEmployment = [];
-      // municipalityKeysEmployment.forEach(key => { // Get all municipalities for employment
-      //     allMunicipalitiesEmployment.push({
-      //         code: key,
-      //         name: municipalities[key]
-      //     });
-      // });
-
-      // I DID THIS TO SEE IF THEY'RE THE SAME. There's a mismatch. So I cannot loop at the same index. :(
-
       
       employmentValues = {}
       const municipalities2 = employmentData.dimension.Alue.category.label
@@ -855,6 +840,26 @@ const getData = async() => {
       
       const metricsPerMunicipality = 8;
       const municipalityKeys = Object.keys(municipalities);
+
+      const allMunicipalities = [];
+      municipalityKeys.forEach(key => { // Get all municipalities
+          allMunicipalities.push({
+              code: key,
+              name: municipalities[key]
+          });
+      });
+
+      localStorage.setItem('allMunicipalities', JSON.stringify(allMunicipalities));
+
+      // const allMunicipalitiesEmployment = [];
+      // municipalityKeysEmployment.forEach(key => { // Get all municipalities for employment
+      //     allMunicipalitiesEmployment.push({
+      //         code: key,
+      //         name: municipalities[key]
+      //     });
+      // });
+
+      // I DID THIS TO SEE IF THEY'RE THE SAME. There's a mismatch. So I cannot loop at the same index. :(
 
 
       for (let i = 0; i < municipalityKeys.length; i++) { // Save every municipality with their stats.
@@ -948,17 +953,17 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   const fertilityPerCapita = ((birthsPerCapita - deathsPerCapita ) / currentData.population * 1000).toFixed(2);
 
                   descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
+                  `Population: <b>${currentData.population} people</b><br>
                   Births: <b>${formatNumber(currentData.births)}</b> <small>(${birthsPerCapita} per 1,000 people)</small><br>
                   Deaths: <b>-${currentData.deaths}</b> <small>(${deathsPerCapita} per 1,000 people)</small><br>
-                  Net Fertility: <b>${formatNumber(fertility)}</b> <small>(${fertilityPerCapita} per 1,000 people)</small>`;
+                  Net Vitals: <b>${formatNumber(fertility)}</b> <small>(${fertilityPerCapita} per 1,000 people)</small>`;
                 } else {
                   const growthPercentage = ((averageStats.totalGrowth / averageStats.initialPopulation) * 100).toFixed(2);
                   const avgBirthsPerCapita = ((averageStats.averageBirths / averageStats.averagePopulation) * 1000).toFixed(1);
                   const avgDeathsPerCapita = ((averageStats.averageDeaths / averageStats.averagePopulation) * 1000).toFixed(1);
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
-                  Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b> <small>(${growthPercentage}% change)</small><br>
+                  Population growth: <b>${formatNumber(averageStats.totalGrowth)} people</b> <small>(${growthPercentage}%)</small><br>
                   Total Births: <b>${formatNumber(averageStats.totalBirths)}</b><br>
                   Total Deaths: <b>-${averageStats.totalDeaths}</b><br>
                   <br>
@@ -966,7 +971,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   Average Population: <b>${averageStats.averagePopulation} people</b><br>
                   Births by year: <b>${formatNumber(averageStats.averageBirths)}</b> <small>(${avgBirthsPerCapita} per 1,000 people)</small><br>
                   Deaths by year: <b>-${averageStats.averageDeaths}</b> <small>(${avgDeathsPerCapita} per 1,000 people)</small><br>
-                  Net Fertility: <b>${formatNumber(averageStats.averageFertility)}</b><br>`;
+                  Net Vitals: <b>${formatNumber(averageStats.averageFertility)} people</b><br>`;
                 }
         } else if (currentTab === 'immigration') { // When immigration is selected
                 
@@ -974,7 +979,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   const immigrationPerCapita = ((currentData.immigration / currentData.population) * 1000).toFixed(1);
 
                   descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
+                  `Population: <b>${currentData.population} people</b><br>
                   Immigration: <b>${formatNumber(currentData.immigration)}</b> <small>(${immigrationPerCapita} per 1,000 people)</small><br>`;
                 } else {
                   const avgImmigrationPerYear = Math.round(averageStats.totalImmigration / averageStats.totalYears);
@@ -982,7 +987,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
-                  Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
+                  Total Immigration: <b>${formatNumber(averageStats.totalImmigration)} people</b><br>
                   <br>
                   <h4>Average stats:</h4>
                   Average Population: <b>${averageStats.averagePopulation} people</b><br>
@@ -993,7 +998,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                 if(currentView === 'year') {
                   const emigrationPerCapita = ((currentData.emigration / currentData.population) * 1000).toFixed(1);
                   descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
+                  `Population: <b>${currentData.population} people</b><br>
                   Emigration: <b>${formatNumber(currentData.emigration)}</b> <small>(${emigrationPerCapita} per 1,000 people)</small><br>`;
                 } else {
                   const avgEmigrationPerYear = Math.round(averageStats.totalEmigration / averageStats.totalYears);
@@ -1001,7 +1006,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
-                  Total Emigration: <b>${formatNumber(averageStats.totalEmigration)}</b><br>
+                  Total Emigration: <b>${formatNumber(averageStats.totalEmigration)} people</b><br>
                   <br>
                   <h4>Average stats:</h4>
                   Average Population: <b>${averageStats.averagePopulation} people</b><br>
@@ -1012,32 +1017,32 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                 
                 if(currentView === 'year') {
                   descriptionElement.innerHTML = 
-                  `Total population: <b>${currentData.population}</b><br>
-                  Immigration: <b>${formatNumber(currentData.immigration)}</b><br>
-                  Emigration: <b>-${currentData.emigration}</b><br>
-                  Net Migration: <b>${formatNumber(currentData.migration)}</b> <small>(${migrationPerCapita} per 1,000 people)</small>`;
+                  `Total population: <b>${currentData.population} people</b><br>
+                  Immigration: <b>${formatNumber(currentData.immigration)} people</b><br>
+                  Emigration: <b>-${currentData.emigration} people</b><br>
+                  Net Migration: <b>${formatNumber(currentData.migration)}</b><small>(${migrationPerCapita} per 1,000 people)</small><br>`;
                 } else {
                   const netMigration = averageStats.totalImmigration - averageStats.totalEmigration;
                   const avgMigrationPerYear = Math.round(netMigration / averageStats.totalYears);
-                  const avgMigrationPerCapita = ((avgMigrationPerYear / averageStats.averagePopulation) * 1000).toFixed(1);
+                  const growthPercentage = ((averageStats.totalGrowth / averageStats.initialPopulation) * 100).toFixed(2);
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
-                  Total population: <b>${formatNumber(currentData.population)}</b><br>
-                  Total Immigration: <b>${formatNumber(averageStats.totalImmigration)}</b><br>
-                  Total Emigration: <b>-${averageStats.totalEmigration}</b><br>
-                  Net Migration: <b>${formatNumber(netMigration)}</b><br>
+                  Total population: <b>${currentData.population} people</b><br>
+                  Total Immigration: <b>${formatNumber(averageStats.totalImmigration)} people</b><br>
+                  Total Emigration: <b>-${averageStats.totalEmigration} people</b><br>
+                  Net Migration: <b>${formatNumber(netMigration)} people</b><br>
                   <br>
                   <h4>Average stats:</h4>
-                  Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b> <small>(${growthPercentage}% change)</small><br>
-                  Net Migration by year: <b>${formatNumber(avgMigrationPerYear)}</b> <small>(${avgMigrationPerCapita} per 1,000 people)</small><br>`;
+                  Population growth: <b>${formatNumber(averageStats.totalGrowth)}</b> <small>(${growthPercentage}%)</small><br>
+                  Net Migration by year: <b>${formatNumber(avgMigrationPerYear)}</b><br>`;
                 }
         } else if (currentTab === 'marriages') {
                   if(currentView === 'year') {
                       const marriagesPerCapita = ((currentData.marriages / currentData.population) * 1000).toFixed(1);
                       
                       descriptionElement.innerHTML = 
-                      `Population: <b>${currentData.population}</b><br>
+                      `Population: <b>${currentData.population} people</b><br>
                       Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPerCapita} per 1,000 people)</small><br>`;
                   } else {
                       const avgMarriagesPerYear = Math.round(averageStats.totalMarriages / averageStats.totalYears);
@@ -1045,7 +1050,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                       
                       descriptionElement.innerHTML = 
                       `<h4>Total stats:</h4>
-                      Total population: <b>${currentData.population}</b><br>
+                      Total population: <b>${currentData.population} people</b><br>
                       Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
                       <br>
                       <h4>Average stats:</h4>
@@ -1057,7 +1062,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                     const divorcesPerCapita = ((currentData.divorces / currentData.population) * 1000).toFixed(1);
                     
                     descriptionElement.innerHTML = 
-                    `Population: <b>${currentData.population}</b><br>
+                    `Population: <b>${currentData.population} people</b><br>
                     Divorces: <b>${formatNumber(currentData.divorces)}</b> <small>(${divorcesPerCapita} per 1,000 people)</small><br>`;
                 } else {
                     const avgDivorcesPerYear = Math.round(averageStats.totalDivorces / averageStats.totalYears);
@@ -1065,8 +1070,8 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                     
                     descriptionElement.innerHTML = 
                     `<h4>Total stats:</h4>
-                    Total population: <b>${currentData.population}</b><br>
-                    Total Divorces: <b>${formatNumber(averageStats.totalDivorces)}</b><br>
+                    Total population: <b>${currentData.population} people</b><br>
+                    Total Divorces: <b>${formatNumber(averageStats.totalDivorces)} divorces</b><br>
                     <br>
                     <h4>Average stats:</h4>
                     Average Population: <b>${averageStats.averagePopulation} people</b><br>
@@ -1078,14 +1083,12 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   const marriagesPerCapita = ((currentData.marriages / currentData.population) * 1000).toFixed(1);
                   const divorcesPerCapita = ((currentData.divorces / currentData.population) * 1000).toFixed(1);
                   const netFamilyPerCapita = (marriagesPerCapita - divorcesPerCapita).toFixed(1);
-                  const marriageDivorceRatio = currentData.divorces > 0 ? (currentData.marriages / currentData.divorces).toFixed(2) : "∞";
                   
                   descriptionElement.innerHTML = 
-                  `Population: <b>${currentData.population}</b><br>
+                  `Population: <b>${currentData.population} people</b><br>
                   Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPerCapita} per 1,000 people)</small><br>
                   Divorces: <b>-${currentData.divorces}</b> <small>(${divorcesPerCapita} per 1,000 people)</small><br>
-                  Net Family Balance: <b>${netFamilyPerCapita}</b> <small>(per 1,000 people)</small><br>
-                  Marriage/Divorce ratio: <b>${marriageDivorceRatio}</b>`;
+                  Net Family Balance: <b>${currentData.marriages - currentData.divorces}</b> <small>(${netFamilyPerCapita} per 1,000 people)</small><br>`
                 } else {
                   const netFamily = averageStats.totalMarriages - averageStats.totalDivorces;
                   const avgFamilyPerYear = Math.round(netFamily / averageStats.totalYears);
@@ -1093,7 +1096,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   
                   descriptionElement.innerHTML = 
                   `<h4>Total stats:</h4>
-                  Total population: <b>${currentData.population}</b><br>
+                  Total population: <b>${currentData.population} people</b><br>
                   Total Marriages: <b>${formatNumber(averageStats.totalMarriages)}</b><br>
                   Total Divorces: <b>-${averageStats.totalDivorces}</b><br>
                   Net Family: <b>${formatNumber(netFamily)}</b><br>
@@ -1129,6 +1132,133 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
       }
     }
 
+const changeDataBtn = document.querySelector('.change-specific-stat');
+changeDataBtn.addEventListener('click', () => {
+    $('#changeDataModal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+        changeData(selectedData)
+      });
+    $('#changeDataModal').modal('show');
+})
+
+function changeData(selectedData) {
+    const yearSelect = document.getElementById('yearSelect');
+    const infoStat = document.getElementById('infoStat');
+    const dataInput = document.getElementById('dataInput');
+    const saveChangesBtn = document.getElementById('saveChangesBtn');
+
+    yearSelect.innerHTML = '';
+
+    const defaultOption = document.createElement('option');
+    defaultOption.text = 'Select a year to change...';
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    yearSelect.appendChild(defaultOption);
+
+    if(currentTab !== "employment") {
+        for(let year = 1990; year <= lastYear; year++) {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          yearSelect.appendChild(option);
+        }
+    } else {
+        for(let year = 2007; year < lastYear; year++) {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          yearSelect.appendChild(option);
+        }
+    }
+    let population = null;
+
+    const municipalitySelect = document.getElementById('municipalitySelect');
+    municipalitySelect.innerHTML = '';
+
+    const defaultOption2 = document.createElement('option');
+    defaultOption2.text = selectedCity;
+    defaultOption2.selected = true;
+    municipalitySelect.appendChild(defaultOption2);
+
+    const allMunicipalities = localStorage.getItem('allMunicipalities');
+    const municipalities = JSON.parse(allMunicipalities)
+
+    municipalities.forEach(municipality => {
+            const option = document.createElement('option');
+            option.value = municipality.code;
+            option.textContent = municipality.name;
+            municipalitySelect.appendChild(option);
+          
+    });
+
+
+    yearSelect.addEventListener('change', () => {
+        selectedMunicipalityCode = municipalitySelect.value;
+        selectedYearValue = yearSelect.value;
+
+        const yearIndex = statData.dimension.Vuosi.category.index[selectedYearValue];
+        const municipalityKeys = Object.keys(statData.dimension.Alue.category.label);
+        const municipalityCount = municipalityKeys.length;
+        const metricsPerMunicipality = 8;
+        
+        const municipalityIndex = municipalityKeys.indexOf(selectedMunicipalityCode);
+        
+        baseIndex = yearIndex * municipalityCount * metricsPerMunicipality + municipalityIndex * metricsPerMunicipality;
+        currentPopulation = statData.value[baseIndex + 7];
+
+        if (currentPopulation !== undefined) {
+            infoStat.textContent = `Population in ${selectedYearValue}: ${currentPopulation}`;
+            dataInput.value = currentPopulation;
+            dataInput.disabled = false;
+            saveChangesBtn.disabled = false;
+        } else {
+            infoStat.textContent = `No data found.`;
+            dataInput.disabled = true;
+            saveChangesBtn.disabled = true;
+        }
+    });
+
+    municipalitySelect.addEventListener('change', () => {
+        if (yearSelect.value && yearSelect.value !== 'Select a year to change...') {
+            const event = new Event('change');
+            yearSelect.dispatchEvent(event);
+        } else {
+            infoStat.textContent = 'Please select a year first';
+            dataInput.disabled = true;
+            saveChangesBtn.disabled = true;
+        }
+    });
+
+    saveChangesBtn.addEventListener('click', () => {
+        if (baseIndex !== null && dataInput.value) {
+            const newValue = parseInt(dataInput.value, 10);
+            if (!isNaN(newValue) && newValue !== 0 && newValue > 0) {
+                statData.value[baseIndex + 7] = newValue;
+                
+                if (selectedMunicipalityCode && selectedData[selectedMunicipalityCode]) {
+                    selectedData[selectedMunicipalityCode].population = newValue;
+                }
+                
+                infoStat.textContent = `Data updated! Population in ${selectedYearValue}: ${newValue}`;
+                
+                updateData();
+                updateSelectedMunicipalityDisplay();
+                
+                setTimeout(() => {
+                    $('#changeDataModal').modal('hide');
+                }, 1500);
+            } else {
+                infoStat.textContent = 'Please enter a valid number';
+            }
+        } else {
+            infoStat.textContent = 'Please select a year and municipality first';
+        }
+    });
+
+
+
+}
+
 function changeTab() {  
     const populationTab = document.querySelector('.nav-link[data-stat="population"]');
     const birthTab = document.querySelector('.dropdown-item[data-stat="births"]');
@@ -1150,6 +1280,9 @@ function changeTab() {
         populationTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
 
             currentTab = 'population';
             localStorage.setItem('currentTab', currentTab);
@@ -1166,6 +1299,10 @@ function changeTab() {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
 
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
+
             currentTab = 'births';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -1179,6 +1316,10 @@ function changeTab() {
         deathTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
             
             currentTab = 'deaths';
             localStorage.setItem('currentTab', currentTab);
@@ -1193,6 +1334,10 @@ function changeTab() {
         vitalTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
             
             currentTab = 'vitals';
             localStorage.setItem('currentTab', currentTab);
@@ -1207,6 +1352,10 @@ function changeTab() {
         immigrationTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
             
             currentTab = 'immigration';
             localStorage.setItem('currentTab', currentTab);
@@ -1221,6 +1370,10 @@ function changeTab() {
         emigrationTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
             
             currentTab = 'emigration';
             localStorage.setItem('currentTab', currentTab);
@@ -1235,6 +1388,10 @@ function changeTab() {
         migrationTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
             
             currentTab = 'migration';
             localStorage.setItem('currentTab', currentTab);
@@ -1250,6 +1407,10 @@ function changeTab() {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
             
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
+            
             currentTab = 'marriages';
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
@@ -1263,6 +1424,10 @@ function changeTab() {
         divorcesTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
             
             currentTab = 'divorces';
             localStorage.setItem('currentTab', currentTab);
@@ -1277,6 +1442,10 @@ function changeTab() {
         familyTab.addEventListener('click', function(e) {
             yearSlider.min = 1990;
             yearSlider.max = 2024;
+
+            selectedYear = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
             
             currentTab = 'family';
             localStorage.setItem('currentTab', currentTab);
@@ -1293,14 +1462,12 @@ function changeTab() {
             localStorage.setItem('currentTab', currentTab);
             statName.textContent = currentTab;
             statDescription.textContent = `Employment rates across Finnish municipalities (2007-2023)`;
-            if (selectedYear < 2007 || selectedYear > lastYear) {
-                selectedYear = lastYear - 1;
-                yearDisplay.textContent = selectedYear;
-                yearSlider.value = selectedYear;
-            }
 
+            selectedYear = 2023;
             yearSlider.min = 2007;
             yearSlider.max = 2023;
+            yearSlider.value = selectedYear;
+            yearDisplay.textContent = selectedYear;
 
             updateData();
             updateLegend();
@@ -1350,7 +1517,7 @@ const initMap = (data) => {
 
       printPlugin = L.easyPrint({
           title: 'Download map',
-          sizeModes: ['A4Landscape'],
+          sizeModes: ['CurrentSize'],
           exportOnly: true,
           hideControlContainer: true
       }).addTo(map);
@@ -1381,7 +1548,7 @@ downloadMapBtn.addEventListener('click', function() {
       } else {
         printPlugin.printMap('CurrentSize', `Finland_${currentTab}_2007_${lastYear}_average`);
       }
-    }, 1000);
+    }, 500);
 });
 
 
@@ -1389,17 +1556,21 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
     div.innerHTML = '';
 
     if (isAverageMode && currentTab === 'population') {
-        div.innerHTML = `<h4>Population Growth (1990-${lastYear})</h4>`;
-        div.innerHTML += '<i style="background: #006837"></i> > 50%<br>';
-        div.innerHTML += '<i style="background: #1a9850"></i> 30% - 50%<br>';
-        div.innerHTML += '<i style="background: #66bd63"></i> 20% - 30%<br>';
-        div.innerHTML += '<i style="background: #a6d96a"></i> 10% - 20%<br>';
-        div.innerHTML += '<i style="background: #d9ef8b"></i> 5% - 10%<br>';
-        div.innerHTML += '<i style="background: #ffffbf"></i> 0% - 5%<br>';
-        div.innerHTML += '<i style="background: #fee08b"></i> -5% - 0%<br>';
-        div.innerHTML += '<i style="background: #fdae61"></i> -10% - -5%<br>';
-        div.innerHTML += '<i style="background: #f46d43"></i> -20% - -10%<br>';
-        div.innerHTML += '<i style="background: #d73027"></i> < -20%<br>';
+          div.innerHTML = `<h4>Population Growth (1990-${lastYear})</h4>`;
+          div.innerHTML += '<i style="background: #003300"></i> > 80%<br>';
+          div.innerHTML += '<i style="background: #004d26"></i> 70% - 80%<br>';
+          div.innerHTML += '<i style="background: #006837"></i> 50% - 70%<br>';
+          div.innerHTML += '<i style="background: #1a9850"></i> 30% - 50%<br>';
+          div.innerHTML += '<i style="background: #66bd63"></i> 20% - 30%<br>';
+          div.innerHTML += '<i style="background: #a6d96a"></i> 10% - 20%<br>';
+          div.innerHTML += '<i style="background: #d9ef8b"></i> 5% - 10%<br>';
+          div.innerHTML += '<i style="background: #ffffbf"></i> 0% - 5%<br>';
+          div.innerHTML += '<i style="background: #fee08b"></i> -5% - 0%<br>';
+          div.innerHTML += '<i style="background: #fdae61"></i> -10% - -5%<br>';
+          div.innerHTML += '<i style="background: #f46d43"></i> -20% - -10%<br>';
+          div.innerHTML += '<i style="background: #e04a3f"></i> -30% - -20%<br>';
+          div.innerHTML += '<i style="background: #b2182b"></i> -40% - -30%<br>';
+          div.innerHTML += '<i style="background: #800026"></i> < -40%<br>'; 
     } else {
       if(currentTab === 'population') {
           div.innerHTML = '<h4>Population</h4>';
@@ -1510,7 +1681,7 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
           div.innerHTML += '<i style="background: #1a9850"></i> 1 - 2<br>';
           div.innerHTML += '<i style="background: #006837"></i> < 1<br>';
       } else if(currentTab === 'family') {
-          div.innerHTML = '<h4>Marriage-Divorce Balance</h4>';
+          div.innerHTML = '<h4>Net Family Balance (Marriages - Divorces)</h4>';
           div.innerHTML += '<i style="background: #006837"></i> > 500<br>';
           div.innerHTML += '<i style="background: #1a9850"></i> 200 - 500<br>';
           div.innerHTML += '<i style="background: #66bd63"></i> 100 - 200<br>';
@@ -1677,7 +1848,7 @@ const updateData = async() => {
     if (isAverageMode) {
         if (currentTab === 'population') {
             statName.textContent = 'Population Growth';
-            statDescription.textContent = `Population growth across Finnish municipalities (1990-${lastYear})`;
+            statDescription.textContent = `Population growth in % across Finnish municipalities (1990-${lastYear})`;
         } else {
             statName.textContent = `Average ${currentTab}`;
             if (currentTab !== "employment") {
@@ -1764,6 +1935,7 @@ const updateData = async() => {
             Object.values(selectedData).forEach(element => {
                 if (element.name === municipalityName) {
                     updatedData = element;
+                    selectedCity = element.name;
                 }
             });
 
@@ -1790,6 +1962,7 @@ const getFeature = (feature, layer) => {
         Object.values(selectedData).forEach(element => {
             if(element.name === name) {
                 currentData = element;
+                selectedCity = element.name;
             }
         });
     if (currentData) {
@@ -1821,6 +1994,7 @@ const getStyle = (feature) => {
     Object.values(selectedData).forEach(element => {
       if(element.name === name) {
         data = element;
+        selectedCity = element.name;
       }
     });
 
@@ -1838,7 +2012,9 @@ const getStyle = (feature) => {
             // For population, show growth instead of average
             const growthPercent = avgStats.totalGrowth / avgStats.initialPopulation * 100;
             
-            if (growthPercent > 50) fillColor = '#006837';
+            if (growthPercent > 80) fillColor = '#003300';     
+            else if (growthPercent > 70) fillColor = '#004d26';
+            else if (growthPercent > 50) fillColor = '#006837';
             else if (growthPercent > 30) fillColor = '#1a9850';
             else if (growthPercent > 20) fillColor = '#66bd63';
             else if (growthPercent > 10) fillColor = '#a6d96a';
@@ -1847,7 +2023,9 @@ const getStyle = (feature) => {
             else if (growthPercent > -5) fillColor = '#fee08b';
             else if (growthPercent > -10) fillColor = '#fdae61';
             else if (growthPercent > -20) fillColor = '#f46d43';
-            else fillColor = '#d73027';
+            else if (growthPercent > -30) fillColor = '#e04a3f';
+            else if (growthPercent > -40) fillColor = '#b2182b';
+            else fillColor = '#800026'; // new: < -40%
         } else if(currentTab === 'births') {
             const avgBirths = avgStats.averageBirths;
             

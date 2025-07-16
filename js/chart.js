@@ -10,11 +10,13 @@ let chart1Type = localStorage.getItem('savedChartType') || 'bar'
 let chart2Type = localStorage.getItem('savedChart2Type') || 'bar';
 let chart3Type = localStorage.getItem('savedChart3Type') || 'bar';
 let chart4Type = localStorage.getItem('savedChart4Type') || 'bar';
+let chart5Type = localStorage.getItem('savedChart5Type') || 'bar';
 
 
 let expandChart2 = localStorage.getItem('expandedChart2') === 'true';
 let expandChart3 = localStorage.getItem('expandedChart3') === 'true';
 let expandChart4 = localStorage.getItem('expandedChart4') === 'true';
+let expandChart5 = localStorage.getItem('expandedChart5') === 'true';
 
 const jsonQuery =
 {
@@ -64,6 +66,53 @@ const jsonQuery =
   }
 }
 
+const jsonQuery2 = 
+{
+  "query": [
+    {
+      "code": "Alue",
+      "selection": {
+        "filter": "item",
+        "values": [
+          savedMunicipalityCode // This will be the selected municipality code
+        ]
+      }
+    },
+    {
+      "code": "Toimiala", // All Industries
+      "selection": {
+        "filter": "item",
+        "values": [
+          "SSS"
+        ]
+      }
+    },
+    {
+      "code": "Sukupuoli", // Both female and men
+      "selection": {
+        "filter": "item",
+        "values": [
+          "SSS"
+        ]
+      }
+    },
+    {
+      "code": "Vuosi",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "2007", "2008", "2009", "2010", "2011",
+          "2012", "2013", "2014", "2015", "2016", "2017",
+          "2018", "2019", "2020", "2021", "2022", "2023"
+        ]
+      }
+    },
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
+
 const getData = async () => {
     
     const url1 = "https://statfin.stat.fi:443/PxWeb/api/v1/en/StatFin/ssaaty/statfin_ssaaty_pxt_121w.px"
@@ -80,6 +129,20 @@ const getData = async () => {
     console.log(statData);
 
     return statData
+}
+
+const getEmploymentData = async() => {
+    const url2 = "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tyokay/statfin_tyokay_pxt_115i.px"
+    const res2 = await fetch(url2, {
+            method: "POST",
+            headers: {"content-type": "application/json"},
+            body: JSON.stringify(jsonQuery2)
+    })
+    if(!res2.ok) {
+          return;
+    }
+    employmentData = await res2.json()
+    return employmentData;
 }
 
 
@@ -1031,7 +1094,190 @@ const buildChart = async () => {
         localStorage.setItem('expandedChart4', 'false');
     });
 
+
+
+
+
+
+
+
+
+// CHART 5 (Employment)
+
+
+
+
+
+
+
+
+
+    const employmentData = await getEmploymentData();
+    const employmentYears = Object.values(employmentData.dimension.Vuosi.category.label);
+    const employmentValues = employmentData.value;
+
+    const employment = [];
+
+    const WORKING_AGE_RATIO = 0.60;
+    const populationAfter2007 = population.slice(years.indexOf("2007"));
+
+
+    for (let i = 0; i < employmentValues.length; i++) {
+        const employmentRate = ((employmentValues[i] / (populationAfter2007[i] * WORKING_AGE_RATIO)) * 100).toFixed(2);
+        employment.push(Number(employmentRate));
+    }
+
+    const chartData5 = {
+        labels: employmentYears,
+        datasets: [
+            {
+                name: "Employment",
+                values: employment,
+            }
+        ]
+    }
+
+    const initialEmployment = employment[0];
+    const finalEmployment = employment[employment.length - 1];
+    const employmentGrowth = ((finalEmployment - initialEmployment) / Math.abs(initialEmployment || 1)) * 100;
+
+    let title5 = `💰 Employment Evolution (${formatNumber(employmentGrowth.toFixed(1))}%)`;
+    let color5 = ['#4CAF50'];
+    let chart5Type = localStorage.getItem('savedChart5Type') || 'bar';
+
+    function updateChart5() {
+        document.getElementById('chart5').innerHTML = '';
+        
+        employmentChart = new frappe.Chart("#chart5", {
+            title: title5,
+            data: {
+                labels: employmentYears,
+                datasets: chartData5.datasets
+            },
+            type: chart5Type,
+            height: 450,
+            colors: color5,
+        });
+    }
+
+    document.getElementById('bar5').addEventListener('click', () => {
+        chart5Type = "bar";
+        localStorage.setItem('savedChart5Type', "bar");
+        location.reload();
+        updateChart5();
+    });
+
+    document.getElementById('line5').addEventListener('click', () => {
+        chart5Type = "line";
+        localStorage.setItem('savedChart5Type', "line");
+        location.reload();
+        updateChart5();
+    });
+
+    let expandChart5 = localStorage.getItem('expandedChart5') === 'true';
+
+    if (expandChart5) {
+        const bsCollapse = new bootstrap.Collapse(document.getElementById('chart5Container'), {
+            show: true
+        });
+
+        setTimeout(() => {
+            document.getElementById('chart5').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+    }
+
+    document.getElementById('chart5Container').addEventListener('shown.bs.collapse', function() {
+        updateChart5();
+        
+        setTimeout(() => {
+            document.getElementById('chart5').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+        }, 100);
+
+        expandChart5 = true;
+        localStorage.setItem('expandedChart5', 'true');
+    });
+
+    document.getElementById('chart5Container').addEventListener('hidden.bs.collapse', function() {
+        expandChart5 = false;
+        localStorage.setItem('expandedChart5', 'false');
+    });
+
 }
+
+const populationTab = document.querySelector('.nav-link[data-stat="population"]');
+const birthTab = document.querySelector('.dropdown-item[data-stat="births"]');
+const deathTab = document.querySelector('.dropdown-item[data-stat="deaths"]');
+const vitalTab = document.querySelector('.dropdown-item[data-stat="vitals"]');
+const immigrationTab = document.querySelector('.dropdown-item[data-stat="immigration"]');
+const emigrationTab = document.querySelector('.dropdown-item[data-stat="emigration"]');
+const migrationTab = document.querySelector('.dropdown-item[data-stat="migration"]');
+const marriagesTab = document.querySelector('.dropdown-item[data-stat="marriages"]');
+const divorcesTab = document.querySelector('.dropdown-item[data-stat="divorces"]');
+const familyTab = document.querySelector('.dropdown-item[data-stat="family"]');
+
+const employmentTab = document.querySelector('.nav-link[data-stat="employment"]');
+
+
+populationTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "population")
+    window.location.href = '../html/map.html';
+});
+
+birthTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "births")
+    window.location.href = '../html/map.html';
+});
+
+deathTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "deaths")
+    window.location.href = '../html/map.html';
+});
+
+vitalTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "vitals")
+    window.location.href = '../html/map.html';
+});
+
+immigrationTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "immigration")
+    window.location.href = '../html/map.html';
+});
+
+emigrationTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "emigration")
+    window.location.href = '../html/map.html';
+});
+
+migrationTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "migration")
+    window.location.href = '../html/map.html';
+});
+
+marriagesTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "marriages")
+    window.location.href = '../html/map.html';
+});
+
+divorcesTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "divorces")
+    window.location.href = '../html/map.html';
+});
+
+familyTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "family")
+    window.location.href = '../html/map.html';
+});
+
+employmentTab.addEventListener('click', function(e) {
+    localStorage.setItem("currentTab", "employment")
+    window.location.href = '../html/map.html';
+});
 
 
 buildChart();

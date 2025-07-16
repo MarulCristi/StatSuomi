@@ -20,6 +20,28 @@
         <script src="https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js"></script>
     </head>
     <body class="zoom-in">
+        <div class="modal" id="changeDataModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <select id="yearSelect" class="form-control"></select>
+                        <select id="municipalitySelect" class="form-control"></select>
+                        <span id="infoStat"></span><br>
+                        <input type="text" id="dataInput" class="small-input mt-2" placeholder="Enter new value">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <a class="navbar-brand" href="../index.html"> <!-- Go to main menu --> 
             <span class="text-success font-weight-bold">StatSuomi</span>
@@ -92,6 +114,7 @@
             </div>
             <div class="stat-name-specific"></div>
             <div class="stat-year-specific"></div>
+            <button class="change-specific-stat">Change Data</button>
             <div class="stat-description-specific">Population: value<br>See more details</div>
             <button id="view-details-btn">View More Details</button>
         </div>
