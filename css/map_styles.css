@@ -402,7 +402,7 @@ body.loaded #map {
 @media (max-width: 700px) {
 
     .legend {
-        bottom: 45vh;
+        bottom: 40vh;
         right: -3px;
         max-width: 120px;
         font-size: 8px;
@@ -480,8 +480,18 @@ body.loaded #map {
         margin-bottom: 0.2em;
     }
 
-    .reset-button {
-        right: 165px;
-    }
 
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-left: auto;
+    }
+    
+    .change-specific-stat,
+    .reset-button {
+        position: static; 
+        width: auto;
+        flex: 1; 
+    }
 }
