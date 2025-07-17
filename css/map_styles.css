@@ -384,7 +384,7 @@ body.loaded #map {
     color: white;
     border-radius: 6px;
     margin-top: 2px;
-    right: 95px;
+    right: 105px;
     font-size: 10px;
     transition: all 0.2s ease;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -402,16 +402,16 @@ body.loaded #map {
 @media (max-width: 700px) {
 
     .legend {
-        bottom: 30vh;
+        bottom: 45vh;
         right: -3px;
         max-width: 120px;
-        font-size: 10px;
+        font-size: 8px;
     }
     .legend h4 {
-        font-size: 10px;
+        font-size: 8px;
     }
     .legend i {
-        width: 10px
+        width: 8px
     }
     #statistic-display-specific {
         top: 60px; 
@@ -478,6 +478,10 @@ body.loaded #map {
     .stat-description-specific h4 {
         font-size: 1.7em;
         margin-bottom: 0.2em;
+    }
+
+    .reset-button {
+        right: 165px;
     }
 
 }

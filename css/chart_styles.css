@@ -164,7 +164,7 @@
         position: static;
         margin-bottom: 10px;
         gap: 5px;
-        margin-left: 15px;
+        margin-left: 10px;
         flex-wrap: wrap;
     }
 
@@ -192,7 +192,7 @@
     }
 
     .collapsible-container {
-        margin-left: 25px;
+        margin-left: 10px;
     }
 }
 
