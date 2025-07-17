@@ -4,7 +4,7 @@ html, body {
 }
 
 .main-menu {
-    background: linear-gradient(-45deg, #00c9ff, #92fe9d, #00c9ff, #a8edea);
+    background: linear-gradient(-45deg, #00c9ff, #7bc583, #00c9ff, #a8edea);
     background-size: 400%;
     animation: gradient 15s ease infinite;
     overflow: hidden;
@@ -37,15 +37,12 @@ html, body {
 
 h1 {
     font-family: "Michroma", sans-serif;
-    font-weight: 400;
-    font-style: normal;
     font-size: 8rem;
     text-align: center;
     margin: 0;
     padding: 10px;
     color: transparent;
     background: linear-gradient(-45deg, #a8edea, #fed6e3, #a8edea, #fed6e3);
-    background-size: 400% 400%;
     background-clip: text;
     -webkit-background-clip: text;
     animation: textGradient 15s ease infinite;
@@ -133,4 +130,44 @@ p:lang(fi):after {
     transform: scale(0.5);
     opacity: 0;
   }
+}
+
+@media (max-width: 1100px) { /* TABLET SUPPORT */
+    h1 {
+        font-size: 5rem;
+        padding: 7px;
+        letter-spacing: 0.05em;
+    }
+    p {
+        font-size: 1.7rem;
+        padding: 4px;
+    }
+    #lets-go {
+        font-size: 3rem;
+        padding: 10px 15px;
+    }
+    .main-container {
+        max-width: 120vw;
+        padding: 0 5vw;
+    }
+}
+
+@media (max-width: 650px) { /* PHONE SUPPORT */
+    h1 {
+        font-size: 3rem;
+        padding: 5px;
+        letter-spacing: 0.08em;
+    }
+    p {
+        font-size: 1.2rem;
+        padding: 2px;
+    }
+    #lets-go {
+        font-size: 2rem;
+        padding: 10px 15px;
+    }
+    .main-container {
+        max-width: 95vw;
+        padding: 0 5vw;
+    }
 }

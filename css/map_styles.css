@@ -145,7 +145,7 @@ body.loaded #map {
 }
 
 #statistic-display-specific {
-    position: absolute;
+    position: fixed;
     top: 180px;
     left: 10px;
     background-color: rgba(255, 255, 255, 0.9);
@@ -156,6 +156,7 @@ body.loaded #map {
     width: 320px;
     display: none; /* Hide by default */
     border-top: 4px solid #4CAF50;
+    max-height: 70vh
 }
 
 .stat-name-specific {
@@ -251,15 +252,17 @@ body.loaded #map {
 }
 
 .legend {
+  position: fixed;
   background: white;
   padding: 10px;
   line-height: 18px;
-  bottom: 30px;
-  right: 10px;
+  bottom: 40px;
+  right: 5px;
   color: #333;
   border-radius: 6px;
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   max-width: 220px;
+  z-index: 1000;
 }
 
 .legend h4 {
@@ -394,4 +397,46 @@ body.loaded #map {
     background-color: #b71c1c;
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 700px) {
+    .legend {
+        bottom: 30vh;
+        right: -3px;
+        max-width: 145px;
+    }
+    .legend h4 {
+        font-size: 12px;
+    }
+    .legend i {
+        width: 10px
+    }
+    #statistic-display-specific {
+        top: 60px; 
+        left: 10px;
+        width: 85vw; 
+        max-height: 31vh;
+        overflow-y: auto;
+        min-width: unset; 
+    }
+    #statistic-display-specific .stat-name-specific {
+        font-size: 16px;
+        padding-bottom: 4px;
+        margin-bottom: 6px;
+    }
+    #statistic-display-specific .stat-description-specific {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    #statistic-display-specific .stat-year-specific {
+        font-size: 0.8em;
+        padding-bottom: 4px;
+    }
+    #statistic-display-specific .stat-tab {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+    #statistic-display {
+        display: none
+    }
 }

@@ -1645,7 +1645,7 @@ function changeTab() {
 const initMap = (data) => {
   if (!map) {
       map = L.map('map', {
-          minZoom: 5,
+          minZoom: 4.5,
           zoomControl: false
       })
 
@@ -1677,7 +1677,7 @@ const initMap = (data) => {
 
       map.fitBounds(geoJson.getBounds())
 
-      map.setView([65.5, 26.0], 5); // Middle of Finland
+      map.setView([64.5, 26.7], 4.6); // Middle of Finland
 
       // console.log("Map was added.")
 
