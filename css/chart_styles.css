@@ -110,4 +110,39 @@
     cursor: not-allowed;
 }
 
+.chart-wrapper {
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+}
+
+#chart, #chart2, #chart3, #chart4, #chart5 {
+    min-width: 800px;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        max-width: 100%;
+        margin-left: 0;
+        padding: 13px 0 0 0;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .frappe-chart .x.axis text {
+        display: none;
+    }
+    
+    .chart-wrapper {
+        padding-bottom: 15px;
+    }
+    
+    .chart-controls {
+        position: static;
+        margin-bottom: 10px;
+        padding: 0 10px;
+    }
+}
+
+
 
