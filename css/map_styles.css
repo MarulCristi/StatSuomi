@@ -384,7 +384,7 @@ body.loaded #map {
     color: white;
     border-radius: 6px;
     margin-top: 2px;
-    right: 110px;
+    right: 95px;
     font-size: 10px;
     transition: all 0.2s ease;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -400,13 +400,15 @@ body.loaded #map {
 }
 
 @media (max-width: 700px) {
+
     .legend {
         bottom: 30vh;
         right: -3px;
-        max-width: 145px;
+        max-width: 120px;
+        font-size: 10px;
     }
     .legend h4 {
-        font-size: 12px;
+        font-size: 10px;
     }
     .legend i {
         width: 10px
@@ -414,8 +416,8 @@ body.loaded #map {
     #statistic-display-specific {
         top: 60px; 
         left: 10px;
-        width: 85vw; 
-        max-height: 31vh;
+        width: 75vw; 
+        max-height: 32vh;
         overflow-y: auto;
         min-width: unset; 
     }
@@ -425,8 +427,8 @@ body.loaded #map {
         margin-bottom: 6px;
     }
     #statistic-display-specific .stat-description-specific {
-        font-size: 12px;
-        line-height: 1.5;
+        font-size: 10px;
+        line-height: 1.3;
     }
     #statistic-display-specific .stat-year-specific {
         font-size: 0.8em;
@@ -439,4 +441,43 @@ body.loaded #map {
     #statistic-display {
         display: none
     }
+    #year-control {
+        bottom: 15px;
+        padding: 8px 12px;
+        max-width: 90%;
+    }
+    .slider-container {
+        width: 200px;
+    }
+    
+    #year-display {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    
+    #download-map-btn, #average-toggle {
+        padding: 6px 10px;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    
+    #year-slider {
+        height: 10px;
+    }
+    
+    #year-slider::-webkit-slider-thumb {
+        width: 16px;
+        height: 16px;
+    }
+    
+    #year-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+    }
+
+    .stat-description-specific h4 {
+        font-size: 1.7em;
+        margin-bottom: 0.2em;
+    }
+
 }
