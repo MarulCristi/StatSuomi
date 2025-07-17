@@ -113,6 +113,11 @@ const jsonQuery2 =
   }
 }
 
+selectedData = {}
+let statData = null;
+let lastYear = new Date().getFullYear() - 1;
+
+
 const getData = async () => {
     
     const url1 = "https://statfin.stat.fi:443/PxWeb/api/v1/en/StatFin/ssaaty/statfin_ssaaty_pxt_121w.px"
@@ -180,10 +185,28 @@ function applyDataModifications(data) {
     });
 }
 
-
 let changed = false;
 let chart2Changed = false;
 
+// let changeData1 = false;
+// let changeData2 = false;
+// let changeData3 = false;
+// let changeData4 = false;
+// let changeData5 = false; REPLACED BY ARRAY
+
+let births = [];
+let deaths = [];
+let vitals = [];
+
+let population = [];
+
+let immigration = [];
+let emigration = [];
+let migration = [];
+
+let marriages = [];
+let divorces = [];
+let families = [];
 
 
 const buildChart = async () => {
@@ -233,19 +256,21 @@ const buildChart = async () => {
     const metricsPerYear = 8;
     const yearCount = years.length;
 
-    const births = [];
-    const deaths = [];
-    const vitals = [];
 
-    const population = [];
+    births = [];
+    deaths = [];
+    vitals = [];
 
-    const immigration = [];
-    const emigration = [];
-    const migration = [];
+    population = [];
 
-    const marriages = [];
-    const divorces = [];
-    const families = [];
+    immigration = [];
+    emigration = [];
+    migration = [];
+
+    marriages = [];
+    divorces = [];
+    families = [];
+    
 
     for (let yearIndex = 0; yearIndex < yearCount; yearIndex++) {
         const baseIndex = yearIndex * metricsPerYear;
@@ -1242,6 +1267,263 @@ const buildChart = async () => {
         localStorage.setItem('expandedChart5', 'false');
     });
 
+}
+
+let changeDataArray = [false, false, false, false, false]
+
+for (let i = 1; i < 5; i++) {
+    const btn = document.querySelector(`.change${i}`);
+    if (btn) {
+        btn.addEventListener('click', () => {
+            changeDataArray[i] = true;
+            $('#changeDataModal').on('shown.bs.modal', function () {
+                $('#myInput').trigger('focus');
+                changeData(selectedData);
+            });
+            $('#changeDataModal').modal('show');
+        });
+    }
+}
+
+document.getElementById('close-button').addEventListener('click', () => {
+    $('#changeDataModal').modal('hide');
+}) 
+
+
+
+function changeData(selectedData) {
+    const typeSelect = document.getElementById('typeSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    const infoStat = document.getElementById('infoStat');
+    const dataInput = document.getElementById('dataInput');
+    const saveChangesBtn = document.getElementById('saveChangesBtn');
+
+    yearSelect.innerHTML = '';
+    typeSelect.innerHTML = '';
+    dataInput.innerHTML = '';
+    infoStat.innerHTML = '';
+
+    const defaultTypeOption = document.createElement('option');
+    defaultTypeOption.text = 'Select data type...';
+    defaultTypeOption.disabled = true;
+    defaultTypeOption.selected = true;
+    typeSelect.appendChild(defaultTypeOption);
+
+    if (changeDataArray[1]) { // Vitals chart
+        addTypeOption(typeSelect, 'births', 'Births');
+        addTypeOption(typeSelect, 'deaths', 'Deaths');
+    } else if (changeDataArray[2]) { // Migration chart
+        addTypeOption(typeSelect, 'immigration', 'Immigration');
+        addTypeOption(typeSelect, 'emigration', 'Emigration');
+    } else if (changeDataArray[3]) { // Family chart
+        addTypeOption(typeSelect, 'marriages', 'Marriages');
+        addTypeOption(typeSelect, 'divorces', 'Divorces');
+    } else if (changeDataArray[4]) { // Population chart
+        addTypeOption(typeSelect, 'population', 'Population');
+    }
+
+    function addTypeOption(select, value, text) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = text;
+        select.appendChild(option);
+    }
+
+    const defaultYearOption = document.createElement('option');
+    defaultYearOption.text = 'Select a year to change...';
+    defaultYearOption.disabled = true;
+    defaultYearOption.selected = true;
+    yearSelect.appendChild(defaultYearOption);
+
+    if(!changeDataArray[5]) {
+        for(let year = 1990; year <= lastYear; year++) {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          yearSelect.appendChild(option);
+        }
+    } else {
+        for(let year = 2007; year < lastYear; year++) {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          yearSelect.appendChild(option);
+        }
+    }
+
+    const municipalitySelect = document.getElementById('municipalitySelect');
+    municipalitySelect.innerHTML = '';
+
+    const allMunicipalities = localStorage.getItem('allMunicipalities');
+    const municipalities = JSON.parse(allMunicipalities)
+
+    municipalities.forEach(municipality => {
+            const option = document.createElement('option');
+            option.value = municipality.code;
+            option.textContent = municipality.name;
+            municipalitySelect.appendChild(option);
+            if(municipality.name === savedMunicipalityName) {
+                savedMunicipalityCode = municipality.code;
+            }
+    });
+
+    const defaultOption2 = document.createElement('option');
+    defaultOption2.text = savedMunicipalityName;
+    defaultOption2.value = savedMunicipalityCode;
+    defaultOption2.selected = true;
+    municipalitySelect.appendChild(defaultOption2);
+
+    let selectedMetric = null;
+    let baseIndex = null;
+    let selectedYearValue = null;
+    let selectedMunicipalityCode = savedMunicipalityCode;
+
+    typeSelect.addEventListener('change', () => {
+        selectedMetric = typeSelect.value;
+        
+        if (yearSelect.value && yearSelect.value !== 'Select a year to change...') {
+            updateInfoAndInput();
+        } else {
+            infoStat.textContent = 'Please select a year';
+            dataInput.disabled = true;
+            saveChangesBtn.disabled = true;
+        }
+    });
+
+    yearSelect.addEventListener('change', () => {
+        selectedMunicipalityCode = municipalitySelect.value;
+        selectedYearValue = yearSelect.value;
+        
+        if (typeSelect.value && typeSelect.value !== 'Select data type...') {
+            updateInfoAndInput();
+        } else {
+            infoStat.textContent = 'Please select a data type first';
+            dataInput.disabled = true;
+            saveChangesBtn.disabled = true;
+        }
+    });
+
+    municipalitySelect.addEventListener('change', () => {
+        selectedMunicipalityCode = municipalitySelect.value;
+        
+        if (yearSelect.value && typeSelect.value && 
+            yearSelect.value !== 'Select a year to change...' &&
+            typeSelect.value !== 'Select data type...') {
+            updateInfoAndInput();
+        } else {
+            infoStat.textContent = 'Please select year and data type';
+            dataInput.disabled = true;
+            saveChangesBtn.disabled = true;
+        }
+    });
+
+    function updateInfoAndInput() {
+        const yearIndex = statData.dimension.Vuosi.category.index[selectedYearValue];
+        
+        if (yearIndex === undefined) {
+            infoStat.textContent = 'Year data not found';
+            dataInput.disabled = true;
+            saveChangesBtn.disabled = true;
+            return;
+        }
+        
+        baseIndex = yearIndex * 8;
+        let metricOffset = 7; // Default to population
+        let label = 'Population';
+        
+        if (selectedMetric === 'births') {
+            metricOffset = 0;
+            label = 'Births';
+        } else if (selectedMetric === 'deaths') {
+            metricOffset = 1;
+            label = 'Deaths';
+        } else if (selectedMetric === 'immigration') {
+            metricOffset = 2;
+            label = 'Immigration';
+        } else if (selectedMetric === 'emigration') {
+            metricOffset = 3;
+            label = 'Emigration';
+        } else if (selectedMetric === 'migration') {
+            metricOffset = 4;
+            label = 'Net Migration';
+        } else if (selectedMetric === 'marriages') {
+            metricOffset = 5;
+            label = 'Marriages';
+        } else if (selectedMetric === 'divorces') {
+            metricOffset = 6;
+            label = 'Divorces';
+        }
+        
+        const currentValue = statData.value[baseIndex + metricOffset];
+        
+        if (currentValue !== undefined) {
+            infoStat.textContent = `${label} in ${selectedYearValue}: ${currentValue}`;
+            dataInput.value = currentValue;
+            dataInput.disabled = false;
+            saveChangesBtn.disabled = false;
+        } else {
+            infoStat.textContent = `No data found.`;
+            dataInput.disabled = true;
+            saveChangesBtn.disabled = true;
+        }
+    }
+
+    saveChangesBtn.addEventListener('click', () => {
+        if (baseIndex !== null && dataInput.value && selectedMetric) {
+            const newValue = parseInt(dataInput.value, 10);
+            if (!isNaN(newValue) && newValue > 0) {
+                let metricOffset = 7; // Default to population
+                
+                if (selectedMetric === 'births') metricOffset = 0;
+                else if (selectedMetric === 'deaths') metricOffset = 1;
+                else if (selectedMetric === 'immigration') metricOffset = 2;
+                else if (selectedMetric === 'emigration') metricOffset = 3;
+                else if (selectedMetric === 'migration') metricOffset = 4;
+                else if (selectedMetric === 'marriages') metricOffset = 5;
+                else if (selectedMetric === 'divorces') metricOffset = 6;
+                
+                statData.value[baseIndex + metricOffset] = newValue;
+                
+                const modifiedData = {
+                    municipalityCode: selectedMunicipalityCode,
+                    year: selectedYearValue,
+                    metric: selectedMetric,
+                    value: newValue,
+                    timestamp: new Date().getTime()
+                };
+                
+                let dataModifications = JSON.parse(localStorage.getItem('dataModifications') || '[]');
+                
+                const existingIndex = dataModifications.findIndex(
+                    mod => mod.municipalityCode === selectedMunicipalityCode && 
+                          mod.year === selectedYearValue && 
+                          mod.metric === selectedMetric
+                );
+                
+                if (existingIndex >= 0) {
+                    dataModifications[existingIndex] = modifiedData;
+                } else {
+                    dataModifications.push(modifiedData);
+                }
+                
+                changeDataArray = [false, false, false, false, false];
+                localStorage.setItem('dataModifications', JSON.stringify(dataModifications));
+                console.log(`Data modified! ${modifiedData.timestamp}`);
+                localStorage.setItem('dataModified', 'true');
+                
+                infoStat.textContent = `Data updated! ${selectedMetric} in ${selectedYearValue}: ${newValue}`;
+                
+                setTimeout(() => {
+                    $('#changeDataModal').modal('hide');
+                    location.reload();
+                }, 1500);
+            } else {
+                infoStat.textContent = 'Please enter a valid positive number';
+            }
+        } else {
+            infoStat.textContent = 'Please make all selections';
+        }
+    });
 }
 
 const populationTab = document.querySelector('.nav-link[data-stat="population"]');

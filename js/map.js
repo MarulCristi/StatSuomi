@@ -783,6 +783,10 @@ closeStatsBtn.addEventListener('click', function() {
     document.getElementById('statistic-display-specific').style.display = 'none';
 });
 
+document.getElementById('close-button').addEventListener('click', () => {
+    $('#changeDataModal').modal('hide');
+}) 
+
 const getData = async() => {
 
       // Get a lot of useful Finnish Data (Population, vitals, migration, family.)
@@ -1183,12 +1187,6 @@ resetDataBtn.addEventListener('click', () => {
     }
 });
 
-if(localStorage.getItem('dataModified') === 'false') {
-  resetDataBtn.style.display = 'none';
-} else {
-  resetDataBtn.style.display = 'inline';
-}
-
 
 function changeData(selectedData) {
     const yearSelect = document.getElementById('yearSelect');
@@ -1419,6 +1417,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
 
@@ -1437,6 +1438,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+            
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
 
@@ -1455,6 +1459,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
 
@@ -1473,6 +1480,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
     
@@ -1491,6 +1501,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
     
@@ -1509,6 +1522,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
     
@@ -1527,6 +1543,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
     
@@ -1545,6 +1564,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
     
@@ -1563,6 +1585,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
     
@@ -1581,6 +1606,9 @@ function changeTab() {
             statDescription.textContent = `Total ${currentTab} across Finnish municipalities`;
             updateData();
             updateLegend();
+                        
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'inline';
         });
     }
 
@@ -1599,7 +1627,17 @@ function changeTab() {
 
             updateData();
             updateLegend();
+
+            const changeDataBtn = document.querySelector('.change-specific-stat');
+            changeDataBtn.style.display = 'none';
         });
+    }
+
+    const resetDataBtn = document.querySelector(".reset-button");
+    if(localStorage.getItem('dataModified') === 'false') {
+      resetDataBtn.style.display = 'none';
+    } else {
+      resetDataBtn.style.display = 'inline';
     }
 
 }
@@ -1669,13 +1707,18 @@ const initMap = (data) => {
 
 const downloadMapBtn = document.getElementById('download-map-btn');
 downloadMapBtn.addEventListener('click', function() {
+
     map.setView([65.5, 26.0], 5); // This makes sure that the map is centered before saving the map
+    
     setTimeout(() => {
       if(currentView !== "average") {
         printPlugin.printMap('CurrentSize', `Finland_${currentTab}_${selectedYear}`);
       } else {
         printPlugin.printMap('CurrentSize', `Finland_${currentTab}_2007_${lastYear}_average`);
       }
+      setTimeout(() => {
+        mapBlocker.style.display = 'none';
+      }, 1000);
     }, 500);
 });
 
