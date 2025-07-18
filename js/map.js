@@ -890,6 +890,11 @@ const getData = async() => {
       }
 
       console.log(selectedData)
+
+      const csv = Object.values(selectedData)
+        .map(m => `${m.name}: ${m.code}`)
+        .join('\n');
+      console.log(csv);
       
       changeTab(); // Make sure correct tab shows.
       initMap(geoData) // Create map with the data.
@@ -967,7 +972,8 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
   }
 
   if (information.style.display === 'block') {
-      const municipalityName = document.querySelector('.stat-name-specific').textContent;
+      const text = document.querySelector('.stat-name-specific').innerHTML
+      const municipalityName = text.split(' <')[0];
 
       let currentData = null;
       Object.values(selectedData).forEach(element => {
@@ -1057,7 +1063,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   `Total population: <b>${currentData.population} people</b><br>
                   Immigration: <b>${formatNumber(currentData.immigration)} people</b><br>
                   Emigration: <b>-${currentData.emigration} people</b><br>
-                  Net Migration: <b>${formatNumber(currentData.migration)}</b><small>(${migrationPerCapita} per 1,000 people)</small><br>`;
+                  Net Migration: <b>${formatNumber(currentData.migration)}</b> <small>(${migrationPerCapita} per 1,000 people)</small><br>`;
                 } else {
                   const netMigration = averageStats.totalImmigration - averageStats.totalEmigration;
                   const avgMigrationPerYear = Math.round(netMigration / averageStats.totalYears);
@@ -2100,7 +2106,8 @@ const updateData = async() => {
         geoJson.setStyle(getStyle);
         const specificDisplay = document.getElementById('statistic-display-specific');
         if (specificDisplay.style.display === 'block') {
-            const municipalityName = document.querySelector('.stat-name-specific').textContent;
+            const text = document.querySelector('.stat-name-specific').innerHTML
+            const municipalityName = text.split(' <')[0];
             
             let updatedData = null;
             Object.values(selectedData).forEach(element => {
@@ -2137,7 +2144,7 @@ const getFeature = (feature, layer) => {
             }
         });
     if (currentData) {
-          document.querySelector('.stat-name-specific').textContent = name;
+          document.querySelector('.stat-name-specific').innerHTML = `${name} <small>${currentData.code}</small>`;
           yearInfo = document.querySelector('.stat-year-specific');
           if (currentView === 'year') {
             yearInfo.innerHTML = `<b>${selectedYear}</b>`;
@@ -2469,7 +2476,8 @@ const getStyle = (feature) => {
 // Clicking view details opens the chart-visualizer.
 const viewDetailsBtn = document.getElementById('view-details-btn');
 viewDetailsBtn.addEventListener('click', function() {
-    const savedMunicipalityName = document.querySelector('.stat-name-specific').textContent;
+    const text = document.querySelector('.stat-name-specific').innerHTML
+    const savedMunicipalityName = text.split(' <')[0];
     
     let savedMunicipalityCode = null;
 
@@ -2652,7 +2660,6 @@ const updateDataImported = (jsonData, values) => {
     return { success: false, message: 'Error updating data: ' + error.message };
   }
 }
-
 
 getData();
 setupDragDrop();

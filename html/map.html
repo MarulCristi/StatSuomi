@@ -99,8 +99,99 @@
                 <a class="nav-link" data-stat="employment">Employment</a>
             </li>
             </ul>
+            <div class="ml-auto">
+                <button class="btn btn-dark" id="howToDragBtn" data-toggle="modal" data-target="#howToDragModal">
+                    How to use Drag and Drop
+                </button>
+            </div>
         </div>
         </nav>
+        <div class="modal fade" id="howToDragModal" tabindex="-1" role="dialog" aria-labelledby="howToDragModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="howToDragModalLabel">How to use Drag and Drop</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ol>
+                <li>Prepare your data as a JSON file in the correct format.</li>
+                <li>Drag your JSON file from your computer and drop it anywhere on this page.</li>
+                <li>Wait for the notification confirming the data was imported.</li>
+                <li>The map and statistics will update automatically with your new data and will be there until "Reset Data" is clicked.</li>
+                </ol>
+                <p><b>What is the correct format?</b></p>
+                <button class="btn btn-link p-0" data-toggle="modal" data-target="#formatTutorialModal" data-dismiss="modal">Show Example</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="modal fade" id="formatTutorialModal" tabindex="-1" role="dialog" aria-labelledby="formatTutorialModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formatTutorialModalLabel">Correct JSON Format Example</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <pre style="background:#f8f9fa;padding:10px;border-radius:5px;">
+<code>{
+    "data": [
+        {"year": "2024", "area": "KU091", "metric": "vaesto", "value": 662100},
+        {"year": "2024", "area": "KU091", "metric": "vm01", "value": 8000}
+    ]
+}</code></pre>
+                <ul>
+                <li><b>year</b>: The year as a string (e.g. "2024")</li>
+                <li>
+                    <a href="#"><b>area</b></a>: Municipality code (e.g. "KU091" - Helsinki)</li>
+                <li>            
+                    <a href="#" data-toggle="modal" data-target="#metricListModal" data-dismiss="modal"><b>metric</b></a>: Metric code ("vaesto", "vm01", etc.)</li>
+                <li><b>value</b>: The value as a number (e.g. 662100)</li>
+                </ul>
+                <p>This will set Helsinki's population in 2024 to 662,100 and births to 8,000. Municipality codes are next to the municipality's name in both chart and map view.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal" data-target="#howToDragModal">Back</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="modal fade" id="metricListModal" tabindex="-1" role="dialog" aria-labelledby="metricListModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="metricListModalLabel">Available Metrics</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                <li><b>vaesto</b>: Population</li>
+                <li><b>vm01</b>: Births</li>
+                <li><b>vm11</b>: Deaths</li>
+                <li><b>vm41</b>: Immigration</li>
+                <li><b>vm42</b>: Emigration</li>
+                <li><b>vm2126</b>: Marriages</li>
+                <li><b>vm3136</b>: Divorces</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal" data-target="#formatTutorialModal">Back</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+        </div>
         <div class="loading-overlay">
             <div class="spinner"></div>
         </div>
