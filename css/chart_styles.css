@@ -197,5 +197,69 @@
     }
 }
 
+#drag-overlay {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(76,175,80,0.25);
+  display: none; /* Hidden by default */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+#drag-overlay.active {
+  display: flex;
+  pointer-events: all;
+  opacity: 1;
+}
+#drag-overlay .drag-message {
+  background: white;
+  padding: 40px 60px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  font-size: 2rem;
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.data-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  z-index: 10000;
+  transform: translateX(110%);
+  transition: transform 0.3s ease-out;
+  max-width: 400px;
+}
+
+.data-notification.show {
+  transform: translateX(0);
+}
+
+.data-notification.success {
+  background-color: #4CAF50;
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+}
+
+.data-notification.error {
+  background-color: #f44336;
+  box-shadow: 0 2px 10px rgba(244, 67, 54, 0.3);
+}
+
+#howToDragBtn {
+  font-size: 1rem;
+  height: 40px;
+  margin-right: 30px;
+  white-space: nowrap;
+}
+
+
+
 
 

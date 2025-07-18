@@ -1596,4 +1596,172 @@ employmentTab.addEventListener('click', function(e) {
 });
 
 
+const dragOverlay = document.getElementById('drag-overlay');
+window.addEventListener('dragenter', () => {
+     dragOverlay.classList.add('active')
+    });
+window.addEventListener('dragover', (e) => {
+     e.preventDefault()
+     dragOverlay.classList.add('active')
+    });
+window.addEventListener('dragleave', () => {
+     dragOverlay.classList.remove('active')
+    });
+window.addEventListener('drop', (e) => {
+     e.preventDefault();
+     dragOverlay.classList.remove('active');
+     if (typeof handleDrop === 'function') {
+        handleDrop(e);
+     }
+    });
+
+let handleDrop;
+
+const setupDragDrop = () => {
+
+    const notification = document.createElement('div');
+    notification.id = 'data-notification';
+    notification.classList.add('data-notification');
+    document.body.appendChild(notification);
+
+
+    function showNotification(message, isError = false) {
+      notification.textContent = message;
+      notification.className = 'data-notification';
+      if (isError) {
+        notification.classList.add('error');
+      } else {
+        notification.classList.add('success');
+      }
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 5000);
+    }
+
+    handleDrop = function(e) {
+      const dataTransfer = e.dataTransfer;
+      const files = dataTransfer.files;
+
+      if (files.length !== 1) {
+        showNotification('Please drop exactly one JSON file.', true);
+        return;
+      }
+      
+      const file = files[0];
+      if (!file.type.match('application/json')) {
+        showNotification('Please drop a valid JSON file.', true);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const jsonData = JSON.parse(e.target.result);
+          processImportedData(jsonData, showNotification);
+        } catch (error) {
+          showNotification('Error parsing JSON file: ' + error.message, true);
+        }
+      }
+      reader.readAsText(file);
+    }
+}
+
+
+const processImportedData = (jsonData, notification) => {
+
+    try {
+      if (!jsonData.data && !jsonData.value) {
+        notification('JSON file must contain actual data values.', true);
+        return;
+      }
+
+      const values = jsonData.data || jsonData.value;
+      const updatedDataInfo = updateDataImported(jsonData, values);
+
+      if(updatedDataInfo.success) {
+        notification(`Successfully updated data for ${updatedDataInfo.count} items.`)
+      } else {
+        notification(updatedDataInfo.message, true)
+      }
+    } catch (error) {
+      console.error('Error processing JSON data:', error);
+      notification('Error processing JSON data: ' + error.message, true);
+    }
+}
+const updateDataImported = (jsonData, values) => {
+
+  let dataModifications = JSON.parse(localStorage.getItem('dataModifications') || '[]');
+  let modificationCount = 0;
+
+  const metricMapping = {
+    'vm01': 'births',         // Live births
+    'vm11': 'deaths',         // Deaths
+    'vm41': 'immigration',    // Immigration to Finland
+    'vm42': 'emigration',     // Emigration from Finland
+    'vm4142': 'migration',    // Net migration
+    'vm2126': 'marriages',    // Marriages
+    'vm3136': 'divorces',     // Divorces
+    'vaesto': 'population'    // Total population
+  };
+
+  try {
+    if(Array.isArray(values)) {
+      values.forEach(item => {
+        if (item.year && item.area && item.metric && item.value !== undefined) {
+          const year = item.year.toString();
+          const areaCode = item.area;
+          const metricCode = item.metric;
+          const value = parseInt(item.value);
+          
+          if (metricMapping[metricCode] && !isNaN(value)) {
+            const modification = {
+              municipalityCode: areaCode,
+              year: year,
+              metric: metricMapping[metricCode],
+              value: value,
+              timestamp: new Date().getTime()
+            };
+            
+            const existingIndex = dataModifications.findIndex(
+              mod => mod.municipalityCode === areaCode && 
+                    mod.year === year && 
+                    mod.metric === metricMapping[metricCode]
+            );
+            
+            if (existingIndex >= 0) {
+              dataModifications[existingIndex] = modification;
+            } else {
+              dataModifications.push(modification);
+            }
+            
+            modificationCount++;
+          }
+        }
+      });
+    }
+
+    if (modificationCount > 0) {
+      localStorage.setItem('dataModifications', JSON.stringify(dataModifications));
+      localStorage.setItem('dataModified', 'true');
+      
+      // Apply modifications to current data. Handled already with the change button too.
+      if (statData) {
+        applyDataModifications(statData);
+        location.reload();
+      }
+      
+      return { success: true, count: modificationCount };
+    } else {
+      return { success: false, message: 'No valid data points found in the file' };
+    }
+  } catch (error) {
+    console.error('Error updating application data:', error);
+    return { success: false, message: 'Error updating data: ' + error.message };
+  }
+}
+
+
 buildChart();
+setupDragDrop();
