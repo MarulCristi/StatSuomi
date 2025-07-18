@@ -2560,10 +2560,6 @@ const setupDragDrop = () => {
 
 
 const processImportedData = (jsonData, notification) => {
-    if(!validateJson(jsonData)) {
-        notification('Invalid JSON structure. Please check the file format.', true);
-        return;
-    }
 
     try {
       if (!jsonData.data && !jsonData.value) {
@@ -2586,27 +2582,7 @@ const processImportedData = (jsonData, notification) => {
       notification('Error processing JSON data: ' + error.message, true);
     }
 }
-
-const validateJson = (jsonData) => {
-  if (!jsonData.variables || !Array.isArray(jsonData.variables)) {
-    return false;
-  }
-
-  const hasYear = jsonData.variables.some(v => v.code === 'Vuosi'); // .some finds if there's at least 1 element in the array that passes the condition
-  const hasArea = jsonData.variables.some(v => v.code === 'Alue');
-  const hasInfo = jsonData.variables.some(v => v.code === 'Tiedot');
-  
-  return hasYear && hasArea && hasInfo;
-}
-
 const updateDataImported = (jsonData, values) => {
-  const yearVar = jsonData.variables.find(v => v.code === 'Vuosi');
-  const areaVar = jsonData.variables.find(v => v.code === 'Alue');
-  const infoVar = jsonData.variables.find(v => v.code === 'Tiedot');
-  
-  if (!yearVar || !areaVar || !infoVar) {
-    return { success: false, message: 'Missing required variable definitions' };
-  }
 
   let dataModifications = JSON.parse(localStorage.getItem('dataModifications') || '[]');
   let modificationCount = 0;
