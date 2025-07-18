@@ -891,10 +891,9 @@ const getData = async() => {
 
       console.log(selectedData)
 
-      const csv = Object.values(selectedData)
-        .map(m => `${m.name}: ${m.code}`)
-        .join('\n');
-      console.log(csv);
+      // Object.entries(selectedData).forEach(function([key, value]) {
+      //   console.log(`${key}:`, value.name);
+      // });
       
       changeTab(); // Make sure correct tab shows.
       initMap(geoData) // Create map with the data.
