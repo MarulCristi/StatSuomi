@@ -154,7 +154,7 @@ p:lang(fi):after {
 
 @media (max-width: 650px) { /* PHONE SUPPORT */
     h1 {
-        font-size: 2.7rem;
+        font-size: 2.5rem;
         padding: 5px;
         letter-spacing: 0.08em;
     }
