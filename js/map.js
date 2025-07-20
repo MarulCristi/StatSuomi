@@ -1130,7 +1130,7 @@ function updateSelectedMunicipalityDisplay() { // Show all details of the munici
                   `Population: <b>${currentData.population} people</b><br>
                   Marriages: <b>${formatNumber(currentData.marriages)}</b> <small>(${marriagesPerCapita} per 1,000 people)</small><br>
                   Divorces: <b>-${currentData.divorces}</b> <small>(${divorcesPerCapita} per 1,000 people)</small><br>
-                  Net Family Balance: <b>${currentData.marriages - currentData.divorces}</b> <small>(${netFamilyPerCapita} per 1,000 people)</small><br>`
+                  Net Family: <b>${currentData.marriages - currentData.divorces}</b> <small>(${netFamilyPerCapita} per 1,000 people)</small><br>`
                 } else {
                   const netFamily = averageStats.totalMarriages - averageStats.totalDivorces;
                   const avgFamilyPerYear = Math.round(netFamily / averageStats.totalYears);
@@ -1821,7 +1821,7 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
           div.innerHTML += '<i style="background: #1a9850"></i> 5 - 10<br>';
           div.innerHTML += '<i style="background: #006837"></i> < 5<br>';
       } else if(currentTab === 'migration') {
-          div.innerHTML = '<h4>Net Migration</h4>';
+          div.innerHTML = '<h4>Net Migration (Immigration - Emigration)</h4>';
           div.innerHTML += '<i style="background: #006837"></i> > 1,000<br>';
           div.innerHTML += '<i style="background: #1a9850"></i> 500 - 1,000<br>';
           div.innerHTML += '<i style="background: #66bd63"></i> 200 - 500<br>';
@@ -1857,7 +1857,7 @@ function updateLegendContent(div) { // Update Legend content based on the tab se
           div.innerHTML += '<i style="background: #1a9850"></i> 1 - 2<br>';
           div.innerHTML += '<i style="background: #006837"></i> < 1<br>';
       } else if(currentTab === 'family') {
-          div.innerHTML = '<h4>Net Family Balance (Marriages - Divorces)</h4>';
+          div.innerHTML = '<h4>Net Family (Marriages - Divorces)</h4>';
           div.innerHTML += '<i style="background: #006837"></i> > 500<br>';
           div.innerHTML += '<i style="background: #1a9850"></i> 200 - 500<br>';
           div.innerHTML += '<i style="background: #66bd63"></i> 100 - 200<br>';
