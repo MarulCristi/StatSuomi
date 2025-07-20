@@ -1690,7 +1690,7 @@ const initMap = (data) => {
           title: 'Download map',
           sizeModes: ['CurrentSize'],
           exportOnly: true,
-          hideControlContainer: true
+          hideControlContainer: false
       }).addTo(map);
 
 
